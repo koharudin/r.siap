@@ -12,6 +12,9 @@ Route::group([
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
 
+    Route::group(['prefix'=>'profile/{profile_id}'],function(Router $router2){
+        $router2->resource('banks', CBankController::class);
+    });    
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('manage_agama', ManageAgama::class);
     //$router->resource('manage_unit_kerja', ManageUnitKerja::class);
