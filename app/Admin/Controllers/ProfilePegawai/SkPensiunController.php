@@ -27,15 +27,13 @@ class SkPensiunController extends  ProfileController
             $form = $this->form();
             $form->setAction('riwayat_sk_pensiun');
         }
-
-        $box = new Box();
-        $box->content($form);
+       
         return $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($this->header()->render())
             ->body($this->headerTab())
-            ->body($box->render());
+            ->body($form->render());
     }
     public function detail($id)
     {
@@ -55,6 +53,10 @@ class SkPensiunController extends  ProfileController
             $tools->disableList();
             $tools->disableView();
             $tools->disableDelete();
+        });
+        // callback after save
+        $form->saved(function (Form $form) {
+            return back();
         });
         return $form;
     }

@@ -28,6 +28,7 @@ Route::group([
     $router->resource('manage_pejabat_penetap', ManagePejabatPenetapController::class);
 
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
+
     $router->resource('profile.data_personal', ProfilePegawai\DataPersonalController::class)->parameters([
         'profile' => 'profile_id',
         'data_personal' => 'id'
