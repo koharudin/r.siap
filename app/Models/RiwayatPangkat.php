@@ -7,4 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class RiwayatPangkat extends Model
 {
     public $table  = 'riwayat_pangkat';
+    public function obj_pangkat(){
+        return $this->hasOne(Pangkat::class,'id','pangkat_id');
+    }
+    public function obj_jenis_kenaikan_pangkat(){
+        return $this->hasOne(JenisKP::class,'id','jenis_kp');
+    }
 }

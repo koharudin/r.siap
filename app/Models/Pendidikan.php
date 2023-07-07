@@ -7,11 +7,11 @@ use Encore\Admin\Traits\ModelTree;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UnitKerja extends Model
+class Pendidikan extends Model
 {
     use HasFactory;
     use ModelTree, AdminBuilder;
-    public $table  = 'unit_kerja';
+    public $table  = 'pendidikan';
     public $primaryKey = 'id';
     public $timestamps  = true;
 

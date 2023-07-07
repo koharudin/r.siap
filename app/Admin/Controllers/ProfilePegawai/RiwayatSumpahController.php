@@ -16,7 +16,7 @@ class RiwayatSumpahController extends ProfileController
      *
      * @var string
      */
-    protected $title = 'RiwayatSumpah';
+    protected $title = 'Riwayat Sumpah';
 
     /**
      * Make a grid builder.

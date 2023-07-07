@@ -2,6 +2,10 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridPejabatPenetap;
+use App\Models\JenisKP;
+use App\Models\Pangkat;
+use App\Models\PejabatPenetap;
 use App\Models\RiwayatPangkat;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -28,11 +32,11 @@ class RiwayatPangkatController extends ProfileController
         $grid = new Grid(new RiwayatPangkat());
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
-        $grid->column('pangkat_id', __('PANGKAT'));
-        $grid->column('jenis_kp', __('JENIS KP'));
-        $grid->column('penetap_nip', __('PENETAP NIP'));
-        $grid->column('penetap_nama', __('PENETAP NAMA'));
-        $grid->column('penetap_jabatan', __('PENETAP JABATAN'));
+        $grid->column('obj_pangkat.name', __('PANGKAT'));
+        $grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+        $grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
+        $grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
+        $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
 
         return $grid;
     }
@@ -47,8 +51,6 @@ class RiwayatPangkatController extends ProfileController
     {
         $show = new Show(RiwayatPangkat::findOrFail($id));
 
-        $show->field('id', __('ID'));
-        $show->field('simpeg_id', __('SIMPEG ID'));
         $show->field('stlud', __('STLUD'));
         $show->field('no_stlud', __('NO STLUD'));
         $show->field('tgl_stlud', __('TGL STLUD'));
@@ -57,19 +59,18 @@ class RiwayatPangkatController extends ProfileController
         $show->field('no_sk', __('NO SK'));
         $show->field('tgl_sk', __('TGL SK'));
         $show->field('tmt_pangkat', __('TMT PANGKAT'));
-        $show->field('pejabat_penetap', __('PEJABAT PENETAP'));
         $show->field('kredit', __('KREDIT'));
-        $show->field('pangkat_id', __('PANGKAT'));
-        $show->field('jenis_kp', __('JENIS KP'));
+        $show->field('obj_pangkat.name', __('PANGKAT'));
+        $show->field('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
         $show->field('keterangan', __('KETERANGAN'));
-        $show->field('penetap_nip', __('PENETAP NIP'));
-        $show->field('penetap_nama', __('PENETAP NAMA'));
         $show->field('jenis_ket', __('JENIS KET'));
         $show->field('tmt_pak', __('TMT PAK'));
-        $show->field('penetap_jabatan', __('PENETAP JABATAN'));
         $show->field('masakerja_thn', __('MASA KERJA TAHUN'));
         $show->field('masakerja_bln', __('MASA KERJA BULAN'));
-
+        $show->divider("PEJABAT PENETAP");
+        $show->field('penetap_nip', __('PENETAP NIP'));
+        $show->field('penetap_nama', __('PENETAP NAMA'));
+        $show->field('penetap_jabatan', __('PENETAP JABATAN'));
         return $show;
     }
 
@@ -90,19 +91,31 @@ class RiwayatPangkatController extends ProfileController
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'));
-        $form->text('pejabat_penetap', __('PEJABAT PENETAP'));
+        
         $form->decimal('kredit', __('KREDIT'));
-        $form->text('pangkat_id', __('PANGKAT'));
-        $form->text('jenis_kp', __('JENIS KP'));
+        $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck('name','id'));
+        $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::all()->pluck('name','id'));
         $form->text('keterangan', __('KETERANGAN'));
-        $form->text('penetap_nip', __('PENETAP NIP'));
-        $form->text('penetap_nama', __('PENETAP NAMA'));
         $form->text('jenis_ket', __('JENIS KET'));
         $form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));
-        $form->text('penetap_jabatan', __('PENETAP JABATAN'));
         $form->number('masakerja_thn', __('MASA KERJA TAHUN'));
         $form->number('masakerja_bln', __('MASA KERJA BULAN'));
-
+        $form->divider("Pejabat Penetap");
+        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
+        $form->text('pejabat_penetap_nip', __('NIP'));
+        $form->text('pejabat_penetap_nama', __('NAMA'));
+        
+        $form->saving(function (Form $form) {
+            if($form->pejabat_penetap_id){
+                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
+                if($r){
+                    $form->pejabat_penetap_jabatan = $r->jabatan;
+                    $form->pejabat_penetap_nip = $r->nip;
+                    $form->pejabat_penetap_nama = $r->nama;
+                }
+            }
+        });
         return $form;
     }
 }

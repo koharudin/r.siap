@@ -11,7 +11,7 @@ use Encore\Admin\Widgets\Box;
 use Encore\Admin\Widgets\Tab as WidgetsTab;
 use Illuminate\Routing\Controller;
 
-class ProfileController extends AdminController
+class ProfileController
 {
     public $profile_id;
     public $activeTab = '';
@@ -49,6 +49,7 @@ class ProfileController extends AdminController
                 
                 'Orang Tua'=>  "riwayat_orangtua",
                 'Istri Suami'=>  "riwayat_istrisuami",
+                'Anak'=>  "riwayat_anak",
 
                 'Organisasi'=>  "riwayat_organisasi",
   
@@ -101,28 +102,42 @@ class ProfileController extends AdminController
             ->body($this->headerTab())
             ->body($grid);
     }
-    public function edit($id, Content $content)
-    {
-        $id = request()->route('id');
-        return parent::edit($id, $content);
-    }
-    public function update($id)
-    {
-        $id = request()->route('id');
-        return $this->form()->update($id);
-    }
+
+    
     public function store()
     {
         return $this->form()->saving(function (Form $form) {
             $form->employee_id = request()->route('profile_id');
         })->store();
     }
-    public function show($id, Content $content)
+    protected $title = 'Title';
+    protected function title()
     {
-        $id = request()->route('id');
+        return $this->title;
+    }
+    public function create($profile_id,Content $content)
+    {
+        return $content
+            ->title($this->title())
+            ->description($this->description['create'] ?? trans('admin.create'))
+            ->body($this->form());
+    }
+    public function show($profile_id,$id, Content $content)
+    {
         return $content
             ->title($this->title())
             ->description($this->description['show'] ?? trans('admin.show'))
             ->body($this->detail($id));
+    }
+    public function edit($profile_id,$id, Content $content)
+    {
+        return $content
+            ->title($this->title())
+            ->description($this->description['edit'] ?? trans('admin.edit'))
+            ->body($this->form()->edit($id));
+    }
+    public function update($profile_id,$id)
+    {
+        return $this->form()->update($id);
     }
 }

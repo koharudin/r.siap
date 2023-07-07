@@ -2,7 +2,11 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Models\Agama;
 use App\Models\Employee;
+use App\Models\GolonganDarah;
+use App\Models\JenisKelamin;
+use App\Models\StatusPernikahan;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
@@ -44,15 +48,15 @@ class DataPersonalController extends  ProfileController
         $form->hidden('id', 'ID');
         // Add an input box of type text
         $form->text('first_name', 'NAMA');
-        $form->text('obj_agama.name', 'AGAMA');
+        $form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
         $form->text('nip_baru', 'NIP');
         $form->text('gelar_depan', 'GELAR DEPAN');
         $form->text('gelar_belakang', 'GELAR BELAKANG');
         $form->text('birth_place', 'TEMPAT LAHIR');
         $form->text('birth_date', 'TANGGAL LAHIR');
-        $form->text('sex', 'JENIS KELAMIN');
-        $form->text('status_kawin', 'STATUS PERNIKAHAN');
-        $form->text('golongan_darah', 'GOLONGAN DARAH');
+        $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name","id"));
+        $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name','id'));
+        $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id','id'));
 
         $form->tools(function ($tools) {
             $tools->disableList();
@@ -61,7 +65,6 @@ class DataPersonalController extends  ProfileController
         });
         //$form->disableSubmit();
         //$form->disableReset();
-        // callback after save
         $form->saved(function (Form $form) {
             return back();
         });

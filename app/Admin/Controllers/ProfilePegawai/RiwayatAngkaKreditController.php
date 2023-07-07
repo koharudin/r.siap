@@ -2,7 +2,10 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridUnitKerja;
+use App\Models\Pangkat;
 use App\Models\RiwayatAngkaKredit;
+use App\Models\UnitKerja;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -32,7 +35,7 @@ class RiwayatAngkaKreditController extends ProfileController
         $grid->column('dt_akhir_penilaian', __('TGL AKHIR PENILAIAN'));
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('unit_kerja', __('UNIT KERJA'));
-        $grid->column('pangkat_id', __('PANGKAT'));
+        $grid->column('obj_pangkat.name', __('PANGKAT'));
         $grid->column('ak_lama', _('AK LAMA'));
         $grid->column('ak_baru', __('AK BARU'));
         $grid->column('tmt_pak', __('TMT PAK'));
@@ -81,13 +84,22 @@ class RiwayatAngkaKreditController extends ProfileController
         $form->date('dt_akhir_penilaian', __('TGL AKHIR PENILAIAN'))->default(date('Y-m-d'));
 
         $form->text('jabatan', __('JABATAN'));
-        $form->text('unit_kerja', __('UNIT KERJA'));
-        $form->text('pangkat_id', __('PANGKAT'));
+        $form->belongsTo('unit_kerja_id',GridUnitKerja::class,'UNIT KERJA');
+        $form->display('unit_kerja', __('UNIT KERJA'));
+        $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck("name","id"));
         $form->decimal('ak_lama', _('AK LAMA'));
         $form->decimal('ak_baru', __('AK BARU'));
         $form->textarea('keterangan', __('KETERANGAN'));
         $form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));
 
+        $form->saving(function (Form $form) {
+            if($form->unit_kerja_id){
+                $unit_kerja =  UnitKerja::where('id',$form->unit_kerja_id)->get()->first();
+                if($unit_kerja){
+                    $form->unit_kerja = $unit_kerja->name;
+                }
+            }
+        });
         return $form;
     }
 }

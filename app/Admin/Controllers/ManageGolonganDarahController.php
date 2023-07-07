@@ -2,20 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Bank;
+use App\Models\GolonganDarah;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class CBankController extends AdminController
+class ManageGolonganDarahController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Bank';
+    protected $title = 'Golongan Darah';
 
     /**
      * Make a grid builder.
@@ -24,12 +24,9 @@ class CBankController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Bank());
+        $grid = new Grid(new GolonganDarah());
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('id', __('Golongan Darah'));
 
         return $grid;
     }
@@ -42,12 +39,9 @@ class CBankController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Bank::findOrFail($id));
+        $show = new Show(GolonganDarah::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('id', __('Golongan Darah'));
 
         return $show;
     }
@@ -59,10 +53,8 @@ class CBankController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Bank());
-
-        $form->text('name', __('Name'));
-
+        $form = new Form(new GolonganDarah());
+        $form->text("id","Golongan Darah");
         return $form;
     }
 }
