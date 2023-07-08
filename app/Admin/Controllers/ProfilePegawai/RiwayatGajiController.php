@@ -7,9 +7,12 @@ use App\Models\JenisKenaikanGaji;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\RiwayatGaji;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
 class RiwayatGajiController extends  ProfileController
@@ -39,7 +42,6 @@ class RiwayatGajiController extends  ProfileController
         $grid->column('masakerja_bulan', __('MASA KERJA BULAN'));
         $grid->column('objJenisKenaikanGaji.name', _('JENIS KENAIKAN'));
         $grid->column('gaji_pokok', __('GAJI POKOK'));
-
         return $grid;
     }
 

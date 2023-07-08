@@ -3,9 +3,12 @@
 namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Models\RiwayatDiklatStruktural;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
 class RiwayatDiklatStrukturalController extends ProfileController
@@ -26,7 +29,7 @@ class RiwayatDiklatStrukturalController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatDiklatStruktural());
-
+        $grid->model();
         $grid->column('diklat', __('DIKLAT'));
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('tempat', __('TEMPAT'));

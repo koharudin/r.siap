@@ -118,7 +118,7 @@ class ManageEmployee extends AdminController
         $form->text('birth_place', __('Birth place'));
         $form->date('birth_date', __('Birth date'))->default(date('Y-m-d'));
         $form->select('sex', __('Sex'))->options(JenisKelamin::all()->pluck("name","id"));
-        $form->select('status_kawin', __('Status kawin'))->options(StatusPernikahan::all()->pluck('name','id');
+        $form->select('status_kawin', __('Status kawin'))->options(StatusPernikahan::all()->pluck('name','id'));
         $form->select('golongan_darah', __('Golongan darah'))->options(GolonganDarah::all()->pluck('id','id'));
         $form->text('email_kantor', __('Email kantor'));
         $form->email('email', __('Email'));

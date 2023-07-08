@@ -7,9 +7,12 @@ use App\Admin\Selectable\GridUnitKerja;
 use App\Models\PejabatPenetap;
 use App\Models\RiwayatMutasi;
 use App\Models\UnitKerja;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
 class RiwayatMutasiController extends ProfileController
@@ -37,7 +40,25 @@ class RiwayatMutasiController extends ProfileController
         $grid->column('tgl_sk', __('TGL SK'));
         $grid->column('tmt_sk', __('TMT SK'));
         $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
-
+        if (!Admin::user()->can('create-riwayat_pangkat')) {
+            $grid->disableCreateButton();
+        }
+        $grid->actions(function ($actions) {
+            if (!Admin::user()->can('delete-riwayat_pangkat')) {
+                $actions->disableDelete();
+            }
+            if (!Admin::user()->can('edit-riwayat_pangkat')) {
+                $actions->disableEdit();
+            }
+        });
+        $grid->tools(function ($tools) {
+            $tools->batch(function ($batch) {
+                if (!Admin::user()->can('delete-riwayat_pangkat')) {
+                    $batch->disableDelete();
+                }
+            });
+        });
+        $grid->disableRowSelector();
         return $grid;
     }
 
@@ -109,5 +130,10 @@ class RiwayatMutasiController extends ProfileController
         });
 
         return $form;
+    }
+    
+    public function edit($profile_id, $id, Content $content){
+        Permission::check('edit-riwayat_mutasi');
+        return parent::edit($profile_id,$id,$content);
     }
 }

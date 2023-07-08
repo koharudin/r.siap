@@ -85,7 +85,7 @@ class RiwayatDiklatFungsionalController  extends ProfileController
         $form->date('tgl_mulai', __('TGL MULAI'))->default(date('Y-m-d'));
         $form->date('tgl_selesai', __('TGL SELESAI'))->default(date('Y-m-d'));
         $form->text('no_sttpp', __('NO STTPP'));
-        $form->date('tgl_sttpp', __('TGL STTPP'))->default(date('Y-m-d'));
+        $form->text('tgl_sttpp', __('TGL STTPP'));
         $form->text('diklat_id', __('DIKLAT ID'));
         $form->text('jumlah_jam', __('JUMLAH JAM'));
 

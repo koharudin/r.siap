@@ -12,8 +12,8 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-
-    Route::group(['prefix'=>'profile/{profile_id}'],function(Router $router2) use($router){
+    
+    Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class);
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class);
         $router->resource('riwayat_istrisuami', ProfilePegawai\RiwayatIstriSuamiController::class);
@@ -39,7 +39,7 @@ Route::group([
         $router->resource('riwayat_sumpah', ProfilePegawai\RiwayatSumpahController::class);
         $router->resource('riwayat_mutasi', ProfilePegawai\RiwayatMutasiController::class);
         $router->resource('riwayat_gaji', ProfilePegawai\RiwayatGajiController::class);
-    });    
+    });
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);

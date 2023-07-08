@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\DetailPegawaiAction;
+use App\Admin\Controllers\ProfilePegawai\DataPersonalController;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Encore\Admin\Controllers\Dashboard;
@@ -19,9 +20,7 @@ class DashboardPegawaiController extends Controller
     public $title  = 'Dashboard Pegawai';
     public function index(Content $content)
     {
-        $box = new Box("","..");
-        return $content
-            ->title($this->title)
-            ->body($box);
+        $dp = new DataPersonalController();
+        return $dp->index($content);
     }
 }

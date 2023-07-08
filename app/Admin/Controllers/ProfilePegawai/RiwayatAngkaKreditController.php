@@ -7,6 +7,7 @@ use App\Models\Pangkat;
 use App\Models\RiwayatAngkaKredit;
 use App\Models\UnitKerja;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -39,7 +40,7 @@ class RiwayatAngkaKreditController extends ProfileController
         $grid->column('ak_lama', _('AK LAMA'));
         $grid->column('ak_baru', __('AK BARU'));
         $grid->column('tmt_pak', __('TMT PAK'));
-
+     
         return $grid;
     }
 

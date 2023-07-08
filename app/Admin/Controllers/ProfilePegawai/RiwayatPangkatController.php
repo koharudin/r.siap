@@ -7,9 +7,12 @@ use App\Models\JenisKP;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\RiwayatPangkat;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
 class RiwayatPangkatController extends ProfileController
@@ -118,4 +121,5 @@ class RiwayatPangkatController extends ProfileController
         });
         return $form;
     }
+    
 }

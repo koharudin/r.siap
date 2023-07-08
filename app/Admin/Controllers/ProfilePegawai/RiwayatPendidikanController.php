@@ -3,9 +3,12 @@
 namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Models\RiwayatPendidikan;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
 class RiwayatPendidikanController extends ProfileController
@@ -27,12 +30,12 @@ class RiwayatPendidikanController extends ProfileController
     {
         $grid = new Grid(new RiwayatPendidikan());
 
-        $grid->column('pendidikan_id', __('Pendidikan id'));
-        $grid->column('jurusan', __('Jurusan'));
-        $grid->column('nama_sekolah', __('Nama sekolah'));
-        $grid->column('tempat_sekolah', __('Tempat sekolah'));
-        $grid->column('tahun', __('Tahun'));
-       
+        $grid->column('pendidikan_id', __('PENDIDIKAN'));
+        $grid->column('jurusan', __('JURUSAN'));
+        $grid->column('nama_sekolah', __('NAMA SEKOLAH'));
+        $grid->column('tempat_sekolah', __('TEMPAT SEKOLAH'));
+        $grid->column('tahun', __('TAHUN'));
+
         return $grid;
     }
 
@@ -46,17 +49,15 @@ class RiwayatPendidikanController extends ProfileController
     {
         $show = new Show(RiwayatPendidikan::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('employee_id', __('Employee id'));
-        $show->field('pendidikan_id', __('Pendidikan id'));
-        $show->field('jurusan', __('Jurusan'));
-        $show->field('nama_sekolah', __('Nama sekolah'));
-        $show->field('tempat_sekolah', __('Tempat sekolah'));
-        $show->field('no_sttb', __('No sttb'));
-        $show->field('tgl_sttb', __('Tgl sttb'));
-        $show->field('tahun', __('Tahun'));
-        $show->field('simpeg_id', __('Simpeg id'));
-        $show->field('kepala_sekolah', __('Kepala sekolah'));
+
+        $show->field('pendidikan_id', __('PENDIDIKAN'));
+        $show->field('jurusan', __('JURUSAN'));
+        $show->field('nama_sekolah', __('NAMA SEKOLAH'));
+        $show->field('tempat_sekolah', __('TEMPAT SEKOLAH'));
+        $show->field('no_sttb', __('NO STTB'));
+        $show->field('tgl_sttb', __('TGL STTB'));
+        $show->field('tahun', __('TAHUN'));
+        $show->field('kepala_sekolah', __('KEPALA SEKOLAH'));
 
         return $show;
     }
@@ -71,15 +72,14 @@ class RiwayatPendidikanController extends ProfileController
         $form = new Form(new RiwayatPendidikan());
 
         $form->hidden('employee_id', __('Employee id'));
-        $form->text('pendidikan_id', __('Pendidikan id'));
-        $form->text('jurusan', __('Jurusan'));
-        $form->text('nama_sekolah', __('Nama sekolah'));
-        $form->text('tempat_sekolah', __('Tempat sekolah'));
-        $form->text('no_sttb', __('No sttb'));
-        $form->date('tgl_sttb', __('Tgl sttb'))->default(date('Y-m-d'));
-        $form->text('tahun', __('Tahun'));
-        $form->text('simpeg_id', __('Simpeg id'));
-        $form->text('kepala_sekolah', __('Kepala sekolah'));
+        $form->text('pendidikan_id', __('PENDIDIKAN'));
+        $form->text('jurusan', __('JURUSAN'));
+        $form->text('nama_sekolah', __('NAMA SEKOLAH'));
+        $form->text('tempat_sekolah', __('TEMPAT SEKOLAH'));
+        $form->text('no_sttb', __('NO STTB'));
+        $form->date('tgl_sttb', __('TGL STTB'))->default(date('Y-m-d'));
+        $form->text('tahun', __('TAHUN'));
+        $form->text('kepala_sekolah', __('KEPALA SEKOLAH'));
 
         return $form;
     }

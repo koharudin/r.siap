@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\GolonganDarah;
 use App\Models\JenisKelamin;
 use App\Models\StatusPernikahan;
+use Encore\Admin\Auth\Permission;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
@@ -17,9 +18,9 @@ class DataPersonalController extends  ProfileController
 
     public $title = 'Data Personal';
 
-    public function index(Content $content)
+    public function index($profile_id,Content $content)
     {
-        $r = Employee::with(['obj_agama'])->where('id', $this->profile_id)->get()->first();
+        $r = Employee::with(['obj_agama'])->where('id', $this->getProfileId())->get()->first();
         $form = $this->form();
         if ($r) {
             $form  =  $form->edit($r->id);
@@ -28,12 +29,7 @@ class DataPersonalController extends  ProfileController
         } else {
             $form->setAction('data_personal');
         }
-        return $content
-            ->title($this->title())
-            ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($this->header()->render())
-            ->body($this->headerTab())
-            ->body($form->render());
+       return parent::index2($profile_id,$content)->body($form->render());
     }
     public function detail($id)
     {
@@ -63,11 +59,15 @@ class DataPersonalController extends  ProfileController
             $tools->disableView();
             $tools->disableDelete();
         });
-        //$form->disableSubmit();
+        if (!Admin::user()->can('save-data_personal')) {
+            $form->disableSubmit();
+        }
+        //
         //$form->disableReset();
         $form->saved(function (Form $form) {
             return back();
         });
         return $form;
     }
+
 }
