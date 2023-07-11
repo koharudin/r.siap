@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Login 04</title>
+  <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -11,7 +11,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <link rel="stylesheet" href="{{ admin_asset("login/css/style.css")}}">
-
+  @if(!is_null($favicon = Admin::favicon()))
+  <link rel="shortcut icon" href="{{$favicon}}">
+  @endif
 </head>
 
 <body>
@@ -25,35 +27,44 @@
       <div class="row justify-content-center">
         <div class="col-md-12 col-lg-10">
           <div class="wrap d-md-flex">
-            <div class="img" style="background-image: url({{ admin_asset("login/images/bg-1.jpg")}});">
+            <div class="img" style="background-image: url({{ admin_asset("login/images/bg-logo.png")}});background-size:cover">
             </div>
             <div class="login-wrap p-4 p-md-5">
               <div class="d-flex">
                 <div class="w-100">
-                  <h3 class="mb-4">Sign In</h3>
+                  <h3 class="mb-4">&nbsp;</h3>
                 </div>
                 <div class="w-100">
                   <p class="social-media d-flex justify-content-end">
-                    <a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-facebook"></span></a>
-                    <a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-twitter"></span></a>
+                    
                   </p>
                 </div>
               </div>
               <form action="{{ admin_url('auth/login') }}" method="post" class="signin-form">
+                @if($errors->has('username'))
+                @foreach($errors->get('username') as $message)
+                <label class="control-label" for="inputError"><i class="fa fa-times-circle-o"></i>{{$message}}</label><br>
+                @endforeach
+                @endif
                 <div class="form-group mb-3">
                   <label class="label" for="name">Username</label>
-                  <input type="text" class="form-control" name="username" placeholder="{{ trans('admin.username') }}"  required>
+                  <input type="text" class="form-control" name="username" placeholder="{{ trans('admin.username') }}" value="{{ old('username') }}" required>
                 </div>
+                @if($errors->has('password'))
+                @foreach($errors->get('password') as $message)
+                <label class="control-label" for="inputError"><i class="fa fa-times-circle-o"></i>{{$message}}</label><br>
+                @endforeach
+                @endif
                 <div class="form-group mb-3">
                   <label class="label" for="password">Password</label>
-                  <input type="password" class="form-control" name="password" placeholder="{{ trans('admin.password') }}"  required>
+                  <input type="password" class="form-control" name="password" placeholder="{{ trans('admin.password') }}" required>
                 </div>
                 <div class="form-group">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
                   <button type="submit" class="form-control btn btn-primary rounded submit px-3">{{ trans('admin.login') }}</button>
                 </div>
               </form>
-              <p class="text-center">Not a member? <a data-toggle="tab" href="#signup">Sign Up</a></p>
+              
             </div>
           </div>
         </div>

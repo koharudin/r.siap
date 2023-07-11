@@ -2,17 +2,21 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Models\DokumenPegawai;
 use App\Models\Employee;
 use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Form;
+use Encore\Admin\Form\Field;
 use Encore\Admin\Form\Tab;
 use Encore\Admin\Grid;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Widgets\Tab as WidgetsTab;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ProfileController
 {
@@ -90,40 +94,85 @@ class ProfileController
         });
         return $form;
     }
-    public function index($profile_id, Content $content)
+    public function saveDokumenUpload($originalFinalName,$newFileName, $arr)
     {
-        $grid = $this->grid();
-        if (!Admin::user()->can("create-{$this->activeTab}")) {
-            $grid->disableCreateButton();
+        if ($newFileName) {
+            if (@$arr['id']) {
+                $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
+            }
+            if (!$dokumen && @$arr['pk1']) {
+                $dokumen = DokumenPegawai::where('pk1', $arr['pk1'])->where('klasifikasi_id', $arr['klasifikasi_id'])->where('pk2', $arr['pk2'])->get()->first();
+            }
+
+            if (!$dokumen) {
+                $dokumen = new DokumenPegawai();
+                $dokumen->ref_id = $arr['id'];
+                $dokumen->klasifikasi_id = $arr['klasifikasi_id'];
+            }
+            $dokumen->file = $newFileName;
+            $dokumen->nama = $originalFinalName;
+            $dokumen->save();
         }
-        $_this = $this;
-        $grid->actions(function ($actions) use ($_this) {
-            if (!Admin::user()->can("delete-{$_this->activeTab}")) {
-                $actions->disableDelete();
-            }
-            if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
-                $actions->disableEdit();
-            }
-        });
-        $grid->tools(function ($tools) use ($_this) {
-            $tools->batch(function ($batch) use ($_this) {
-                if (!Admin::user()->can("delete-{$this->activeTab}")) {
-                    $batch->disableDelete();
-                }
-            });
-        });
-        $grid->disableRowSelector();
-        $grid->model()->where('employee_id',  $this->getProfileId());
-        return $this->index2($profile_id, $content)->body($grid);
     }
-    public function index2($profile_id, Content $content)
+    public function getDokumenUrl($arr)
     {
-        return $content
+        if (@$arr['id']) {
+            $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
+        }
+        if (!$dokumen && @$arr['pk1']) {
+            $dokumen = DokumenPegawai::where('pk1', $arr['pk1'])->where('klasifikasi_id', $arr['klasifikasi_id'])->where('pk2', $arr['pk2'])->get()->first();
+        }
+        if ($dokumen) {
+            $disk = Storage::disk("minio_dokumen");
+            $url = $disk->temporaryUrl(
+                $dokumen->file,
+                now()->addMinutes(5)
+            );
+            if ($disk->exists($dokumen->file)) {
+                return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Lihat</a>";
+            } else return $url;
+        }
+    }
+    public function index(Content $content)
+    {
+        $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($this->header()->render())
             ->body($this->headerTab());
+        if (method_exists($this, 'grid')) {
+            $grid = $this->grid();
+
+            if (!Admin::user()->can("create-{$this->activeTab}")) {
+                $grid->disableCreateButton();
+            }
+            $_this = $this;
+            $grid->actions(function ($actions) use ($_this) {
+                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
+                    $actions->disableDelete();
+                }
+                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                    $actions->disableEdit();
+                }
+            });
+            $grid->tools(function ($tools) use ($_this) {
+                $tools->batch(function ($batch) use ($_this) {
+                    if (!Admin::user()->can("delete-{$this->activeTab}")) {
+                        $batch->disableDelete();
+                    }
+                });
+            });
+            $grid->disableRowSelector();
+            $grid->model()->where('employee_id',  $this->getProfileId());
+            $content->body($grid);
+            return $content;
+        } else if (method_exists($this, 'form')) {
+            $form = $this->form();
+            $content->body($form);
+            return $content;
+        }
     }
+
     public function store()
     {
         return $this->form()->saving(function (Form $form) {
@@ -165,6 +214,12 @@ class ProfileController
     public function getProfileId()
     {
         return request()->profile_id;
+    }
+    public function getEmployee()
+    {
+        $profile_id = $this->getProfileId();
+        $e = Employee::findOrFail($profile_id);
+        return $e;
     }
     public function destroy($id)
     {

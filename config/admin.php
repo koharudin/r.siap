@@ -123,7 +123,8 @@ return [
 
         'providers' => [
             'admin' => [
-                'driver' => 'eloquent',
+                //'driver' => 'eloquent',
+                'driver' => 'custom',
                 'model'  => Encore\Admin\Auth\Database\Administrator::class,
             ],
         ],

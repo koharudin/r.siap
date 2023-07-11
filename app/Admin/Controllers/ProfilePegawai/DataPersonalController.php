@@ -18,19 +18,6 @@ class DataPersonalController extends  ProfileController
 
     public $title = 'Data Personal';
 
-    public function index($profile_id,Content $content)
-    {
-        $r = Employee::with(['obj_agama'])->where('id', $this->getProfileId())->get()->first();
-        $form = $this->form();
-        if ($r) {
-            $form  =  $form->edit($r->id);
-            $form->setAction('data_personal/' . $r->id);
-            $form->setTitle(' ');
-        } else {
-            $form->setAction('data_personal');
-        }
-       return parent::index2($profile_id,$content)->body($form->render());
-    }
     public function detail($id)
     {
         return Admin::content(function (Content $content) {
@@ -67,6 +54,14 @@ class DataPersonalController extends  ProfileController
         $form->saved(function (Form $form) {
             return back();
         });
+        $r = Employee::with(['obj_agama'])->where('id', $this->getProfileId())->get()->first();
+        if ($r) {
+            $form  =  $form->edit($r->id);
+            $form->setAction('data_personal/' . $r->id);
+            $form->setTitle(' ');
+        } else {
+            $form->setAction('data_personal');
+        }
         return $form;
     }
 

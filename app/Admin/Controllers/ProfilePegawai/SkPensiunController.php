@@ -15,25 +15,6 @@ class SkPensiunController extends  ProfileController
     public $title = 'SK Pensiun';
     public $activeTab = 'riwayat_sk_pensiun';
 
-    public function index($profile_id, Content $content)
-    {
-        $r = RiwayatPensiun::where('employee_id', $this->getProfileId())->get()->first();
-        if ($r) {
-            $form  =  $this->form()->edit($r->id);
-            $form->setAction('riwayat_sk_pensiun/' . $r->id);
-            $form->setTitle(' ');
-        } else {
-            $form = $this->form();
-            $form->setAction('riwayat_sk_pensiun');
-        }
-
-        return $content
-            ->title($this->title())
-            ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($this->header()->render())
-            ->body($this->headerTab())
-            ->body($form->render());
-    }
     public function detail($id)
     {
         return Admin::content(function (Content $content) {
@@ -42,7 +23,7 @@ class SkPensiunController extends  ProfileController
     }
     public function form()
     {
-
+        
         $form = new Form(new RiwayatPensiun());
         $form->hidden('employee_id', 'ID');
         // Add an input box of type text
@@ -60,6 +41,15 @@ class SkPensiunController extends  ProfileController
         $form->saved(function (Form $form) {
             return back();
         });
+        
+        $r = RiwayatPensiun::where('employee_id', $this->getProfileId())->get()->first();
+        if ($r) {
+            $form  =  $form->edit($r->id);
+            $form->setAction('riwayat_sk_pensiun/' . $r->id);
+            $form->setTitle(' ');
+        } else {
+            $form->setAction('riwayat_sk_pensiun');
+        }
         return $form;
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
-use App\Admin\Controllers\DashboardPegawaiController;
-use App\Admin\Controllers\ProfilePegawaiController;
+use App\Admin\Controllers\ManageAgama;
+use App\Admin\Controllers\ProfilePegawai\DataPersonalController;
+use Encore\Admin\Layout\Content;
 use Illuminate\Routing\Router;
 
 Admin::routes();
@@ -12,7 +13,7 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-    
+
     Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class);
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class);
@@ -39,11 +40,13 @@ Route::group([
         $router->resource('riwayat_sumpah', ProfilePegawai\RiwayatSumpahController::class);
         $router->resource('riwayat_mutasi', ProfilePegawai\RiwayatMutasiController::class);
         $router->resource('riwayat_gaji', ProfilePegawai\RiwayatGajiController::class);
+       
     });
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);
     $router->resource('manage_unit_kerja', ManageTreeUnitKerja::class);
+    $router->resource('manage_klasifikasi_dokumen', ManageTreeKlasifikasiDokumenController::class);
     $router->resource('manage_country', ManageCountry::class);
     $router->resource('manage_bank', ManageBank::class);
     $router->resource('manage_pangkat', ManagePangkat::class);
@@ -55,6 +58,9 @@ Route::group([
     $router->resource('manage_jenjang_fungsional', ManageJenjangFungsional::class);
     $router->resource('manage_pejabat_penetap', ManagePejabatPenetapController::class);
     $router->resource('manage_golongan_darah', ManageGolonganDarahController::class);   
+    $router->resource('manage_user', UserController::class);   
+    $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
+
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
@@ -66,5 +72,4 @@ Route::group([
     $router->any('statistik', 'StatistikController@Index');
     $router->any('riwayat_hukuman', 'RiwayatHukumanController@Index');
 
-    $router->middleware([])->get('profil-ku',[DashboardPegawaiController::class,'index']);
 });

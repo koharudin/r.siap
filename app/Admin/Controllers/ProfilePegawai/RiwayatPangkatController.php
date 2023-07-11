@@ -2,7 +2,9 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use Illuminate\Http\UploadedFile;
 use App\Admin\Selectable\GridPejabatPenetap;
+use App\Models\DokumenPegawai;
 use App\Models\JenisKP;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
@@ -14,6 +16,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Storage;
 
 class RiwayatPangkatController extends ProfileController
 {
@@ -32,6 +35,7 @@ class RiwayatPangkatController extends ProfileController
      */
     protected function grid()
     {
+        $employee = $this->getEmployee();
         $grid = new Grid(new RiwayatPangkat());
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
@@ -40,7 +44,21 @@ class RiwayatPangkatController extends ProfileController
         $grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
         $grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
         $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
-
+        $_this = $this;
+        $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
+            if ($this->simpeg_id) {
+                $arr = explode("#", $this->simpeg_id);
+                if (sizeof($arr) == 2) {
+                    return $_this->getDokumenUrl([
+                        'pk1' => $employee->simpeg_id,
+                        'pk2' => $arr[1],
+                        'klasifikasi_id' => 5,
+                        'id' => $this->id,
+                    ]);
+                }
+            }
+            return '-';
+        });
         return $grid;
     }
 
@@ -94,32 +112,51 @@ class RiwayatPangkatController extends ProfileController
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'));
-        
+
         $form->decimal('kredit', __('KREDIT'));
-        $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck('name','id'));
-        $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::all()->pluck('name','id'));
+        $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck('name', 'id'));
+        $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::all()->pluck('name', 'id'));
         $form->text('keterangan', __('KETERANGAN'));
         $form->text('jenis_ket', __('JENIS KET'));
         $form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));
         $form->number('masakerja_thn', __('MASA KERJA TAHUN'));
         $form->number('masakerja_bln', __('MASA KERJA BULAN'));
         $form->divider("Pejabat Penetap");
-        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
         $form->text('pejabat_penetap_jabatan', __('JABATAN'));
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
-        
-        $form->saving(function (Form $form) {
-            if($form->pejabat_penetap_id){
-                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
-                if($r){
+
+        $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_dokumen')->uniqueName();
+
+        $form->submitted(function (Form $form) use ($d) {
+            $form->ignore('dokumen');
+        });
+        $_this = $this;
+        $form->saving(function (Form $form) use ($d, $_this) {
+            if ($form->pejabat_penetap_id) {
+                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
                     $form->pejabat_penetap_nama = $r->nama;
                 }
             }
         });
+        $form->saved(function (Form $form) use ($d, $_this) {
+            $file = request()->file('dokumen');
+            if ($file) {
+                $newFileName = $d->prepare($file);
+                $keys = explode("#", $form->model()->simpeg_id);
+                $arr = [
+                    'id' => $form->model()->id,
+                    'klasifikasi_id' => 5,
+                    'pk1' => sizeof($keys) == 2 ? $keys[0] : null,
+                    'pk2' => sizeof($keys) == 2 ? $keys[1] : null,
+                ];
+                $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
+            }
+        });
         return $form;
     }
-    
 }
