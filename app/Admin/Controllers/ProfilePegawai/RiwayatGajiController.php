@@ -18,6 +18,7 @@ use Encore\Admin\Show;
 class RiwayatGajiController extends  ProfileController
 {
     public $activeTab = 'riwayat_gaji';
+    public $klasifikasi_id = 9;
     /**
      * Title for current resource.
      *

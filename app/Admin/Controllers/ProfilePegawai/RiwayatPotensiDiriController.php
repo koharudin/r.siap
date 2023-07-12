@@ -11,12 +11,13 @@ use Encore\Admin\Show;
 class RiwayatPotensiDiriController  extends ProfileController
 {
     public $activeTab = 'riwayat_potensi_diri';
+    public $klasifikasi_id = 20;       
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'RiwayatPotensiDiri';
+    protected $title = 'Riwayat Potensi Diri';
 
     /**
      * Make a grid builder.

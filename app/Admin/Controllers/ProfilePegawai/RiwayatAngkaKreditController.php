@@ -15,6 +15,7 @@ use Encore\Admin\Show;
 class RiwayatAngkaKreditController extends ProfileController
 {
     public $activeTab = 'riwayat_angkakredit';
+    public $klasifikasi_id = 34;
     /**
      * Title for current resource.
      *

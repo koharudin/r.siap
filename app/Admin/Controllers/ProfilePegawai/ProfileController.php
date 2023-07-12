@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ProfileController
 {
     public $activeTab = '';
+    public $klasifikasi_id = 0;
 
     public function __construct()
     {
@@ -55,8 +56,10 @@ class ProfileController
             'Orang Tua' =>  "riwayat_orangtua",
             'Istri Suami' =>  "riwayat_istrisuami",
             'Anak' =>  "riwayat_anak",
+            'Saudara' =>  "riwayat_saudara",
 
             'Organisasi' =>  "riwayat_organisasi",
+            'Penguasaan Bahasa' =>  "riwayat_penguasaan_bahasa",
 
             'Hukuman' =>  "riwayat_hukuman",
             'Diklat Teknis' =>  "riwayat_diklat_teknis",
@@ -124,6 +127,7 @@ class ProfileController
         }
         if ($dokumen) {
             $disk = Storage::disk("minio_dokumen");
+            if($dokumen->file =='' || $dokumen->file =='-')return 'File Hilang.';
             $url = $disk->temporaryUrl(
                 $dokumen->file,
                 now()->addMinutes(5)
@@ -132,6 +136,7 @@ class ProfileController
                 return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Lihat</a>";
             } else return $url;
         }
+        return "-";
     }
     public function index(Content $content)
     {
@@ -142,7 +147,22 @@ class ProfileController
             ->body($this->headerTab());
         if (method_exists($this, 'grid')) {
             $grid = $this->grid();
-
+            $employee = $this->getEmployee();
+            $_this = $this;
+            $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
+                if ($this->simpeg_id) {
+                    $arr = explode("#", $this->simpeg_id);
+                    if (sizeof($arr) == 2) {
+                        return $_this->getDokumenUrl([
+                            'pk1' => $employee->simpeg_id,
+                            'pk2' => $arr[1],
+                            'klasifikasi_id' => $_this->klasifikasi_id,
+                            'id' => $this->id,
+                        ]);
+                    }
+                }
+                return '-';
+            });
             if (!Admin::user()->can("create-{$this->activeTab}")) {
                 $grid->disableCreateButton();
             }

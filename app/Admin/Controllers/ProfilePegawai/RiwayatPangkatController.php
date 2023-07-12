@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 class RiwayatPangkatController extends ProfileController
 {
     public $activeTab = 'riwayat_pangkat';
+    public $klasifikasi_id = 5;
     /**
      * Title for current resource.
      *
@@ -44,21 +45,8 @@ class RiwayatPangkatController extends ProfileController
         $grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
         $grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
         $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
-        $_this = $this;
-        $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
-            if ($this->simpeg_id) {
-                $arr = explode("#", $this->simpeg_id);
-                if (sizeof($arr) == 2) {
-                    return $_this->getDokumenUrl([
-                        'pk1' => $employee->simpeg_id,
-                        'pk2' => $arr[1],
-                        'klasifikasi_id' => 5,
-                        'id' => $this->id,
-                    ]);
-                }
-            }
-            return '-';
-        });
+       
+        
         return $grid;
     }
 

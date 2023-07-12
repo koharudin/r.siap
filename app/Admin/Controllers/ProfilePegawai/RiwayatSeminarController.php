@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 class RiwayatSeminarController extends ProfileController
 {
     public $activeTab = 'riwayat_seminar';
+    public $klasifikasi_id = 16;
     /**
      * Title for current resource.
      *
@@ -26,7 +27,7 @@ class RiwayatSeminarController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatSeminar());
-
+        $grid->model()->where('jenis_piagam',2); 
         $grid->column('nama', __('NAMA'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));

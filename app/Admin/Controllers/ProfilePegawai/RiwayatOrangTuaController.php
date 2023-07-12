@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 class RiwayatOrangTuaController extends ProfileController
 {
     public $activeTab = 'riwayat_orangtua';
+    public $klasifikasi_id = 40;      
     /**
      * Title for current resource.
      *

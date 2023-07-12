@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 class RiwayatDiklatTeknisController  extends ProfileController
 {
     public $activeTab = 'riwayat_diklat_teknis';
+    public $klasifikasi_id = 14;
     /**
      * Title for current resource.
      *

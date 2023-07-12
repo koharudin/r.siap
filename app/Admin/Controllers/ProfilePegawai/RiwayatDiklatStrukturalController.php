@@ -14,6 +14,7 @@ use Encore\Admin\Show;
 class RiwayatDiklatStrukturalController extends ProfileController
 {
     public $activeTab = 'riwayat_diklat_struktural';
+    public $klasifikasi_id = 12;    
     /**
      * Title for current resource.
      *

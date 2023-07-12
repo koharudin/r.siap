@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 class RiwayatDiklatFungsionalController  extends ProfileController
 {
     public $activeTab = 'riwayat_diklat_fungsional';
+    public $klasifikasi_id = 13; 
     /**
      * Title for current resource.
      *
@@ -26,7 +27,7 @@ class RiwayatDiklatFungsionalController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatDiklatFungsional());
-        $grid->model()->where('jenis_diklat',1); 
+        $grid->model()->where('jenis_diklat',2); 
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));

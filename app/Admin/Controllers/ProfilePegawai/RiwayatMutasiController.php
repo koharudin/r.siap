@@ -18,6 +18,7 @@ use Encore\Admin\Show;
 class RiwayatMutasiController extends ProfileController
 {
     public $activeTab = 'riwayat_mutasi';
+    public $klasifikasi_id = 7;
     /**
      * Title for current resource.
      *

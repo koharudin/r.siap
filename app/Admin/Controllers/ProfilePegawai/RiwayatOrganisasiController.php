@@ -10,6 +10,7 @@ use Encore\Admin\Show;
 class RiwayatOrganisasiController extends ProfileController
 {
     public $activeTab = 'riwayat_organisasi';
+    public $klasifikasi_id = 33;    
     /**
      * Title for current resource.
      *
