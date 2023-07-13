@@ -42,7 +42,8 @@ Route::group([
         $router->resource('riwayat_gaji', ProfilePegawai\RiwayatGajiController::class);
         $router->resource('riwayat_penguasaan_bahasa', ProfilePegawai\RiwayatBahasaController::class);
         $router->resource('riwayat_saudara', ProfilePegawai\RiwayatSaudaraController::class);
-       
+        $router->resource('riwayat_pengalaman_kerja', ProfilePegawai\RiwayatPengalamanKerjaController::class);
+    
     });
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('manage_agama', ManageAgama::class);

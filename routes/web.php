@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Router;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/admin');
 });
 Route::get('/test', function () {
     $minio = Storage::disk('minio');

@@ -51,6 +51,7 @@ class ProfileController
             'Penghargaan' =>  "riwayat_penghargaan",
             'Potensi Diri' =>  "riwayat_potensi_diri",
             'Prestasi Kerja' =>  "riwayat_prestasi_kerja",
+            'Pengalaman Kerja' =>  "riwayat_pengalaman_kerja",
 
 
             'Orang Tua' =>  "riwayat_orangtua",
@@ -76,7 +77,7 @@ class ProfileController
         $form = new Form(new Employee());
         $form->setTitle("Data Personal");
         $form->display('first_name', 'Nama Lengkap')->default('qwe@aweq.com');
-        $form->image('foto')->disk('minio_foto')->readonly()->value(1);
+        //$form->image('foto')->disk('minio_foto')->readonly()->value(1);
         $form->display('nip_baru', 'NIP');
         $form->edit($this->getProfileId());
         $form->disableSubmit();

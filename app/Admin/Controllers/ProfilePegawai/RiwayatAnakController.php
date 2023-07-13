@@ -4,6 +4,7 @@ namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Models\JenisKelamin;
 use App\Models\RiwayatAnak;
+use App\Models\StatusAnak;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -12,6 +13,7 @@ use Encore\Admin\Show;
 class RiwayatAnakController extends ProfileController
 {
     public $activeTab = 'riwayat_anak';
+    public $klasifikasi_id = 25; 
     /**
      * Title for current resource.
      *
@@ -32,7 +34,7 @@ class RiwayatAnakController extends ProfileController
         $grid->column('birth_place', __('TEMPAT LAHIR'));
         $grid->column('birth_date', __('TANGGAL LAHIR'));
         $grid->column('obj_jenis_kelamin.name', __('JENIS KELAMIN'));
-        $grid->column('status_keluarga', __('STATUS KELUARGA'));
+        $grid->column('obj_status_anak.name', __('STATUS KELUARGA'));
         $grid->column('status_tunjangan', __('STATUS TUNJANGAN'));
         $grid->column('bln_dibayar', __('BLN DIBAYAR'));
         $grid->column('bln_akhir_dibayar', __('BLN AKHIR DIBAYAR'));
@@ -76,7 +78,7 @@ class RiwayatAnakController extends ProfileController
         $form->text('birth_place', __('TEMPAT LAHIR'));
         $form->date('birth_date', __('TANGGAL LAHIR'))->default(date('Y-m-d'));
         $form->select('jenis_kelamin', __('JENIS KELAMIN'))->options(JenisKelamin::all()->pluck('name','id'));
-        $form->text('status_keluarga', __('STATUS KELUARGA'));
+        $form->select('status_keluarga', __('STATUS KELUARGA'))->options(StatusAnak::all()->pluck('name','id'));
         $form->text('status_tunjangan', __('STATUS TUNJANGAN'));
         $form->date('bln_dibayar', __('BLN DIBAYAR'))->default(date('Y-m-d'));
         $form->date('bln_akhir_dibayar', __('BLN AKHIR DIBAYAR'))->default(date('Y-m-d'));

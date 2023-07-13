@@ -11,4 +11,8 @@ class RiwayatAnak extends Model
     public function obj_jenis_kelamin(){
         return $this->hasOne(JenisKelamin::class,'id','jenis_kelamin');
     }
+    public function obj_status_anak(){
+        return $this->hasOne(StatusAnak::class,'id','status_keluarga');
+    }
+    
 }
