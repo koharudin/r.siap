@@ -8,17 +8,17 @@ use Encore\Admin\Show;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\MessageBag;
 
-class RiwayatOrangTuaController extends ProfileController
+class RiwayatMertuaController extends ProfileController
 {
-    public $activeTab = 'riwayat_orangtua';
-    public $klasifikasi_id = 40;      
+    public $activeTab = 'riwayat_mertua';
+    public $klasifikasi_id = 24;      
     public $use_document = false;
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Riwayat Orang Tua';
+    protected $title = 'Riwayat Mertua';
 
     /**
      * Make a grid builder.
@@ -28,13 +28,13 @@ class RiwayatOrangTuaController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatOrangTua());
-        $grid->model()->whereIn("status",[1,2]);
+        $grid->model()->whereIn("status",[3,4]);
         $grid->column('name', __('NAMA'));
         $grid->column('status', __('STATUS'))->display(function ($status) {
-            if($status==2){
+            if($status==4){
                 return "Ibu";
             }
-            else if ($status==1){
+            else if ($status==3){
                 return "Ayah";
             }
             else return "-";
@@ -71,7 +71,7 @@ class RiwayatOrangTuaController extends ProfileController
         
         
         if($form->isCreating()){
-            $form->select('status')->options(['1'=>'Ayah','2'=>'Ibu'])->required(true);
+            $form->select('status')->options(['3'=>'Mertua Ayah','4'=>'Mertua Ibu'])->required(true);
         }
 
         $form->hidden('employee_id', __('Employee id'));

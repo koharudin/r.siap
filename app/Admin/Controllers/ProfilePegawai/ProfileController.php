@@ -22,6 +22,7 @@ class ProfileController
 {
     public $activeTab = '';
     public $klasifikasi_id = 0;
+    public $use_document = true;
 
     public function __construct()
     {
@@ -55,6 +56,7 @@ class ProfileController
 
 
             'Orang Tua' =>  "riwayat_orangtua",
+            'Mertua' =>  "riwayat_mertua",
             'Riwayat Nikah' =>  "riwayat_nikah",
             'Anak' =>  "riwayat_anak",
             'Saudara' =>  "riwayat_saudara",
@@ -98,7 +100,7 @@ class ProfileController
         });
         return $form;
     }
-    public function saveDokumenUpload($originalFinalName,$newFileName, $arr)
+    public function saveDokumenUpload($originalFinalName, $newFileName, $arr)
     {
         if ($newFileName) {
             if (@$arr['id']) {
@@ -128,7 +130,7 @@ class ProfileController
         }
         if ($dokumen) {
             $disk = Storage::disk("minio_dokumen");
-            if(str_replace(' ','',$dokumen->file) ==''|| $dokumen->file =='-')return 'File tidak ditemukan.';
+            if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') return 'File tidak ditemukan.';
             $url = $disk->temporaryUrl(
                 $dokumen->file,
                 now()->addMinutes(5)
@@ -149,21 +151,23 @@ class ProfileController
         if (method_exists($this, 'grid')) {
             $grid = $this->grid();
             $employee = $this->getEmployee();
-            $_this = $this;
-            $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
-                if ($this->simpeg_id) {
-                    $arr = explode("#", $this->simpeg_id);
-                    if (sizeof($arr) == 2) {
-                        return $_this->getDokumenUrl([
-                            'pk1' => $employee->simpeg_id,
-                            'pk2' => $arr[1],
-                            'klasifikasi_id' => $_this->klasifikasi_id,
-                            'id' => $this->id,
-                        ]);
+            if ($this->use_document) {
+                $_this = $this;
+                $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
+                    if ($this->simpeg_id) {
+                        $arr = explode("#", $this->simpeg_id);
+                        if (sizeof($arr) == 2) {
+                            return $_this->getDokumenUrl([
+                                'pk1' => $employee->simpeg_id,
+                                'pk2' => $arr[1],
+                                'klasifikasi_id' => $_this->klasifikasi_id,
+                                'id' => $this->id,
+                            ]);
+                        }
                     }
-                }
-                return '-';
-            });
+                    return '-';
+                });
+            }
             if (!Admin::user()->can("create-{$this->activeTab}")) {
                 $grid->disableCreateButton();
             }

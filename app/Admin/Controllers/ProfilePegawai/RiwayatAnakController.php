@@ -78,8 +78,9 @@ class RiwayatAnakController extends ProfileController
         $form->text('birth_place', __('TEMPAT LAHIR'));
         $form->date('birth_date', __('TANGGAL LAHIR'))->default(date('Y-m-d'));
         $form->select('jenis_kelamin', __('JENIS KELAMIN'))->options(JenisKelamin::all()->pluck('name','id'));
+        $form->text('pekerjaan', __('PEKERJAAN'));
         $form->select('status_keluarga', __('STATUS KELUARGA'))->options(StatusAnak::all()->pluck('name','id'));
-        $form->text('status_tunjangan', __('STATUS TUNJANGAN'));
+        $form->select('status_tunjangan', __('STATUS TUNJANGAN'))->options(['1' => 'Dapat',  '0' => 'Tidak']);
         $form->date('bln_dibayar', __('BLN DIBAYAR'))->default(date('Y-m-d'));
         $form->date('bln_akhir_dibayar', __('BLN AKHIR DIBAYAR'))->default(date('Y-m-d'));
 
