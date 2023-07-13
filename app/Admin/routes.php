@@ -17,9 +17,8 @@ Route::group([
     Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class);
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class);
-        $router->resource('riwayat_istrisuami', ProfilePegawai\RiwayatIstriSuamiController::class);
+        $router->resource('riwayat_nikah', ProfilePegawai\RiwayatNikahController::class);
         $router->resource('riwayat_sk_pensiun', ProfilePegawai\SkPensiunController::class);
-        $router->resource('riwayat_istrisuami', ProfilePegawai\RiwayatIstriSuamiController::class);
         $router->resource('riwayat_anak', ProfilePegawai\RiwayatAnakController::class);
         $router->resource('riwayat_organisasi', ProfilePegawai\RiwayatOrganisasiController::class);
         $router->resource('riwayat_rekammedis', ProfilePegawai\RiwayatRekamMedisController::class);

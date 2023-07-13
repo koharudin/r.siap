@@ -55,7 +55,7 @@ class ProfileController
 
 
             'Orang Tua' =>  "riwayat_orangtua",
-            'Istri Suami' =>  "riwayat_istrisuami",
+            'Riwayat Nikah' =>  "riwayat_nikah",
             'Anak' =>  "riwayat_anak",
             'Saudara' =>  "riwayat_saudara",
 
@@ -128,7 +128,7 @@ class ProfileController
         }
         if ($dokumen) {
             $disk = Storage::disk("minio_dokumen");
-            if($dokumen->file =='' || $dokumen->file =='-')return 'File Hilang.';
+            if(str_replace(' ','',$dokumen->file) ==''|| $dokumen->file =='-')return 'File tidak ditemukan.';
             $url = $disk->temporaryUrl(
                 $dokumen->file,
                 now()->addMinutes(5)
