@@ -19,7 +19,9 @@ Route::group([
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class);
         $router->resource('riwayat_mertua', ProfilePegawai\RiwayatMertuaController::class);
         $router->resource('riwayat_nikah', ProfilePegawai\RiwayatNikahController::class);
-        $router->resource('riwayat_sk_pensiun', ProfilePegawai\SkPensiunController::class);
+        $router->resource('riwayat_sk_cpns', ProfilePegawai\SKCPNS_Controller::class);
+        $router->resource('riwayat_sk_pns', ProfilePegawai\SKPNS_Controller::class);
+        $router->resource('riwayat_sk_pensiun', ProfilePegawai\SKPensiun_Controller::class);
         $router->resource('riwayat_anak', ProfilePegawai\RiwayatAnakController::class);
         $router->resource('riwayat_organisasi', ProfilePegawai\RiwayatOrganisasiController::class);
         $router->resource('riwayat_rekammedis', ProfilePegawai\RiwayatRekamMedisController::class);

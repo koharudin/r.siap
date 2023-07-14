@@ -11,7 +11,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Form;
 
-class SkPensiunController extends  ProfileController
+class SKPensiun_Controller extends  ProfileController
 {
 
     public $title = 'SK Pensiun';

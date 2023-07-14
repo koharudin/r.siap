@@ -33,6 +33,8 @@ class ProfileController
         $links = [
             'Data Personal' => "data_personal",
             'Angka Kredit' => "riwayat_angkakredit",
+            'SK CPNS' =>  "riwayat_sk_cpns",
+            'SK PNS' =>  "riwayat_sk_pns",
             'Riwayat Pangkat' =>  "riwayat_pangkat",
             'Riwayat Jabatan' =>  "riwayat_jabatan",
             'Riwayat Mutasi' =>  "riwayat_mutasi",
