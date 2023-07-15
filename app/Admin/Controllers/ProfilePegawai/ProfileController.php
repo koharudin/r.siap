@@ -164,6 +164,7 @@ class ProfileController
             ->body($this->headerTab());
         if (method_exists($this, 'grid')) {
             $grid = $this->grid();
+            $grid->paginate(10);
             $employee = $this->getEmployee();
             if ($this->use_document) {
                 $_this = $this;

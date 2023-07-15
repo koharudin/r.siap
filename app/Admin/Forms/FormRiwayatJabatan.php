@@ -36,7 +36,7 @@ class FormRiwayatJabatan extends Form
     public function handle(Request $request)
     {
         //dump($request->all());
-
+        dd(1234);
         admin_success('Processed successfully.');
 
         return back();
@@ -99,6 +99,7 @@ class FormRiwayatJabatan extends Form
             }
         });
         $form->saved(function (Form $form) use ($d, $_this) {
+            dd(123);
             $file = request()->file('dokumen');
             if ($file) {
                 $newFileName = $d->prepare($file);

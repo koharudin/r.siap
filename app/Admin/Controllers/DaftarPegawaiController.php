@@ -26,29 +26,16 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
+        $grid->paginate(10);
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableEdit();
             $actions->disableView();
             $actions->add(new DetailPegawaiAction());
         });
-        $grid->column('id', __('ID'));
-        // column not in table
-        $grid->column('foto')->display(function ($foto) {
-            $disk = Storage::disk('minio_foto');
-            if (Str::of($foto)->trim()->isNotEmpty()) {
-                if ($disk->exists($foto)) {
-                    $url = $disk->temporaryUrl(
-                        $foto,
-                        now()->addMinutes(5)
-                    );
-                    return $url;
-                }
-            }
-            return config("admin.default_avatar");
-        })->image('',100,100);
-        $grid->column('first_name', __('FIRST NAME'));
-        $grid->column('last_name', __('LAST NAME'));
+        $grid->disableCreateButton();
+        $grid->disableRowSelector();
+        $grid->column('first_name', __('NAMA'));
         $grid->column('nip_baru', __('NIP'));
         $grid->column('email_kantor', __('EMAIL KANTOR'));
         $grid->column('email', __('EMAIL'));
