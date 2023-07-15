@@ -1,8 +1,5 @@
 <?php
 
-use App\Admin\Controllers\ManageAgama;
-use App\Admin\Controllers\ProfilePegawai\DataPersonalController;
-use Encore\Admin\Layout\Content;
 use Illuminate\Routing\Router;
 
 Admin::routes();
@@ -27,6 +24,7 @@ Route::group([
         $router->resource('riwayat_rekammedis', ProfilePegawai\RiwayatRekamMedisController::class);
         $router->resource('riwayat_angkakredit', ProfilePegawai\RiwayatAngkaKreditController::class);
         $router->resource('riwayat_pangkat', ProfilePegawai\RiwayatPangkatController::class);
+        $router->resource('riwayat_jabatan', ProfilePegawai\RiwayatJabatanController::class);
         $router->resource('riwayat_pendidikan', ProfilePegawai\RiwayatPendidikanController::class);
         $router->resource('riwayat_kursus', ProfilePegawai\RiwayatKursusController::class);
         $router->resource('riwayat_seminar', ProfilePegawai\RiwayatSeminarController::class);
@@ -51,6 +49,7 @@ Route::group([
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);
     $router->resource('manage_unit_kerja', ManageTreeUnitKerja::class);
+    $router->resource('manage_tree_jabatan', ManageTreeJabatan::class);
     $router->resource('manage_klasifikasi_dokumen', ManageTreeKlasifikasiDokumenController::class);
     $router->resource('manage_country', ManageCountry::class);
     $router->resource('manage_bank', ManageBank::class);
