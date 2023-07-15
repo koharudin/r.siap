@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Forms\Config;
+use App\Admin\Forms\Settings;
 use App\Models\DokumenPegawai;
 use App\Models\Employee;
 use Encore\Admin\Auth\Permission;
@@ -75,6 +77,16 @@ class ProfileController
             } else $tab->addLink($k, $v, false);
         }
         return $tab;
+    }
+    public function header1(){
+        $form = new Settings();
+        $form->setEmployee($this->getEmployee());
+        return $form;
+    }
+    public function header2(){
+        $form = new Config();
+        $form->setEmployee($this->getEmployee());
+        return $form;
     }
     public function header()
     {

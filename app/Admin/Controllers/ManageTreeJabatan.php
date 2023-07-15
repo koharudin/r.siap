@@ -33,10 +33,10 @@ class ManageTreeJabatan extends AdminController
     protected function form()
     {
         $form = new Form(new Jabatan());
-
+        
         $form->number('parent_id', __('Parent id'));
         $form->text('name', __('Name'));
-
+        
         return $form;
     }
 }
