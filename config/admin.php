@@ -250,7 +250,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => 'http://192.168.1.4:9000/foto/user-images.png',
+    'default_avatar' => 'https://kepegawaian.anri.go.id/minio/foto/user-images.png',
 
     /*
     |--------------------------------------------------------------------------
