@@ -46,6 +46,7 @@ Route::group([
     
     });
     $router->get('/', 'HomeController@index')->name('home');
+    $router->resource('test', TestController::class);
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);
     $router->resource('manage_unit_kerja', ManageTreeUnitKerja::class);

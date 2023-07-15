@@ -31,7 +31,8 @@ class DataPersonalController extends  ProfileController
         $form->hidden('id', 'ID');
         // Add an input box of type text
         $form->text('first_name', 'NAMA');
-        $form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
+        //$form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
+        $form->display("obj_agama.name","AGAMA");
         $form->text('nip_baru', 'NIP');
         $form->text('gelar_depan', 'GELAR DEPAN');
         $form->text('gelar_belakang', 'GELAR BELAKANG');
