@@ -44,7 +44,7 @@ return [
         'minio_dokumen' => [
             'driver' => 's3',
             'endpoint' => env('MINIO_ENDPOINT', 'http://192.168.1.4:9000'),
-            'use_path_style_endpoint' => true,
+            'use_path_style_endpoint' => false,
             'key' => env('MINIO_ACCESS_KEY'),
             'secret' => env('MINIO_ACCESS_SECRET'),
             'region' => env('MINIO_ACCESS_REGION'),
