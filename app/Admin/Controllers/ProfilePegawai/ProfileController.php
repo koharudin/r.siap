@@ -143,15 +143,13 @@ class ProfileController
             $dokumen = DokumenPegawai::where('pk1', $arr['pk1'])->where('klasifikasi_id', $arr['klasifikasi_id'])->where('pk2', $arr['pk2'])->get()->first();
         }
         if ($dokumen) {
-            $disk = Storage::disk("minio_dokumen");
             if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') return 'File tidak ditemukan.';
-            $url = $disk->temporaryUrl(
-                $dokumen->file,
-                now()->addMinutes(5)
-            );
-            if ($disk->exists($dokumen->file)) {
-                return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Lihat</a>";
-            } else return $url;
+            else {
+                $url = route('admin.download.dokumen',[
+                    'f'=>base64_encode($dokumen->file)
+                ]);
+                return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Download</a>";
+            }
         }
         return "-";
     }

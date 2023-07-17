@@ -8,6 +8,7 @@ use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -36,5 +37,13 @@ class HomeController extends Controller
         ];
 
         return view('admin::dashboard.environment', compact('envs'));
+    }
+    public function download_dokumen($f){
+        $file = base64_decode($f);
+        $disk = Storage::disk("minio_dokumen");
+        if($disk->exists($file)){
+           return $disk->download($file);
+        }
+        else abort(404);
     }
 }
