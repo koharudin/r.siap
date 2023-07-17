@@ -29,6 +29,7 @@ class RiwayatOrangTuaController extends ProfileController
     {
         $grid = new Grid(new RiwayatOrangTua());
         $grid->model()->whereIn("status",[1,2]);
+        $grid->model()->orderBy('status','asc');
         $grid->column('name', __('NAMA'));
         $grid->column('status', __('STATUS'))->display(function ($status) {
             if($status==2){
