@@ -46,7 +46,7 @@ Route::group([
     
     });
     $router->get('/', 'HomeController@index')->name('home');
-    $router->get('/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
+    $router->get('/download/dokumen/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
     $router->resource('test', TestController::class);
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);
@@ -65,6 +65,7 @@ Route::group([
     $router->resource('manage_pejabat_penetap', ManagePejabatPenetapController::class);
     $router->resource('manage_golongan_darah', ManageGolonganDarahController::class);   
     $router->resource('manage_user', UserController::class);   
+    $router->resource('manage_diklat', DiklatController::class);
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
 
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');

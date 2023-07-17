@@ -29,7 +29,7 @@ class RiwayatAnakController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatAnak());
-
+        $grid->model()->orderBy('birth_date','asc');
         $grid->column('name', __('NAMA'));
         $grid->column('birth_place', __('TEMPAT LAHIR'));
         $grid->column('birth_date', __('TANGGAL LAHIR'));

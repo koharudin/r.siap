@@ -31,6 +31,7 @@ class RiwayatAngkaKreditController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatAngkaKredit());
+        $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
         $grid->column('dt_awal_penilaian', __('TGL AWAL PENILAIAN'));
