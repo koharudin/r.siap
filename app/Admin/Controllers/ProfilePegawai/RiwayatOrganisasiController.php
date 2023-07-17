@@ -26,7 +26,7 @@ class RiwayatOrganisasiController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatOrganisasi());
-
+        $grid->model()->orderBy('awal','asc');
         $grid->column('nama', __('ORGANISASI'));
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('awal', __('AWAL'));

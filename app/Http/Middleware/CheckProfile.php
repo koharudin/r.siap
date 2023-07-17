@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Employee;
 use Closure;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
@@ -21,10 +22,11 @@ class CheckProfile
         if($request->profile_id=="me" || $request->profile_id == null)
         {
             if(Admin::user()->isRole('pegawai')){
-                $request->profile_id=578;
+                $nip = Auth::user()->username;
+                $e = Employee::where('nip_baru',$nip)->get()->first();
+                $request->profile_id=$e->id;
                 return $next($request);
             }   
-            $request->profile_id=578;
             return $next($request);
             abort(401, 'This action is unauthorized.');
         }
