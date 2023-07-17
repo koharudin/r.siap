@@ -38,6 +38,7 @@ class RiwayatPangkatController extends ProfileController
     {
         $employee = $this->getEmployee();
         $grid = new Grid(new RiwayatPangkat());
+        $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
         $grid->column('obj_pangkat.name', __('PANGKAT'));
