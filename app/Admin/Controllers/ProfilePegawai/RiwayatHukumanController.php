@@ -2,7 +2,9 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridPejabatPenetap;
 use App\Models\Hukuman;
+use App\Models\PejabatPenetap;
 use App\Models\RiwayatHukuman;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -27,15 +29,14 @@ class RiwayatHukumanController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatHukuman());
-        
-        $grid->column('nama_hukuman.hukuman', __('Hukuman'));
+        $grid->model()->orderBy('tmt_sk','asc');
+
+        $grid->column('nama_hukuman.hukuman', __('HUKUMAN'));
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
         $grid->column(('PELANGGARAN'), __(('PELANGGARAN')));
         $grid->column('tmt_sk', __('TMT SK'));
-        $grid->column('pejabat_penetap_jabatan', __('Pejabat penetap jabatan'));
-        $grid->column('pejabat_penetap_nip', __('Pejabat penetap nip'));
-        $grid->column('pejabat_penetap_nama', __('Pejabat penetap nama'));
+        $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
 
         return $grid;
     }
@@ -50,27 +51,21 @@ class RiwayatHukumanController  extends ProfileController
     {
         $show = new Show(RiwayatHukuman::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('employee_id', __('Employee id'));
-        $show->field('simpeg_id', __('Simpeg id'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
         $show->field('no_sk', __('NO SK'));
         $show->field('tgl_sk', __('TGL SK'));
         $show->field(('PELANGGARAN'), __(('PELANGGARAN')));
         $show->field('tmt_sk', __('TMT SK'));
-        $show->field('pejabat_penetap_id', __('Pejabat penetap id'));
-        $show->field('pejabat_penetap_jabatan', __('Pejabat penetap jabatan'));
-        $show->field('pejabat_penetap_nip', __('Pejabat penetap nip'));
-        $show->field('pejabat_penetap_nama', __('Pejabat penetap nama'));
-        $show->field('tmt_akhir', __('Tmt akhir'));
-        $show->field('pejabat_penetap_akhir_id', __('Pejabat penetap akhir id'));
-        $show->field('pejabat_penetap_akhir_jabatan', __('Pejabat penetap akhir jabatan'));
-        $show->field('pejabat_penetap_akhir_nip', __('Pejabat penetap akhir nip'));
-        $show->field('pejabat_penetap_akhir_nama', __('Pejabat penetap akhir nama'));
-        $show->field('sk_akhir', __('Sk akhir'));
-        $show->field('tgl_sk_akhir', __('Tgl sk akhir'));
-        $show->field('hukuman_id', __('Hukuman id'));
+        $show->divider('');
+        $show->field('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
+        $show->field('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
+        $show->field('pejabat_penetap_nama', __('PEJABAT PENETAP NAMA'));
+        $show->field('tmt_akhir', __('TMT AKHIR'));
+        $show->field('pejabat_penetap_akhir_jabatan', __('PEJABAT PENETAP AKHIR JABATAN'));
+        $show->field('pejabat_penetap_akhir_nip', __('PEJABAT PENETAP AKHIR NIP'));
+        $show->field('pejabat_penetap_akhir_nama', __('PEJABAT PENETAP AKHIR NAMA'));
+        $show->field('sk_akhir', __('SK AKHIR'));
+        $show->field('tgl_sk_akhir', __('TGL  AKHIR'));
+        $show->field('hukuman_id', __('HUKUMAN'));
 
         return $show;
     }
@@ -93,19 +88,44 @@ class RiwayatHukumanController  extends ProfileController
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_sk', __('TMT SK'))->default(date('Y-m-d'));
 
-        $form->text('pejabat_penetap_id', __('Pejabat penetap id'));
-        $form->text('pejabat_penetap_jabatan', __('Pejabat penetap jabatan'));
-        $form->text('pejabat_penetap_nip', __('Pejabat penetap nip'));
-        $form->text('pejabat_penetap_nama', __('Pejabat penetap nama'));
+        $form->divider("PEJABAT PENETAP");
+        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+
+        $form->text('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
+        $form->text('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
+        $form->text('pejabat_penetap_nama', __('PEJABAT PENETAP NAMA'));
         $form->divider('SK PECABUTAN HUKUMAN');
-        $form->date('tmt_akhir', __('Tmt akhir'))->default(date('Y-m-d'));
-        $form->text('pejabat_penetap_akhir_id', __('Pejabat penetap akhir id'));
-        $form->text('pejabat_penetap_akhir_jabatan', __('Pejabat penetap akhir jabatan'));
-        $form->text('pejabat_penetap_akhir_nip', __('Pejabat penetap akhir nip'));
-        $form->text('pejabat_penetap_akhir_nama', __('Pejabat penetap akhir nama'));
-        $form->text('sk_akhir', __('Sk akhir'));
-        $form->date('tgl_sk_akhir', __('Tgl sk akhir'))->default(date('Y-m-d'));
-        $form->select('hukuman_id')->options(Hukuman::all()->pluck('hukuman','simpeg_id'));
+        $form->date('tmt_akhir', __('TMT AKHIR'))->default(date('Y-m-d'));
+        $form->belongsTo('pejabat_penetap_akhir_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+        $form->text('pejabat_penetap_akhir_jabatan', __('PEJABAT PENETAP AKHIR JABATAN'));
+        $form->text('pejabat_penetap_akhir_nip', __('PEJABAT PENETAP AKHIR NIP'));
+        $form->text('pejabat_penetap_akhir_nama', __('PEJABAT PENETAP AKHIR NAMA'));
+        $form->text('sk_akhir', __('SK AKHIR'));
+        $form->date('tgl_sk_akhir', __('TGL  AKHIR'))->default(date('Y-m-d'));
+        $form->select('hukuman_id','HUKUMAN')->options(Hukuman::all()->pluck('name','id'));
+
+        $form->saving(function (Form $form) {
+            if($form->pejabat_penetap_id){
+                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
+                if($r){
+                    $form->pejabat_penetap_jabatan = $r->jabatan;
+                    $form->pejabat_penetap_nip = $r->nip;
+                    $form->pejabat_penetap_nama = $r->nama;
+                }
+            }
+        });
+
+        $form->saving(function (Form $form) {
+            if($form->pejabat_penetap_id){
+                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_akhir_id)->get()->first();
+                if($r){
+                    $form->pejabat_penetap_akhir_jabatan = $r->jabatan;
+                    $form->pejabat_penetap_akhir_nip = $r->nip;
+                    $form->pejabat_penetap_akhir_nama = $r->nama;
+                }
+            }
+        });
+        
         return $form;
     }
 }

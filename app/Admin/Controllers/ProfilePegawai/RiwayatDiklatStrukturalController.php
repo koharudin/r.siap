@@ -30,7 +30,9 @@ class RiwayatDiklatStrukturalController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatDiklatStruktural());
-        $grid->model();
+        $grid->model()->orderBy('tahun','asc');
+        $grid->model()->orderBy('tgl_mulai','asc');
+        
         $grid->column('diklat', __('DIKLAT'));
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('tempat', __('TEMPAT'));

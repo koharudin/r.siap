@@ -26,6 +26,7 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
+        $grid->model()->orderBy('first_name','asc');
         $grid->paginate(10);
         $grid->actions(function ($actions) {
             $actions->disableDelete();

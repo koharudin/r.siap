@@ -34,7 +34,7 @@ class RiwayatGajiController extends  ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatGaji());
-
+        $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
         $grid->column('tmt_sk', __('TMT SK'));

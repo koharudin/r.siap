@@ -28,6 +28,8 @@ class RiwayatDiklatFungsionalController  extends ProfileController
     {
         $grid = new Grid(new RiwayatDiklatFungsional());
         $grid->model()->where('jenis_diklat',2); 
+        $grid->model()->orderBy('tahun','asc');
+        $grid->model()->orderBy('tgl_mulai','asc');
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
