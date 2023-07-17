@@ -29,7 +29,7 @@ class RiwayatNikahController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatNikah());
-
+        $grid->model()->orderBy('tgl_kawin','asc');
         $grid->column('name', __('NAMA SUAMI/ISTRI'));
         $grid->column('obj_status_menikah.name', __('STATUS PERNIKAHAN'));
         

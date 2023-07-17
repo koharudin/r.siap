@@ -34,7 +34,7 @@ class RiwayatMutasiController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatMutasi());
-
+        $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('satker_lama', __('SATKER LAMA'));
         $grid->column('satker_baru', __('SATKER BARU'));
         $grid->column('no_sk', __('NO SK'));

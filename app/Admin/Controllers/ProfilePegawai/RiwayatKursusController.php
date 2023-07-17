@@ -27,7 +27,8 @@ class RiwayatKursusController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatKursus());
-
+        $grid->model()->orderBy('tahun','asc');
+        $grid->model()->orderBy('tgl_mulai','asc');
         $grid->column('nama', __('NAMA'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
