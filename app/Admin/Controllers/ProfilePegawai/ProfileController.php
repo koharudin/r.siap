@@ -240,10 +240,16 @@ class ProfileController
     public function edit($profile_id, $id, Content $content)
     {
         Permission::check("edit-{$this->activeTab}");
+        $form  = $this->form()->edit($id);
+        $profile_id = $this->getProfileId();
+        $owner_id = $form->model()->employee_id;
+        if($profile_id != $owner_id){
+            abort(401,"Wrong owner. Profile ID $profile_id . Owner ID $owner_id");
+        }
         return $content
             ->title($this->title())
             ->description($this->description['edit'] ?? trans('admin.edit'))
-            ->body($this->form()->edit($id));
+            ->body($form->edit($id));
     }
     public function update($profile_id, $id)
     {

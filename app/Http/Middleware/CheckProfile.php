@@ -27,7 +27,6 @@ class CheckProfile
                 $request->profile_id=$e->id;
                 return $next($request);
             }   
-            return $next($request);
             abort(401, 'This action is unauthorized.');
         }
         return $next($request);
