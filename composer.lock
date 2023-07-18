@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58c6353a8a681c4f115322167906758e",
+    "content-hash": "125eb92d04fa144f1d81177e5cab045a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1446,6 +1446,289 @@
                 }
             ],
             "time": "2023-04-17T16:11:26+00:00"
+        },
+        {
+            "name": "jxlwqq/data-table",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/data-table.git",
+                "reference": "f3f55721b15aec80c9ecabf174ed9df007144775"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/data-table/zipball/f3f55721b15aec80c9ecabf174ed9df007144775",
+                "reference": "f3f55721b15aec80c9ecabf174ed9df007144775",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jxlwqq\\DataTable\\DataTableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jxlwqq\\DataTable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jxlwqq",
+                    "email": "jxlwqq@gmail.com"
+                }
+            ],
+            "description": "dataTable for laravel-admin",
+            "homepage": "https://github.com/jxlwqq/data-table",
+            "keywords": [
+                "extension",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-admin-extensions/data-table/issues",
+                "source": "https://github.com/laravel-admin-extensions/data-table/tree/1.0.4"
+            },
+            "time": "2021-07-27T13:55:46+00:00"
+        },
+        {
+            "name": "jxlwqq/echarts",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jxlwqq/echarts.git",
+                "reference": "c7ef8a44bb339d1ba60b74aa437bdb512217dc79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jxlwqq/echarts/zipball/c7ef8a44bb339d1ba60b74aa437bdb512217dc79",
+                "reference": "c7ef8a44bb339d1ba60b74aa437bdb512217dc79",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jxlwqq\\Echarts\\EchartsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jxlwqq\\Echarts\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jxlwqq",
+                    "email": "jxlwqq@gmail.com"
+                }
+            ],
+            "description": "echarts for laravel-admin",
+            "homepage": "https://github.com/jxlwqq/echarts",
+            "keywords": [
+                "extension",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/jxlwqq/echarts/issues",
+                "source": "https://github.com/jxlwqq/echarts/tree/master"
+            },
+            "time": "2019-06-27T10:40:24+00:00"
+        },
+        {
+            "name": "laravel-admin-ext/chartjs",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/chartjs.git",
+                "reference": "3a12f9907c9d4ba59cdd1c9033e67325a337469f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/chartjs/zipball/3a12f9907c9d4ba59cdd1c9033e67325a337469f",
+                "reference": "3a12f9907c9d4ba59cdd1c9033e67325a337469f",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "*",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\Chartjs\\ChartjsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\Chartjs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "song",
+                    "email": "zosong@126.com"
+                }
+            ],
+            "description": "Use Chartjs in laravel-admin",
+            "homepage": "https://github.com/laravel-admin-ext/chartjs",
+            "keywords": [
+                "chartjs",
+                "extension",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-admin-extensions/chartjs/issues",
+                "source": "https://github.com/laravel-admin-extensions/chartjs/tree/master"
+            },
+            "time": "2018-09-16T17:28:26+00:00"
+        },
+        {
+            "name": "laravel-admin-ext/daterangepicker",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/daterangepicker.git",
+                "reference": "f38de46062203973ecfea1ab4092839eef77e269"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/daterangepicker/zipball/f38de46062203973ecfea1ab4092839eef77e269",
+                "reference": "f38de46062203973ecfea1ab4092839eef77e269",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\DateRangePicker\\DateRangePickerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\DateRangePicker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "song",
+                    "email": "zosong@126.com"
+                }
+            ],
+            "description": "Integrates daterangepicker into laravel-admin",
+            "homepage": "https://github.com/laravel-admin-ext/daterangepicker",
+            "keywords": [
+                "daterangepicker",
+                "extension",
+                "form",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-admin-extensions/daterangepicker/issues",
+                "source": "https://github.com/laravel-admin-extensions/daterangepicker/tree/v1.0.0"
+            },
+            "time": "2018-09-13T17:50:59+00:00"
+        },
+        {
+            "name": "laravel-admin-ext/latlong",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/latlong.git",
+                "reference": "01eeb930eea478dbfb4aeca274f238ee2d9dd477"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/latlong/zipball/01eeb930eea478dbfb4aeca274f238ee2d9dd477",
+                "reference": "01eeb930eea478dbfb4aeca274f238ee2d9dd477",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\Admin\\Latlong\\LatlongServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\Admin\\Latlong\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "z-song",
+                    "email": "zosong@126.com"
+                }
+            ],
+            "description": "Latitude & Longitude selector",
+            "homepage": "https://github.com/laravel-admin-ext/latlong",
+            "keywords": [
+                "extension",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-admin-extensions/latlong/issues",
+                "source": "https://github.com/laravel-admin-extensions/latlong/tree/v2.0.2"
+            },
+            "time": "2021-12-07T02:02:37+00:00"
         },
         {
             "name": "laravel/framework",
@@ -5909,6 +6192,62 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "zhpefe/select-tree",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zhpefe/select-tree.git",
+                "reference": "77c0681e87b6af3a4a0d34a64d1f33be09104817"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zhpefe/select-tree/zipball/77c0681e87b6af3a4a0d34a64d1f33be09104817",
+                "reference": "77c0681e87b6af3a4a0d34a64d1f33be09104817",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Zhpefe\\SelectTree\\SelectTreeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zhpefe\\SelectTree\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "z.pefei",
+                    "email": "zhpefe789@gmail.com"
+                }
+            ],
+            "description": "laravel-admin select-tree",
+            "homepage": "https://github.com/zhpefe/select-tree",
+            "keywords": [
+                "laravel-admin",
+                "select-tree"
+            ],
+            "support": {
+                "issues": "https://github.com/zhpefe/select-tree/issues",
+                "source": "https://github.com/zhpefe/select-tree/tree/master"
+            },
+            "time": "2019-04-15T00:53:04+00:00"
         }
     ],
     "packages-dev": [

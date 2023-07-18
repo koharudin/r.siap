@@ -9,10 +9,16 @@
         "encore/laravel-admin": "^1.8",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jxlwqq/data-table": "^1.0",
+        "jxlwqq/echarts": "^1.0",
+        "laravel-admin-ext/chartjs": "^1.0",
+        "laravel-admin-ext/daterangepicker": "^1.0",
+        "laravel-admin-ext/latlong": "^2.0",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "league/flysystem-aws-s3-v3": "^1.0"
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "zhpefe/select-tree": "^1.2"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

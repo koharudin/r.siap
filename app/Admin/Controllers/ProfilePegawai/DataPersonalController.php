@@ -27,20 +27,29 @@ class DataPersonalController extends  ProfileController
     public function form()
     {
         $form = new Form(new Employee());
-        //$form->fill($this->data());
-        $form->hidden('id', 'ID');
-        // Add an input box of type text
-        $form->text('first_name', 'NAMA');
-        //$form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
-        $form->display("obj_agama.name","AGAMA");
-        $form->text('nip_baru', 'NIP');
-        $form->text('gelar_depan', 'GELAR DEPAN');
-        $form->text('gelar_belakang', 'GELAR BELAKANG');
-        $form->text('birth_place', 'TEMPAT LAHIR');
-        $form->text('birth_date', 'TANGGAL LAHIR');
-        $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name","id"));
-        $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name','id'));
-        $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id','id'));
+        $form->column(1 / 2, function ($form) {
+            //$form->fill($this->data());
+            $form->hidden('id', 'ID');
+            $form->image('foto','FOTO')->disk("minio_foto")->readonly();
+            // Add an input box of type text
+            $form->text('first_name', 'NAMA');
+            //$form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
+            $form->display("obj_agama.name", "AGAMA");
+            $form->text('nip_baru', 'NIP');
+            $form->text('gelar_depan', 'GELAR DEPAN');
+            $form->text('gelar_belakang', 'GELAR BELAKANG');
+            $form->text('birth_place', 'TEMPAT LAHIR');
+            $form->text('birth_date', 'TANGGAL LAHIR');
+        });
+        $form->column(1 / 2, function ($form) {
+            $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name", "id"));
+            $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name', 'id'));
+            $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id', 'id'));
+            $form->text('no_hp', 'HANDPHONE');
+            $form->text('email_kantor', 'EMAIL DINAS');
+            $form->text('email', 'EMAIL');
+        });
+
 
         $form->tools(function ($tools) {
             $tools->disableList();
@@ -65,5 +74,4 @@ class DataPersonalController extends  ProfileController
         }
         return $form;
     }
-
 }

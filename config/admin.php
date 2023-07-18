@@ -224,7 +224,7 @@ return [
          * or specific method to path like: get:admin/auth/logs.
          */
         'except' => [
-            env('ADMIN_ROUTE_PREFIX', 'admin').'/auth/logs*',
+            env('ADMIN_ROUTE_PREFIX', 'admin') . '/auth/logs*',
         ],
     ],
 
@@ -250,7 +250,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => env('APP_DEFAULT_AVATAR',''),
+    'default_avatar' => env('APP_DEFAULT_AVATAR', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -290,7 +290,7 @@ return [
     | "sidebar-mini".
     |
     */
-    'layout' => ['fixed','sidebar-mini'],
+    'layout' => ['fixed', 'sidebar-mini'],
 
     /*
     |--------------------------------------------------------------------------
@@ -349,9 +349,7 @@ return [
     'minify_assets' => [
 
         // Assets will not be minified.
-        'excepts' => [
-
-        ],
+        'excepts' => [],
 
     ],
 
@@ -406,6 +404,40 @@ return [
     |
     */
     'extensions' => [
+        'echarts' => [
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+        ],
+        'chartjs' => [
 
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+        ], 'daterangepicker' => [
+
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+
+            // Find more configurations http://www.daterangepicker.com/
+            'config' => []
+        ],
+        'extensions' => [
+
+            'latlong' => [
+
+                // Whether to enable this extension, defaults to true
+                'enable' => true,
+
+                // Specify the default provider
+                'default' => 'google',
+
+                // According to the selected provider above, fill in the corresponding api_key
+                'providers' => [
+
+                    'google' => [
+                        'api_key' => '',
+                    ],
+                ]
+            ]
+        ]
     ],
 ];
