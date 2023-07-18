@@ -21,7 +21,7 @@ Route::group([
         $router->resource('riwayat_sk_pensiun', ProfilePegawai\SKPensiun_Controller::class);
         $router->resource('riwayat_anak', ProfilePegawai\RiwayatAnakController::class);
         $router->resource('riwayat_organisasi', ProfilePegawai\RiwayatOrganisasiController::class);
-        $router->resource('riwayat_rekammedis', ProfilePegawai\RiwayatRekamMedisController::class);
+        $router->resource('riwayat_rekam_medis', ProfilePegawai\RiwayatRekamMedisController::class);
         $router->resource('riwayat_angkakredit', ProfilePegawai\RiwayatAngkaKreditController::class);
         $router->resource('riwayat_pangkat', ProfilePegawai\RiwayatPangkatController::class);
         $router->resource('riwayat_jabatan', ProfilePegawai\RiwayatJabatanController::class);
