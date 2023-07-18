@@ -28,8 +28,9 @@ class RiwayatSaudaraController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatSaudara());
-
+        $grid->model()->orderBy('birth_date','asc');
         $grid->column('name', __('NAMA'));
+        $grid->column('birth_date', __('TANGGAL LAHIR'));
         $grid->column('telepon', __('TELEPON'));
         $grid->column('alamat', __('ALAMAT'));
 
