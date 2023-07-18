@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridPendidikan;
+use App\Models\Pendidikan;
 use App\Models\RiwayatPendidikan;
 use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
@@ -30,7 +32,7 @@ class RiwayatPendidikanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPendidikan());
-
+        $grid->model()->orderBy('tahun','asc');
         $grid->column('pendidikan_id', __('PENDIDIKAN'));
         $grid->column('jurusan', __('JURUSAN'));
         $grid->column('nama_sekolah', __('NAMA SEKOLAH'));
@@ -73,15 +75,25 @@ class RiwayatPendidikanController extends ProfileController
         $form = new Form(new RiwayatPendidikan());
 
         $form->hidden('employee_id', __('Employee id'));
-        $form->text('pendidikan_id', __('PENDIDIKAN'));
+        $form->belongsTo('pendidikan_id',GridPendidikan::class,'PENDIDIKAN');
         $form->text('jurusan', __('JURUSAN'));
         $form->text('nama_sekolah', __('NAMA SEKOLAH'));
         $form->text('tempat_sekolah', __('TEMPAT SEKOLAH'));
         $form->text('no_sttb', __('NO STTB'));
         $form->date('tgl_sttb', __('TGL STTB'))->default(date('Y-m-d'));
         $form->text('tahun', __('TAHUN'));
+        $form->text('akreditasi', __('AKREDITASI'));
+        $form->text('ipk', __('IPK'));
         $form->text('kepala_sekolah', __('KEPALA SEKOLAH'));
-
+        $_this = $this;
+        $form->saving(function (Form $form) use ( $_this) {
+            if ($form->pendidikan_id) {
+                $r =  Pendidikan::where('id', $form->pendidikan_id)->get()->first();
+                if ($r) {
+                    $form->jurusan = $r->name;
+                }
+            }
+        });
         return $form;
     }
 }

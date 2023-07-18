@@ -16,7 +16,8 @@ class GridUnitKerja extends Selectable
         $this->column('name',__('NAMA'));
 
         $this->filter(function (Filter $filter) {
-            $filter->like('name');
+            $filter->disableIdFilter();
+            $filter->ilike('name');
         });
     }
 }
