@@ -27,7 +27,7 @@ class RiwayatUjiKompetensiController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatUjiKompetensi());
-
+        $grid->model()->orderBy('tanggal','asc');
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('satker', __('SATKER'));
         $grid->column('keterangan', __('KETERANGAN'));
