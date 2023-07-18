@@ -31,7 +31,7 @@ class RiwayatSumpahController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatSumpah());
-
+        $grid->model()->orderBy('tgl_sumpah','asc');
         $grid->column('no_sumpah', __('NO SUMPAH'));
         $grid->column('tgl_sumpah', __('TGL SUMPAH'));
         $grid->column('keterangan', __('KETERANGAN'));
@@ -71,9 +71,6 @@ class RiwayatSumpahController extends ProfileController
         $form->hidden('employee_id', __('Employee id'));
         $form->text('no_sumpah', __('NO SUMPAH'));
         $form->date('tgl_sumpah', __('TGL SUMPAH'))->default(date('Y-m-d'));
-        $form->text('pengambil_sumpah', __('PENGAMBIL SUMPAH'));
-        $form->text('saksi_1', __('SAKSI 1'));
-        $form->text('saksi_2', __('SAKSI 2'));
         $form->text('keterangan', __('KETERANGAN'));
 
         return $form;
