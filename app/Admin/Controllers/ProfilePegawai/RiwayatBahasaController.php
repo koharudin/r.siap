@@ -29,7 +29,7 @@ class RiwayatBahasaController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPenguasaanBahasa());
-
+        $grid->model()->orderBy('nama_bahasa','asc');
         $grid->column('obj_jenis_bahasa.name', __('JENIS BAHASA'));
         $grid->column('nama_bahasa', __('NAMA BAHASA'));
         $grid->column('obj_kemampuan_bicara.name', __('KEMAMPUAN BICARA'));

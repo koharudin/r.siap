@@ -2,6 +2,10 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridPejabatPenetap;
+use App\Admin\Selectable\GridPenghargaan;
+use App\Models\PejabatPenetap;
+use App\Models\Penghargaan;
 use App\Models\RiwayatPenghargaan;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -27,7 +31,7 @@ class RiwayatPenghargaanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPenghargaan());
-
+        $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'));
@@ -71,9 +75,25 @@ class RiwayatPenghargaanController extends ProfileController
         $form->text('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
-        $form->text('pejabat_penetap', __('PEJABAT PENETAP'));
         $form->number('tahun', __('TAHUN'));
+        $form->belongsTo('jenis_penghargaan_id',GridPenghargaan::class, __('JENIS PENGHARGAAN'));
         $form->text('jenis_penghargaan', __('JENIS PENGHARGAAN'));
+        
+        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
+        $form->text('pejabat_penetap_nip', __('NIP'));
+        $form->text('pejabat_penetap_nama', __('NAMA'));
+
+        $form->saving(function (Form $form) {
+            if($form->pejabat_penetap_id){
+                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
+                if($r){
+                    $form->pejabat_penetap_jabatan = $r->jabatan;
+                    $form->pejabat_penetap_nip = $r->nip;
+                    $form->pejabat_penetap_nama = $r->nama;
+                }
+            }
+        });
 
         return $form;
     }

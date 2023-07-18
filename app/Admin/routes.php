@@ -67,6 +67,7 @@ Route::group([
     $router->resource('manage_user', UserController::class);   
     $router->resource('manage_diklat', DiklatController::class);
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
+    $router->resource('manage_penghargaan', ManagePenghargaan::class);
 
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');
