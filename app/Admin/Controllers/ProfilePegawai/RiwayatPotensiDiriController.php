@@ -27,7 +27,7 @@ class RiwayatPotensiDiriController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPotensiDiri());
-    
+        $grid->model()->orderBy('tahun','asc');
         $grid->column('tahun', __('TAHUN'));
         $grid->column('tanggung_jawab', __('TANGGUNG JAWAB'));
         $grid->column('motivasi', __('MOTIVASI'));
