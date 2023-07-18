@@ -31,25 +31,29 @@ class DataPersonalController extends  ProfileController
         $form->column(1 / 2, function ($form) {
             //$form->fill($this->data());
             $form->hidden('id', 'ID');
-            $form->image('foto','FOTO')->disk("minio_foto")->readonly();
+            $form->image('foto','FOTO')->disk("minio_foto")->name(function($file){
+               return $this->data['nip_baru']."_".md5(uniqid()).".".$file->guessExtension();
+            });
             // Add an input box of type text
             $form->text('first_name', 'NAMA');
-            //$form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
-            $form->display("obj_agama.name", "AGAMA");
+           
+            //$form->display("obj_agama.name", "AGAMA");
             $form->text('nip_baru', 'NIP');
             $form->text('gelar_depan', 'GELAR DEPAN');
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');
             $form->text('birth_date', 'TANGGAL LAHIR');
             $form->belongsTo('unit_id',GridUnitKerja::class,'UNIT KERJA');
-            $form->text('email_kantor', 'EMAIL DINAS');
+            
         });
         $form->column(1 / 2, function ($form) {
+            $form->select('agama_id', 'AGAMA')->options(Agama::all()->pluck('name','id'));
             $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name", "id"));
             $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name', 'id'));
             $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id', 'id'));
             $form->text('no_hp', 'HANDPHONE');
             $form->text('email', 'EMAIL');
+            $form->text('email_kantor', 'EMAIL DINAS');
             $form->text('karpeg', 'NO. KARPEG');
             $form->text('taspen', 'TASPEN');
             $form->text('npwp', 'NPWP');
