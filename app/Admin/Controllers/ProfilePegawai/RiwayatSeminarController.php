@@ -27,6 +27,7 @@ class RiwayatSeminarController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatSeminar());
+        $grid->model()->orderBy('tgl_mulai','asc');
         $grid->model()->where('jenis_piagam',2); 
         $grid->column('nama', __('NAMA'));
         $grid->column('tempat', __('TEMPAT'));
@@ -73,7 +74,6 @@ class RiwayatSeminarController extends ProfileController
         $form->text('nama', __('NAMA'));
         $form->text('tempat', __('TEMPAT'));
         $form->text('penyelenggara', __('PENYELENGGARA'));
-        $form->number('angkatan', __('ANGKATAN'));
         $form->date('tgl_mulai', __('TGL MULAI'))->default(date('Y-m-d'));
         $form->date('tgl_selesai', __('TGL SELESAI'))->default(date('Y-m-d'));
         $form->text('no_piagam', __('NO PIAGAM'));
