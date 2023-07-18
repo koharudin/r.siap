@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridUnitKerja;
 use App\Models\Agama;
 use App\Models\Employee;
 use App\Models\GolonganDarah;
@@ -40,14 +41,20 @@ class DataPersonalController extends  ProfileController
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');
             $form->text('birth_date', 'TANGGAL LAHIR');
+            $form->belongsTo('unit_id',GridUnitKerja::class,'UNIT KERJA');
+            $form->text('email_kantor', 'EMAIL DINAS');
         });
         $form->column(1 / 2, function ($form) {
             $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name", "id"));
             $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name', 'id'));
             $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id', 'id'));
             $form->text('no_hp', 'HANDPHONE');
-            $form->text('email_kantor', 'EMAIL DINAS');
             $form->text('email', 'EMAIL');
+            $form->text('karpeg', 'NO. KARPEG');
+            $form->text('taspen', 'TASPEN');
+            $form->text('npwp', 'NPWP');
+            $form->text('askes', 'ASKES');
+            $form->text('nik', 'NIK');
         });
 
 

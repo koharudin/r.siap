@@ -420,23 +420,21 @@ return [
             // Find more configurations http://www.daterangepicker.com/
             'config' => []
         ],
-        'extensions' => [
 
-            'latlong' => [
+        'latlong' => [
 
-                // Whether to enable this extension, defaults to true
-                'enable' => true,
+            // Whether to enable this extension, defaults to true
+            'enable' => false,
 
-                // Specify the default provider
-                'default' => 'google',
+            // Specify the default provider
+            'default' => 'google',
 
-                // According to the selected provider above, fill in the corresponding api_key
-                'providers' => [
+            // According to the selected provider above, fill in the corresponding api_key
+            'providers' => [
 
-                    'google' => [
-                        'api_key' => '',
-                    ],
-                ]
+                'google' => [
+                    'api_key' => '',
+                ],
             ]
         ]
     ],
