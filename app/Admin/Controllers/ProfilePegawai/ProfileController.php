@@ -48,7 +48,7 @@ class ProfileController
             'Diklat Struktural' =>  "riwayat_diklat_struktural",
             'Diklat Fungsional' =>  "riwayat_diklat_fungsional",
             'Diklat Teknis' =>  "riwayat_diklat_teknis",
-
+             
             'Kursus' =>  "riwayat_kursus",
             'Seminar' =>  "riwayat_seminar",
             'Nilai DP3' =>  "riwayat_dp3",
@@ -58,7 +58,7 @@ class ProfileController
             'Prestasi Kerja' =>  "riwayat_prestasi_kerja",
             'Pengalaman Kerja' =>  "riwayat_pengalaman_kerja",
 
-
+            'Rekam Medis' =>  "riwayat_rekam_medis",
             'Orang Tua' =>  "riwayat_orangtua",
             'Mertua' =>  "riwayat_mertua",
             'Riwayat Nikah' =>  "riwayat_nikah",

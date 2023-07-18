@@ -7,9 +7,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class RiwayatRekamMedisController extends ProfileController
+class RiwayatRekamMedisController  extends ProfileController
 {
-    public $activeTab = 'riwayat_rekammedis';
+    public $activeTab = 'riwayat_rekam_medis';
+    public $klasifikasi_id = -100;       
     /**
      * Title for current resource.
      *
@@ -25,7 +26,7 @@ class RiwayatRekamMedisController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatRekamMedis());
-
+        $grid->model()->orderBy('tgl_periksa','asc');
         $grid->column('id', __('ID'));
         $grid->column('tgl_periksa', __('TGL PERIKSA'));
         $grid->column('keluhan', __('KELUHAN'));
