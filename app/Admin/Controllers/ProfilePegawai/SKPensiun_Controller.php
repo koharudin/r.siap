@@ -16,6 +16,7 @@ class SKPensiun_Controller extends  ProfileController
 
     public $title = 'SK Pensiun';
     public $activeTab = 'riwayat_sk_pensiun';
+    public $klasifikasi_id = 10;    
 
     public function detail($id)
     {

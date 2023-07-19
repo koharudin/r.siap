@@ -420,7 +420,19 @@ return [
             // Find more configurations http://www.daterangepicker.com/
             'config' => []
         ],
-
+        'data-table' => [
+            // If the value is set to false, this extension will be disabled
+            'enable' => true,
+            // global options
+            'options' => [
+                 'paging' => false,
+                 'lengthChange' => false,
+                 'searching' => false,
+                 'ordering' => false,
+                 'info' => false,
+                 'language' => 'English', // or Chinese
+            ]
+            ],
         'latlong' => [
 
             // Whether to enable this extension, defaults to true
