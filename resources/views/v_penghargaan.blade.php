@@ -3,16 +3,27 @@
         <h3 class="box-title">Penghargaan</h3>
 
         <div class=" pull-right">
-            <select class="form-control" aria-label="Default select example"  >
-                <option selected  value="1">USULAN YANG AKAN MENDAPAT</option>
-                <option value="2">YANG TELAH MENDAPAT</option>
-            </select>
-            <select class="form-control" aria-label="Default select example" >
-                <option selected  value="1">SATYALANCANA KARYA SATYA X (PERUNGGU)</option>
-                <option value="2">SATYALANCANA KARYA SATYA XX (PERAK)</option>
-                <option value="3">SATYALANCANA KARYA SATYA XXX (EMAS)</option>
-            </select>
-            <a class='btn btn-primary'>Tampilkan</a>
+            <div class="row">
+                <div class="col">
+                    <select class="form-control" aria-label="Default select example">
+                        <option selected value="1">USULAN YANG AKAN MENDAPAT</option>
+                        <option value="2">YANG TELAH MENDAPAT</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <select class="form-control" aria-label="Default select example">
+                        <option selected value="1">SATYALANCANA KARYA SATYA X (PERUNGGU)</option>
+                        <option value="2">SATYALANCANA KARYA SATYA XX (PERAK)</option>
+                        <option value="3">SATYALANCANA KARYA SATYA XXX (EMAS)</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <a class='btn btn-primary'>Tampilkan</a>
+                </div>
+            </div>
+
+
+
         </div>
     </div>
 
@@ -39,6 +50,7 @@
     <script type="text/javascript">
         $(function() {
             var table = $('.yajra-datatable').DataTable({
+                dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
                 processing: true,
                 serverSide: true,
                 ordering: false,

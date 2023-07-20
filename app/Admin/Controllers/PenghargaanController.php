@@ -28,7 +28,7 @@ class PenghargaanController extends Controller
     public function dt()
     {
         $query = Employee::with(['obj_riwayat_jabatan','obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
-        //$query->where('id', 578);
+        $query->orderBy('first_name','asc');
         return  DataTables::eloquent($query)
             ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'jenis_penghargaan'])
             ->addIndexColumn()
@@ -41,7 +41,7 @@ class PenghargaanController extends Controller
                 }
                 return "Belum di tempatkan!";
             })
-            ->addColumn('jenis_penghargaan', function (Employee $user) {
+            ->addColumn('jenis_penghargaan', function (Employee $user) { 
                 return "SATYALANCANA KARYA SATYA";
             })
             ->addColumn('jabatan', function (Employee $user) {
