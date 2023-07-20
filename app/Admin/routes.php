@@ -74,7 +74,8 @@ Route::group([
     $router->any('kgb', 'KGBController@Index');
     $router->any('kp', 'KGBController@Index');    
     $router->any('pensiun', 'PensiunController@Index');    
-    $router->any('penghargaan', 'PenghargaanController@Index');   
+    $router->any('penghargaan', 'PenghargaanController@Index');
+    $router->any('dt-penghargaan', 'PenghargaanController@dt')->name('penghargaan.dt');   
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');    
     $router->any('diagram_jabatan', 'DiagramJabatanController@Index');
     $router->any('statistik', 'StatistikController@Index');

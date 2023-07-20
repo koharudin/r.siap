@@ -6,75 +6,58 @@ use App\Admin\Actions\DetailPegawaiAction;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Encore\Admin\Controllers\Dashboard;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use DataTables;
 
 class PenghargaanController extends Controller
 {
     public $title  = 'Penghargaan';
     public function index(Content $content)
     {
-        
+        Admin::js('js/v_penghargaan.js');
         return $content
             ->title($this->title)
-            ->body($this->grid());
+            ->body(view("v_penghargaan"));
     }
-    public function grid()
+    public function dt()
     {
-        $grid = new Grid(new Employee());
-        $grid->actions(function ($actions) {
-            $actions->disableDelete();
-            $actions->disableEdit();
-            $actions->disableView();
-            $actions->add(new DetailPegawaiAction());
-        });
-        $grid->disableCreateButton();
-        // column not in table
-        $grid->column('foto')->display(function ($foto) {
-            $disk = Storage::disk('minio_foto');
-            if (Str::of($foto)->trim()->isNotEmpty()) {
-                if ($disk->exists($foto)) {
-                    $url = $disk->temporaryUrl(
-                        $foto,
-                        now()->addMinutes(5)
-                    );
-                    return $url;
+        $query = Employee::with(['obj_riwayat_jabatan','obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
+        //$query->where('id', 578);
+        return  DataTables::eloquent($query)
+            ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'jenis_penghargaan'])
+            ->addIndexColumn()
+            ->addColumn('no', function (Employee $user) {
+                return 'Hi ' . $user->name . '!';
+            })
+            ->addColumn('unit_kerja', function (Employee $user) {
+                if ($user->obj_satker) {
+                    return $user->obj_satker->name;
                 }
-            }
-            return config("admin.default_avatar");
-        })->image('',100,100);
-        $grid->column('nip_baru', __('NIP'));
-        $grid->column('first_name', __('FIRST NAME'));
-        $grid->column('last_name', __('LAST NAME'));
-       
-        $grid->column('golongan_ruang_lama', __('Gol. Ruang Lama'));
-        $grid->column('tmt_lama', __('TMT LAMA'));
-
-        $grid->column('golongan_ruang_baru', __('Gol. Ruang Baru'));
-        $grid->column('tmt_baru', __('TMT BARU'));
-
-
-        $grid->column('gapok_lama', __('GAJI POKOK LAMA'));
-        $grid->column('gapok_baru', __('GAJI POKOK BARU'));
-
-        $grid->column('pejabat_penetap', __('PEJABAT PENETAP'));
-
-        $grid->expandFilter();  
-        $grid->filter(function($filter){    
-            $filter->disableIdFilter();
-            $filter->where(function ($query) {
-                $query->where('first_name','ilike',"%".$this->input.'%');
-        },'Nama Pegawai');
-            $filter->like('nip_baru', 'NIP Pegawai');
-        });
-        $grid->tools(function ($tools) {
-            $tools->append("<a class='btn btn-sm btn-danger'><i class='fa fa-cog'></i> &nbsp; Proses</a>");
-            
-        });
-        return $grid;
+                return "Belum di tempatkan!";
+            })
+            ->addColumn('jenis_penghargaan', function (Employee $user) {
+                return "SATYALANCANA KARYA SATYA";
+            })
+            ->addColumn('jabatan', function (Employee $user) {
+                $last = $user->obj_riwayat_jabatan->last();
+                return  $last->nama_jabatan;
+            })
+            ->addColumn('pangkat', function (Employee $user) {
+                $last = $user->obj_riwayat_pangkat->last();
+                return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
+            })
+            /* ->addColumn('action', function ($row) {
+                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            */
+            ->make(true);
     }
 }
