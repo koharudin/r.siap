@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\JenisPensiun;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
+use App\Models\RiwayatPangkat;
 use App\Models\RiwayatPensiun;
 use App\Models\RiwayatSKCPNS;
 use Encore\Admin\Facades\Admin;
@@ -39,7 +40,7 @@ class SKCPNS_Controller extends  ProfileController
         $form->date('tmt_cpns', 'TMT CPNS')->required(true);
 
         $form->fieldset('PEJABAT YANG MENETAPKAN SK CPNS', function (Form $form) {
-            $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+            $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
             $form->text('pejabat_penetap_jabatan', 'JABATAN');
             $form->text('pejabat_penetap_nip', 'NIP');
             $form->text('pejabat_penetap_nama', 'NAMA');
@@ -48,13 +49,12 @@ class SKCPNS_Controller extends  ProfileController
         $form->text('masa_kerja_bulan', 'MASA KERJA (BULAN)');
         $form->date('tgl_tugas', 'TANGGAL TUGAS');
         $form->fieldset('PENYESUAIAN MASA KERJA', function (Form $form) {
-            $form->text('no_sk_penyesuaian_mk','NO SK');
-            $form->date('tgl_sk_penyesuaian_mk','TANGGAL SK');
-            $form->date('tmt_sk_penyesuaian_mk','TMT SK');
-            $form->text('pejabat_penetap_sk_penyesuaian_mk','NO SK');
+            $form->text('no_sk_penyesuaian_mk', 'NO SK');
+            $form->date('tgl_sk_penyesuaian_mk', 'TANGGAL SK');
+            $form->date('tmt_sk_penyesuaian_mk', 'TMT SK');
+            $form->text('pejabat_penetap_sk_penyesuaian_mk', 'NO SK');
             $form->text('tambahan_tahun', 'TAMBAHAN MASA KERJA (TAHUN)');
             $form->text('tambahan_bulan', 'TAMBAHAN MASA KERJA (BULAN)');
-            
         });
         $form->divider();
         $form->text('total_tahun', 'MASA KERJA AKUMULASI (TAHUN)');
@@ -69,18 +69,36 @@ class SKCPNS_Controller extends  ProfileController
             $form->disableSubmit();
         }
         $form->saving(function (Form $form) {
-            if($form->pejabat_penetap_id){
-                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
-                if($r){
+            if ($form->pejabat_penetap_id) {
+                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
                     $form->pejabat_penetap_nama = $r->nama;
                 }
             }
         });
-        
+
         // callback after save
         $form->saved(function (Form $form) {
+            //update riwayat pangkat
+            $riwayat_skcpns = RiwayatPangkat::where('employee_id',$this->getProfileId())->where('is_cpns_pns',RiwayatPangkat::SK_CPNS)->get()->first();
+            if(!$riwayat_skcpns){
+                $riwayat_skcpns = new RiwayatPangkat();
+                $riwayat_skcpns->employee_id = $this->getProfileId();
+                $riwayat_skcpns->is_cpns_pns = RiwayatPangkat::SK_CPNS;
+                $riwayat_skcpns->jenis_ket = "CPNS";
+            }
+            $model = $form->model();
+            $riwayat_skcpns->pejabat_penetap_id = $model->pejabat_penetap_id;
+            $riwayat_skcpns->no_nota = $model->no_nota;
+            $riwayat_skcpns->no_sk = $model->no_sk;
+            $riwayat_skcpns->tgl_sk = $model->tgl_sk;
+            $riwayat_skcpns->tmt_pangkat = $model->tmt_cpns;
+            $riwayat_skcpns->pangkat_id = $model->pangkat_id;
+            $riwayat_skcpns->masakerja_thn = $model->total_tahun;
+            $riwayat_skcpns->masakerja_bln = $model->total_bulan;
+            $riwayat_skcpns->save();
             return back();
         });
 
@@ -95,4 +113,3 @@ class SKCPNS_Controller extends  ProfileController
         return $form;
     }
 }
-

@@ -34,8 +34,9 @@ class ManageTreeJabatan extends AdminController
     {
         $form = new Form(new Jabatan());
         
-        $form->number('parent_id', __('Parent id'));
+        $form->select('parent_id', __('Parent id'))->options(Jabatan::all()->pluck('name','id'));
         $form->text('name', __('Name'));
+        $form->number('bup', __('Batas Usia Pensiun'));
         
         return $form;
     }

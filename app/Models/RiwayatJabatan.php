@@ -8,4 +8,14 @@ class RiwayatJabatan extends Model
 {
     
     public $table  = 'riwayat_jabatan';
+
+    public function obj_jabatan_fungsional(){
+        return $this->hasOne(Jabatan::class,'id','jabatan_id');
+    }
+    public function obj_jabatan_struktural(){
+        return $this->hasOne(UnitKerja::class,'id','jabatan_id');
+    }
+    public function obj_tipe_jabatan(){
+        return $this->hasOne(TipeJabatan::class,'id','tipe_jabatan_id');
+    }
 }
