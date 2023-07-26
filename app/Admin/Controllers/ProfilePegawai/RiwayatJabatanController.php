@@ -46,18 +46,18 @@ class RiwayatJabatanController extends ProfileController
     {
         $employee = $this->getEmployee();
         $grid = new Grid(new RiwayatJabatan());
-        $grid->model()->orderBy('tmt_jabatan','desc');
+        $grid->model()->orderBy('tmt_jabatan', 'desc');
         $grid->column('nama_jabatan', __('JABATAN'));
         $grid->column('unit_text', __('UNIT KERJA'));
-        $grid->column('tmt_jabatan', __('TMT JABATAN'))->display(function($o){
-            if($o){
+        $grid->column('tmt_jabatan', __('TMT JABATAN'))->display(function ($o) {
+            if ($o) {
                 return $this->tmt_jabatan->format('d-m-Y');
             }
             return "-";
         });
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'))->display(function($o){
-            if($o){
+        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
+            if ($o) {
                 return $this->tgl_sk->format('d-m-Y');
             }
             return "-";
@@ -88,7 +88,7 @@ class RiwayatJabatanController extends ProfileController
         $show->field('kredit', __('KREDIT'));
         $show->field('obj_pangkat.name', __('PANGKAT'));
         $show->field('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-        $show->field('keterangan', __('KETERANGAN'));
+        $show->field('status_jabatan_id', __('KETERANGAN'));
         $show->field('jenis_ket', __('JENIS KET'));
         $show->field('tmt_pak', __('TMT PAK'));
         $show->field('masakerja_thn', __('MASA KERJA TAHUN'));
@@ -109,16 +109,16 @@ class RiwayatJabatanController extends ProfileController
     {
         $form = new Form(new RiwayatJabatan());
         $form->hidden('employee_id', __('Employee id'));
-        
-       
+
+
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_jabatan', __('TMT JABATAN'))->default(date('Y-m-d'));
-        $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in',[1,6], function (Form $form) {
+        $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
             $form->date('tmt_eselon', __('TMT ESELON'))->default(date('Y-m-d'));
             $form->belongsTo('jabatan_id', GridUnitKerja::class, 'JABATAN');
-        })->when('in',[2,3,4,5],function(Form $form){
+        })->when('in', [2, 3, 4, 5], function (Form $form) {
             $form->belongsTo('jabatan_id', GridJabatan::class, 'JABATAN');
         });
         $form->text('nama_jabatan', __('NAMA JABATAN'));
@@ -126,9 +126,9 @@ class RiwayatJabatanController extends ProfileController
         $form->date('tgl_pelantikan', __('TGL PELANTIKAN'))->default(date('Y-m-d'));
         $form->text('tunjangan', __('TUNJANGAN'));
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
-        $form->belongsTo('unit_id',GridUnitKerja::class, __('UNIT KERJA'));
-        $form->text("unit_text",__("UNIT KERJA"));
-        $form->select('keterangan', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name','id'));
+        $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'));
+        $form->text("unit_text", __("UNIT KERJA"));
+        $form->select('status_jabatan_id', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
 
         $form->divider("Pejabat Penetap");
         $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
@@ -152,9 +152,9 @@ class RiwayatJabatanController extends ProfileController
                     $form->pejabat_penetap_nama = $r->nama;
                 }
             }
-            if($form->unit_id){
-                $unit_kerja =  UnitKerja::where('id',$form->unit_id)->get()->first();
-                if($unit_kerja){
+            if ($form->unit_id) {
+                $unit_kerja =  UnitKerja::where('id', $form->unit_id)->get()->first();
+                if ($unit_kerja) {
                     $form->unit_text = $unit_kerja->name;
                 }
             }
@@ -172,10 +172,6 @@ class RiwayatJabatanController extends ProfileController
                 ];
                 $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
             }
-
-            //Update bup
-            $e = $_this->getEmployee();
-            $e->setTanggalPensiun();
         });
         return $form;
     }

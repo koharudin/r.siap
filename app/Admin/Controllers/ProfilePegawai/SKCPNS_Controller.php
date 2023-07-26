@@ -81,24 +81,6 @@ class SKCPNS_Controller extends  ProfileController
 
         // callback after save
         $form->saved(function (Form $form) {
-            //update riwayat pangkat
-            $riwayat_skcpns = RiwayatPangkat::where('employee_id',$this->getProfileId())->where('is_cpns_pns',RiwayatPangkat::SK_CPNS)->get()->first();
-            if(!$riwayat_skcpns){
-                $riwayat_skcpns = new RiwayatPangkat();
-                $riwayat_skcpns->employee_id = $this->getProfileId();
-                $riwayat_skcpns->is_cpns_pns = RiwayatPangkat::SK_CPNS;
-                $riwayat_skcpns->jenis_ket = "CPNS";
-            }
-            $model = $form->model();
-            $riwayat_skcpns->pejabat_penetap_id = $model->pejabat_penetap_id;
-            $riwayat_skcpns->no_nota = $model->no_nota;
-            $riwayat_skcpns->no_sk = $model->no_sk;
-            $riwayat_skcpns->tgl_sk = $model->tgl_sk;
-            $riwayat_skcpns->tmt_pangkat = $model->tmt_cpns;
-            $riwayat_skcpns->pangkat_id = $model->pangkat_id;
-            $riwayat_skcpns->masakerja_thn = $model->total_tahun;
-            $riwayat_skcpns->masakerja_bln = $model->total_bulan;
-            $riwayat_skcpns->save();
             return back();
         });
 

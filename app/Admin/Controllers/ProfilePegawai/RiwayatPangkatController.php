@@ -148,6 +148,8 @@ class RiwayatPangkatController extends ProfileController
                 ];
                 $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
             }
+
+            return back();
         });
         return $form;
     }
