@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class RiwayatSKCPNS extends Model
 {
     public $table  = 'riwayat_skcpns';
+    protected $dates = ['tmt_cpns','tgl_sk'];
 }

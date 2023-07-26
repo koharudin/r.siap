@@ -15,4 +15,6 @@ class RiwayatPangkat extends Model
     public function obj_jenis_kenaikan_pangkat(){
         return $this->hasOne(JenisKP::class,'id','jenis_kp');
     }
+
+    protected $dates = ['tmt_pangkat','tgl_sk'];
 }
