@@ -39,6 +39,7 @@ class DataPersonalController extends  ProfileController
            
             //$form->display("obj_agama.name", "AGAMA");
             $form->text('nip_baru', 'NIP');
+            $form->text('tgl_pensiun', 'TANGGAL PENSIUN');
             $form->text('gelar_depan', 'GELAR DEPAN');
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');

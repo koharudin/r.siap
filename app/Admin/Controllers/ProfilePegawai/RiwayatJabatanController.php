@@ -13,6 +13,7 @@ use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\RiwayatJabatan;
 use App\Models\RiwayatPangkat;
+use App\Models\StatusJabatan;
 use App\Models\TipeJabatan;
 use App\Models\UnitKerja;
 use Carbon\Carbon;
@@ -116,9 +117,9 @@ class RiwayatJabatanController extends ProfileController
         $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in',[1,6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
             $form->date('tmt_eselon', __('TMT ESELON'))->default(date('Y-m-d'));
-            $form->belongsTo('jabatan_struktural_id', GridUnitKerja::class, 'JABATAN');
+            $form->belongsTo('jabatan_id', GridUnitKerja::class, 'JABATAN');
         })->when('in',[2,3,4,5],function(Form $form){
-            $form->belongsTo('fungsional_id', GridJabatan::class, 'JABATAN');
+            $form->belongsTo('jabatan_id', GridJabatan::class, 'JABATAN');
         });
         $form->text('nama_jabatan', __('NAMA JABATAN'));
         $form->text('no_pelantikan', __('NO PELANTIKAN'));
@@ -127,7 +128,7 @@ class RiwayatJabatanController extends ProfileController
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
         $form->belongsTo('unit_id',GridUnitKerja::class, __('UNIT KERJA'));
         $form->text("unit_text",__("UNIT KERJA"));
-        $form->text('keterangan', __('KETERANGAN'));
+        $form->select('keterangan', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name','id'));
 
         $form->divider("Pejabat Penetap");
         $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
@@ -171,6 +172,10 @@ class RiwayatJabatanController extends ProfileController
                 ];
                 $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
             }
+
+            //Update bup
+            $e = $_this->getEmployee();
+            $e->setTanggalPensiun();
         });
         return $form;
     }
