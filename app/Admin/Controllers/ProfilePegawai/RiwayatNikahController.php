@@ -38,8 +38,19 @@ class RiwayatNikahController extends ProfileController
             if($o==1) return "<span class='label label-info'>Ya</span>";
             else return "-";
         });
-        $grid->column('tgl_kawin', __('TGL NIKAH'));
-        $grid->column('tgl_sk_cerai', __('TGL SK CERAI'));
+        $grid->column('tgl_kawin', __('TGL NIKAH'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_kawin->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('tgl_sk_cerai', __('TGL SK CERAI'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_sk_cerai->format('d-m-Y');
+            }
+            return "-";
+        });
+
         $grid->column('obj_jenis_pekerjaan.name', __('JENIS PEKERJAAN'));
 
         $grid->column('pekerjaan', __('PEKERJAAN'));

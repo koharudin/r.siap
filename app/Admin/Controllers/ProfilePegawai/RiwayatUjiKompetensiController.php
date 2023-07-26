@@ -31,7 +31,12 @@ class RiwayatUjiKompetensiController extends ProfileController
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('satker', __('SATKER'));
         $grid->column('keterangan', __('KETERANGAN'));
-        $grid->column('tanggal', __('TANGGAL'));
+        $grid->column('tanggal', __('TANGGAL'))->display(function ($o) {
+            if ($o) {
+                return $this->tanggal->format('d-m-Y');
+            }
+            return "-";
+        });
 
         return $grid;
     }

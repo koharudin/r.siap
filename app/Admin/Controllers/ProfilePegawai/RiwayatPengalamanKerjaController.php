@@ -32,8 +32,12 @@ class RiwayatPengalamanKerjaController extends ProfileController
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('masa_kerja_tahun', __('MASA KERJA TAHUN'));
         $grid->column('masa_kerja_bulan', __('MASA KERJA BULAN'));
-        $grid->column('tgl_kerja', __('TGL KERJA'));
-
+        $grid->column('tgl_kerja', __('TGL KERJA'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_kerja->format('d-m-Y');
+            }
+            return "-";
+        });
         return $grid;
     }
 

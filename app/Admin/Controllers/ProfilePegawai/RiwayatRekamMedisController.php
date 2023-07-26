@@ -27,7 +27,12 @@ class RiwayatRekamMedisController  extends ProfileController
     {
         $grid = new Grid(new RiwayatRekamMedis());
         $grid->model()->orderBy('tgl_periksa','asc');
-        $grid->column('tgl_periksa', __('TGL PERIKSA'));
+        $grid->column('tgl_periksa', __('TANGGAL PERIKSA'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_periksa->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('keluhan', __('KELUHAN'));
         return $grid;
     }

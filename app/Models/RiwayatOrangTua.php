@@ -9,4 +9,5 @@ class RiwayatOrangTua extends Model
 
     public $table  = 'riwayat_orangtua';
     public $primaryKey = "id";
+    public $dates = ['birth_date'];
 }

@@ -40,7 +40,12 @@ class RiwayatMertuaController extends ProfileController
             }
             else return "-";
         });
-        $grid->column('birth_date', __('TGL LAHIR'));
+        $grid->column('birth_date', __('TGL LAHIR'))->display(function ($o) {
+            if ($o) {
+                return $this->birth_date->format('d-m-Y');
+            }
+            return "-";
+        });
         return $grid;
     }
 

@@ -32,7 +32,12 @@ class RiwayatAnakController extends ProfileController
         $grid->model()->orderBy('birth_date','asc');
         $grid->column('name', __('NAMA'));
         $grid->column('birth_place', __('TEMPAT LAHIR'));
-        $grid->column('birth_date', __('TANGGAL LAHIR'));
+        $grid->column('birth_date', __('TANGGAL LAHIR'))->display(function ($o) {
+            if ($o) {
+                return $this->birth_date->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('obj_jenis_kelamin.name', __('JENIS KELAMIN'));
         $grid->column('obj_status_anak.name', __('STATUS KELUARGA'));
         $grid->column('status_tunjangan', __('STATUS TUNJANGAN'));

@@ -35,8 +35,18 @@ class RiwayatDiklatFungsionalController  extends ProfileController
         $grid->column('penyelenggara', __('PENYELENGGARA'));
         $grid->column('angkatan', __('ANGKATAN'));
         $grid->column('tahun', __('TAHUN'));
-        $grid->column('tgl_mulai', __('TGL MULAI'));
-        $grid->column('tgl_selesai', __('TGL SELESAI'));
+        $grid->column('tgl_mulai', __('TGL MULAI'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_mulai->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('tgl_selesai', __('TGL SELESAI'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_selesai->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('no_sttpp', __('NO STTPP'));
         $grid->column('tgl_sttpp', __('TGL STTPP'));
         $grid->column('jumlah_jam', __('JUMLAH JAM'));

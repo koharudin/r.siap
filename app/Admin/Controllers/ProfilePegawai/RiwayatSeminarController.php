@@ -32,8 +32,18 @@ class RiwayatSeminarController extends ProfileController
         $grid->column('nama', __('NAMA'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
-        $grid->column('tgl_mulai', __('TGL MULAI'));
-        $grid->column('tgl_selesai', __('TGL SELESAI'));
+        $grid->column('tgl_mulai', __('TGL MULAI'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_mulai->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('tgl_selesai', __('TGL SELESAI'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_selesai->format('d-m-Y');
+            }
+            return "-";
+        });
         return $grid;
     }
 

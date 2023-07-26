@@ -14,5 +14,5 @@ class RiwayatAnak extends Model
     public function obj_status_anak(){
         return $this->hasOne(StatusAnak::class,'id','status_keluarga');
     }
-    
+    public $dates = ['birth_date'];
 }

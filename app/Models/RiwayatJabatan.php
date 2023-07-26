@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Database\Eloquent\Model;
 
 class RiwayatJabatan extends Model
 {
-    
+    use DefaultDatetimeFormat;
     public $table  = 'riwayat_jabatan';
 
     public function obj_jabatan_fungsional(){
@@ -18,4 +19,5 @@ class RiwayatJabatan extends Model
     public function obj_tipe_jabatan(){
         return $this->hasOne(TipeJabatan::class,'id','tipe_jabatan_id');
     }
+    protected $dates = ['tmt_jabatan','tgl_sk'];
 }

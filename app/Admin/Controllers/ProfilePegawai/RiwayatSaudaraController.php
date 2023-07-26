@@ -30,7 +30,12 @@ class RiwayatSaudaraController  extends ProfileController
         $grid = new Grid(new RiwayatSaudara());
         $grid->model()->orderBy('birth_date','asc');
         $grid->column('name', __('NAMA'));
-        $grid->column('birth_date', __('TANGGAL LAHIR'));
+        $grid->column('birth_date', __('TGL LAHIR'))->display(function ($o) {
+            if ($o) {
+                return $this->birth_date->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('telepon', __('TELEPON'));
         $grid->column('alamat', __('ALAMAT'));
 

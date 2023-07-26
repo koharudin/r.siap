@@ -14,5 +14,5 @@ class RiwayatGaji extends Model
     public function objJenisKenaikanGaji(){
         return $this->hasOne(JenisKenaikanGaji::class,'id','jenis_kenaikan');
     }
-    
+    public $dates = ['tmt_sk','tgl_sk'];
 }

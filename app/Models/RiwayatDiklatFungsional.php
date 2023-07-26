@@ -11,4 +11,6 @@ class RiwayatDiklatFungsional extends Model
     public function scopeDiklatTeknis($query){
         $query->where('jenis_diklat',1);
     }
+    
+    public $dates = ['tgl_mulai', 'tgl_selesai'];
 }

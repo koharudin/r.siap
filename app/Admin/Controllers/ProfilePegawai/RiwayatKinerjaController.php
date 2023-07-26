@@ -32,7 +32,12 @@ class RiwayatKinerjaController extends ProfileController
         $grid->model()->orderBy('tgl_penilaian','asc');
         $grid->column('tahun', __('TAHUN'));
         $grid->column('nilai', __('NILAI'));
-        $grid->column('tgl_penilaian', __('TANGGAL PENILAIAN'));
+        $grid->column('tgl_penilaian', __('TANGGAL PENILAIAN'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_penilaian->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('satuan_kerja', __('SATUAN  KERJA'));
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('nilai_skp', __('NILAI SKP'));

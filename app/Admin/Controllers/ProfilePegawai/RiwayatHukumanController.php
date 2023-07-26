@@ -33,9 +33,19 @@ class RiwayatHukumanController  extends ProfileController
 
         $grid->column('nama_hukuman.hukuman', __('HUKUMAN'));
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'));
-        $grid->column(('PELANGGARAN'), __(('PELANGGARAN')));
-        $grid->column('tmt_sk', __('TMT SK'));
+        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column(('pelanggaran'), __(('PELANGGARAN')));
+        $grid->column('tmt_sk', __('TMT SK'))->display(function ($o) {
+            if ($o) {
+                return $this->tmt_sk->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
 
         return $grid;
@@ -53,7 +63,7 @@ class RiwayatHukumanController  extends ProfileController
 
         $show->field('no_sk', __('NO SK'));
         $show->field('tgl_sk', __('TGL SK'));
-        $show->field(('PELANGGARAN'), __(('PELANGGARAN')));
+        $show->field(('pelanggaran'), __(('PELANGGARAN')));
         $show->field('tmt_sk', __('TMT SK'));
         $show->divider('');
         $show->field('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
@@ -81,7 +91,7 @@ class RiwayatHukumanController  extends ProfileController
 
         $form->hidden('employee_id', __('Employee id'));
         
-        $form->textarea(('PELANGGARAN'), __(('PELANGGARAN')));
+        $form->textarea(('pelanggaran'), __(('PELANGGARAN')));
         
         $form->divider('SK HUKUMAN');
         $form->text('no_sk', __('NO SK'));

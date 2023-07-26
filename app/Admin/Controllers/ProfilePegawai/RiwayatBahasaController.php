@@ -36,7 +36,12 @@ class RiwayatBahasaController  extends ProfileController
         $grid->column('jenis_sertifikasi', __('JENIS SERTIFIKASI'));
         $grid->column('lembaga_sertifikasi', __('LEMBAGA SERTIFIKASI'));
         $grid->column('skor', __('SKOR'));
-        $grid->column('tgl_expired', __('TGL KADALUARSA'));
+        $grid->column('tgl_expired', __('TGL KADALUARSA'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_expired->format('d-m-Y');
+            }
+            return "-";
+        });
 
         return $grid;
     }

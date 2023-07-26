@@ -29,8 +29,18 @@ class RiwayatOrganisasiController extends ProfileController
         $grid->model()->orderBy('awal','asc');
         $grid->column('nama', __('ORGANISASI'));
         $grid->column('jabatan', __('JABATAN'));
-        $grid->column('awal', __('AWAL'));
-        $grid->column('akhir', __('AKHIR'));
+        $grid->column('awal', __('AWAL'))->display(function ($o) {
+            if ($o) {
+                return $this->awal->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('akhir', __('AKHIR'))->display(function ($o) {
+            if ($o) {
+                return $this->akhir->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('pimpinan', __('PIMPINAN'));
         $grid->column('tempat', __('TEMPAT'));
 

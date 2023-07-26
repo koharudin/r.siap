@@ -34,7 +34,12 @@ class RiwayatPenghargaanController extends ProfileController
         $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'));
+        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('pejabat_penetap', __('PEJABAT PENETAP'));
         $grid->column('tahun', __('TAHUN'));
         $grid->column('jenis_penghargaan', __('JENIS PENGHARGAAN'));

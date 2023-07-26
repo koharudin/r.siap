@@ -14,4 +14,5 @@ class RiwayatPenguasaanBahasa extends Model
     public function obj_kemampuan_bicara(){
         return $this->hasOne(KemampuanBicara::class,'id','kemampuan_bicara');
     }
+    public $dates = ['tgl_expired'];
 }

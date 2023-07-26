@@ -15,6 +15,7 @@ use App\Models\RiwayatJabatan;
 use App\Models\RiwayatPangkat;
 use App\Models\TipeJabatan;
 use App\Models\UnitKerja;
+use Carbon\Carbon;
 use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -47,9 +48,19 @@ class RiwayatJabatanController extends ProfileController
         $grid->model()->orderBy('tmt_jabatan','desc');
         $grid->column('nama_jabatan', __('JABATAN'));
         $grid->column('unit_text', __('UNIT KERJA'));
-        $grid->column('tmt_jabatan', __('TMT JABATAN'));
+        $grid->column('tmt_jabatan', __('TMT JABATAN'))->display(function($o){
+            if($o){
+                return $this->tmt_jabatan->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'));
+        $grid->column('tgl_sk', __('TGL SK'))->display(function($o){
+            if($o){
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
 
         return $grid;

@@ -36,8 +36,18 @@ class RiwayatGajiController extends  ProfileController
         $grid = new Grid(new RiwayatGaji());
         $grid->model()->orderBy('tgl_sk','asc');
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'));
-        $grid->column('tmt_sk', __('TMT SK'));
+        $grid->column('tgl_sk', __('TGL SK'))->display(function($o){
+            if($o){
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('tmt_sk', __('TMT SK'))->display(function($o){
+            if($o){
+                return $this->tmt_sk->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('objPangkat.name', __('PANGKAT'));
         $grid->column('masakerja_tahun', __('MASA KERJA TAHUN'));
         $grid->column('masakerja_bulan', __('MASA KERJA BULAN'));

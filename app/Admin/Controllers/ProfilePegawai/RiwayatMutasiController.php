@@ -38,8 +38,18 @@ class RiwayatMutasiController extends ProfileController
         $grid->column('satker_lama', __('SATKER LAMA'));
         $grid->column('satker_baru', __('SATKER BARU'));
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'));
-        $grid->column('tmt_sk', __('TMT SK'));
+        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
+            if ($o) {
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('tmt_sk', __('TMT SK'))->display(function ($o) {
+            if ($o) {
+                return $this->tmt_sk->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
         if (!Admin::user()->can('create-riwayat_pangkat')) {
             $grid->disableCreateButton();

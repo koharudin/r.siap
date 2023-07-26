@@ -15,7 +15,7 @@ class UserController extends AdminController
      */
     protected function title()
     {
-        return "---" . trans('admin.administrator');
+        return trans('admin.administrator');
     }
 
     /**
