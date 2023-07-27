@@ -73,7 +73,16 @@ Route::group([
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
     $router->any('kp', 'KGBController@Index');    
-    $router->any('pensiun', 'PensiunController@Index');    
+    $router->any('pensiun', 'PensiunController@akan_pensiun');     
+    $router->any('pensiun-akan', 'PensiunController@akan_pensiun')->name('pensiun.akan-pensiun');     
+    $router->any('pensiun-mpp', 'PensiunController@mpp')->name('pensiun.mpp');    
+    $router->any('pensiun-tusk', 'PensiunController@tusk')->name('pensiun.tusk');    
+    $router->any('pensiun-album', 'PensiunController@album')->name('pensiun.album');    
+    $router->any('dt-akan-pensiun', 'PensiunController@dt_akan_pensiun')->name('pensiun.akan_pensiun.dt');   
+    $router->any('dt-mpp', 'PensiunController@dt_akan_pensiun')->name('pensiun.mpp.dt');
+    $router->any('dt-tusk', 'PensiunController@dt_tusk')->name('pensiun.tusk.dt');
+    $router->any('dt-album', 'PensiunController@dt_album')->name('pensiun.album.dt');
+
     $router->any('penghargaan', 'PenghargaanController@Index');
     $router->any('dt-penghargaan', 'PenghargaanController@dt')->name('penghargaan.dt');   
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');    
