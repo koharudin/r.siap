@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Admin\Forms;
+namespace App\Admin\Forms\Pensiun;
 
 use App\Admin\Selectable\GridPejabatPenetap;
 use App\Models\Employee;
 use Encore\Admin\Widgets\Form;
 use Illuminate\Http\Request;
 
-class FormTUSKAlbum extends Form
+class FormMPPAlbum extends Form
 {
     protected $employee;
 
@@ -41,7 +41,7 @@ class FormTUSKAlbum extends Form
         $e->obj_riwayat_pensiun->save();
         admin_success("Pegawai [{$e->nip_baru}] ".$e->first_name." berhasil dipindahkan ke ALBUM Pensiun");
 
-        return redirect(route('admin.pensiun.tusk'));
+        return redirect(route('admin.pensiun.mpp'));
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Employee extends Model
 {
@@ -15,6 +16,9 @@ class Employee extends Model
 
     public const STATUS_PENSIUN = 3;
    
+    public function showPhoto(){
+        return Storage::disk('minio_foto')->url($this->foto);
+    }
     public function scopeAktif($query){
         $query->whereIn('status_pegawai_id',[0,1,2]);
     }

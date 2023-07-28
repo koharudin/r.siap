@@ -12,6 +12,7 @@ Route::group([
 ], function (Router $router) {
 
     Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
+        $router->resource('/', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class)->parameter('riwayat_orangtua','id');
         $router->resource('riwayat_mertua', ProfilePegawai\RiwayatMertuaController::class)->parameter('riwayat_mertua','id');
@@ -68,6 +69,8 @@ Route::group([
     $router->resource('manage_diklat', DiklatController::class);
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
     $router->resource('manage_penghargaan', ManagePenghargaan::class);
+    $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
+    $router->resource('usulanku', UsulanKuController::class);
 
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');

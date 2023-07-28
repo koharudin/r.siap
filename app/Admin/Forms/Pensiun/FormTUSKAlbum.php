@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Admin\Forms;
+namespace App\Admin\Forms\Pensiun;
 
 use App\Admin\Selectable\GridPejabatPenetap;
 use App\Models\Employee;
 use Encore\Admin\Widgets\Form;
 use Illuminate\Http\Request;
 
-class FormAkan2MPP extends Form
+class FormTUSKAlbum extends Form
 {
     protected $employee;
 
@@ -19,7 +19,7 @@ class FormAkan2MPP extends Form
      *
      * @var string
      */
-    public $title = 'AKAN PENSIUN -> MPP';
+    public $title = 'TUSK -> ALBUM';
 
     /**
      * Handle the form request.
@@ -33,13 +33,15 @@ class FormAkan2MPP extends Form
         //dump($request->all());
         $employee_id = $request->employee_id;
         $e = Employee::with('obj_riwayat_pensiun')->findOrFail($employee_id);
+        $e->status_pegawai_id = 3;
+        $e->save();
 
-        $e->obj_riwayat_pensiun->mpp = "v";
-        
+        $e->obj_riwayat_pensiun->tgl_bkn = $request->tgl_bkn;
+        $e->obj_riwayat_pensiun->no_bkn = $request->no_bkn;
         $e->obj_riwayat_pensiun->save();
-        admin_success("Pegawai [{$e->nip_baru}] ".$e->first_name." berhasil dipindahkan ke MPP");
+        admin_success("Pegawai [{$e->nip_baru}] ".$e->first_name." berhasil dipindahkan ke ALBUM Pensiun");
 
-        return redirect(route('admin.pensiun.akan-pensiun'));
+        return redirect(route('admin.pensiun.tusk'));
     }
 
     /**
@@ -48,8 +50,14 @@ class FormAkan2MPP extends Form
     public function form()
     {
         $this->hidden('employee_id');
-        $this->display('nip','NIP');
-        $this->display('name','NAMA');
+        $this->date('tgl_pensiun','TANGGAL PENSIUN');
+        $this->date('tgl_bkn','TANGGAL BKN');
+        $this->text('no_bkn','NO BKN')->required(true);
+        $this->display('tmt_pensiun','TMT PENSIUN');
+        $this->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
+        $this->text('pejabat_penetap_jabatan', __('JABATAN'));
+        $this->text('pejabat_penetap_nip', __('NIP'));
+        $this->text('pejabat_penetap_nama', __('NAMA'));
     }
 
     /**
@@ -64,8 +72,10 @@ class FormAkan2MPP extends Form
         $tmt->addDays(1);
         return [
             'employee_id'=>$this->employee->id,
-            'nip'       => $this->employee->nip_baru,
-            'name'       => $this->employee->first_name,
+            'tgl_pensiun'       => $riwayat_pensiun->tgl_pensiun,
+            'tmt_pensiun' =>$tmt->format('d-m-Y'),
+            'tgl_bkn'      => $riwayat_pensiun->tgl_bkn,
+            'no_bkn' => $riwayat_pensiun->no_bkn,
         ];
     }
 }

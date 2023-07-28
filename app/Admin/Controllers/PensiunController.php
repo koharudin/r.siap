@@ -3,10 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\DetailPegawaiAction;
-use App\Admin\Forms\FormAkan2MPP;
-use App\Admin\Forms\FormMPP2TUSK;
-use App\Admin\Forms\FormMPPAlbum;
-use App\Admin\Forms\FormTUSKAlbum;
+use App\Admin\Forms\Pensiun\FormAkan2MPP;
+use App\Admin\Forms\Pensiun\FormMPP2TUSK;
+use App\Admin\Forms\Pensiun\FormMPPAlbum;
+use App\Admin\Forms\Pensiun\FormTUSKAlbum;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\RiwayatPensiun;
@@ -138,7 +138,7 @@ class PensiunController extends Controller
                 return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
             })
             ->addColumn('action', function (Employee $user) {
-                return "<a class='btn btn-danger' href='" . route('admin.pensiun.akan2mpp.form',$user->id) . "'>Pindah ke MPP</a>";
+                return "<a class='btn btn-danger' href='" . route('admin.pensiun.akan2mpp.form', $user->id) . "'>Pindah ke MPP</a>";
             })
             ->make(true);
     }
@@ -195,8 +195,7 @@ class PensiunController extends Controller
                 return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
             })
             ->addColumn('action', function (Employee $user) {
-                return "<a class='btn btn-warning' href='" . route('admin.pensiun.mpp2tusk.form',$user->id) . "'>Pindah ke TUSK</a><a class='btn btn-danger' href='" . route('admin.pensiun.mpp2album.form',$user->id) . "'>Pindah ke ALBUM</a>";
-
+                return "<a class='btn btn-warning' href='" . route('admin.pensiun.mpp2tusk.form', $user->id) . "'>Pindah ke TUSK</a><a class='btn btn-danger' href='" . route('admin.pensiun.mpp2album.form', $user->id) . "'>Pindah ke ALBUM</a>";
             })
             ->make(true);
     }
@@ -252,13 +251,13 @@ class PensiunController extends Controller
                 return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
             })
             ->addColumn('action', function (Employee $user) {
-                return "<a class='btn btn-danger' href='" . route('admin.pensiun.tusk2album.form',$user->id) . "'>Pindah ke Album</a>";
+                return "<a class='btn btn-danger' href='" . route('admin.pensiun.tusk2album.form', $user->id) . "'>Pindah ke Album</a>";
             })
             ->make(true);
     }
     public function dt_album()
     {
-        $query = Employee::pensiun()->with(['obj_riwayat_pensiun','obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
+        $query = Employee::pensiun()->with(['obj_riwayat_pensiun', 'obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
         return  DataTables::eloquent($query)
             ->only(['no', 'sex', 'usia', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'tgl_pensiun', 'tmt_jabatan', 'sisa_masa_kerja'])
             ->addIndexColumn()
@@ -309,11 +308,11 @@ class PensiunController extends Controller
             ->make(true);
     }
 
-    public function tusk2AlbumForm(Content $content,$e_id)
+    public function tusk2AlbumForm(Content $content, $e_id)
     {
         $e =  Employee::with(['obj_riwayat_pensiun'])->find($e_id);
-        if($e->status_pegawai_id == Employee::STATUS_PENSIUN){
-            abort(401,"Pegawai sudah berstatus pensiun");
+        if ($e->status_pegawai_id == Employee::STATUS_PENSIUN) {
+            abort(401, "Pegawai sudah berstatus pensiun");
         }
         $form = new FormTUSKAlbum();
         $form->setEmployee($e);
@@ -321,11 +320,11 @@ class PensiunController extends Controller
             ->title($this->title)
             ->body($form);
     }
-    public function mpp2TUSKForm(Content $content,$e_id)
+    public function mpp2TUSKForm(Content $content, $e_id)
     {
         $e =  Employee::with(['obj_riwayat_pensiun'])->find($e_id);
-        if($e->status_pegawai_id == Employee::STATUS_PENSIUN){
-            abort(401,"Pegawai sudah berstatus pensiun");
+        if ($e->status_pegawai_id == Employee::STATUS_PENSIUN) {
+            abort(401, "Pegawai sudah berstatus pensiun");
         }
         $form = new FormMPP2TUSK();
         $form->setEmployee($e);
@@ -333,11 +332,11 @@ class PensiunController extends Controller
             ->title($this->title)
             ->body($form);
     }
-    public function mpp2AlbumForm(Content $content,$e_id)
+    public function mpp2AlbumForm(Content $content, $e_id)
     {
         $e =  Employee::with(['obj_riwayat_pensiun'])->find($e_id);
-        if($e->status_pegawai_id == Employee::STATUS_PENSIUN){
-            abort(401,"Pegawai sudah berstatus pensiun");
+        if ($e->status_pegawai_id == Employee::STATUS_PENSIUN) {
+            abort(401, "Pegawai sudah berstatus pensiun");
         }
         $form = new FormMPPAlbum();
         $form->setEmployee($e);
@@ -345,11 +344,11 @@ class PensiunController extends Controller
             ->title($this->title)
             ->body($form);
     }
-    public function akan2mppForm(Content $content,$e_id)
+    public function akan2mppForm(Content $content, $e_id)
     {
         $e =  Employee::with(['obj_riwayat_pensiun'])->find($e_id);
-        if($e->status_pegawai_id == Employee::STATUS_PENSIUN){
-            abort(401,"Pegawai sudah berstatus pensiun");
+        if ($e->status_pegawai_id == Employee::STATUS_PENSIUN) {
+            abort(401, "Pegawai sudah berstatus pensiun");
         }
         $form = new FormAkan2MPP();
         $form->setEmployee($e);

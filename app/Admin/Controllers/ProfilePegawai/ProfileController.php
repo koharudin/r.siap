@@ -29,9 +29,8 @@ class ProfileController
     public function __construct()
     {
     }
-    public function headerTab()
+    public function links()
     {
-        $tab = new WidgetsTab();
         $links = [
             'Data Personal' => "data_personal",
             'Angka Kredit' => "riwayat_angkakredit",
@@ -48,7 +47,7 @@ class ProfileController
             'Diklat Struktural' =>  "riwayat_diklat_struktural",
             'Diklat Fungsional' =>  "riwayat_diklat_fungsional",
             'Diklat Teknis' =>  "riwayat_diklat_teknis",
-             
+
             'Kursus' =>  "riwayat_kursus",
             'Seminar' =>  "riwayat_seminar",
             'Nilai DP3' =>  "riwayat_dp3",
@@ -71,23 +70,9 @@ class ProfileController
             'Hukuman' =>  "riwayat_hukuman",
             'Diklat Teknis' =>  "riwayat_diklat_teknis",
         ];
-        foreach ($links as $k => $v) {
-            if ($v === $this->activeTab) {
-                $tab->addLink($k, $v, true);
-            } else $tab->addLink($k, $v, false);
-        }
-        return $tab;
+        return $links;
     }
-    public function header1(){
-        $form = new Settings();
-        $form->setEmployee($this->getEmployee());
-        return $form;
-    }
-    public function header2(){
-        $form = new Config();
-        $form->setEmployee($this->getEmployee());
-        return $form;
-    }
+
     public function header()
     {
         $form = new Form(new Employee());
@@ -145,8 +130,8 @@ class ProfileController
         if ($dokumen) {
             if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') return 'File tidak ditemukan.';
             else {
-                $url = route('admin.download.dokumen',[
-                    'f'=>base64_encode($dokumen->file)
+                $url = route('admin.download.dokumen', [
+                    'f' => base64_encode($dokumen->file)
                 ]);
                 return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Download</a>";
             }
@@ -158,8 +143,7 @@ class ProfileController
         $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($this->header()->render())
-            ->body($this->headerTab());
+            ->body($this->header()->render());
         if (method_exists($this, 'grid')) {
             $grid = $this->grid();
             $grid->paginate(10);
@@ -202,13 +186,14 @@ class ProfileController
             });
             $grid->disableRowSelector();
             $grid->model()->where('employee_id',  $this->getProfileId());
-            $content->body($grid);
-            return $content;
+            $c = $grid->render();
         } else if (method_exists($this, 'form')) {
             $form = $this->form();
-            $content->body($form);
-            return $content;
+            $c = $form;
         }
+        $employee = $this->getEmployee();
+        $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $employee]);
+        return $content;
     }
 
     public function store()
@@ -225,10 +210,12 @@ class ProfileController
     public function create($profile_id, Content $content)
     {
         Permission::check("create-{$this->activeTab}");
-        return $content
+        $c = $this->form();
+        $content
             ->title($this->title())
-            ->description($this->description['create'] ?? trans('admin.create'))
-            ->body($this->form());
+            ->description($this->description['create'] ?? trans('admin.create'));
+        $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $this->getEmployee()]);
+        return $content;
     }
     public function show($profile_id, $id, Content $content)
     {
@@ -243,13 +230,15 @@ class ProfileController
         $form  = $this->form()->edit($id);
         $profile_id = $this->getProfileId();
         $owner_id = $form->model()->employee_id;
-        if($profile_id != $owner_id){
-            abort(401,"Wrong owner. Profile ID $profile_id . Owner ID $owner_id");
+        if ($profile_id != $owner_id) {
+            abort(401, "Wrong owner. Profile ID $profile_id . Owner ID $owner_id");
         }
-        return $content
+        $c = $form->edit($id);
+        $content
             ->title($this->title())
-            ->description($this->description['edit'] ?? trans('admin.edit'))
-            ->body($form->edit($id));
+            ->description($this->description['create'] ?? trans('admin.create'));
+        $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $this->getEmployee()]);
+        return $content;
     }
     public function update($profile_id, $id)
     {

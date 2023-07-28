@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Forms;
+namespace App\Admin\Forms\Pensiun;
 
 use App\Admin\Selectable\GridPejabatPenetap;
 use App\Models\Employee;
