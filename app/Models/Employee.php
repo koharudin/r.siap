@@ -79,6 +79,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatDiklatTeknis::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
     }
+    public function obj_riwayat_hukuman()
+    {
+        return $this->hasMany(RiwayatHukuman::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
+    }
     public function getUsiaAttribute($from=null)
     {
         if($from==null){
