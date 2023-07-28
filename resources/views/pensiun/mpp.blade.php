@@ -24,6 +24,7 @@
                         <th>TANGGAL PENSIUN</th>
                         <th>USIA</th>
                         <th>SISA MASA KERJA</th>
+                        <th>#</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +84,10 @@
                     {
                         data: 'sisa_masa_kerja',
                         name: 'sisa_masa_kerja'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action'
                     }
                 ]
             });

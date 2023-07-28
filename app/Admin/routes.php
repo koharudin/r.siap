@@ -77,9 +77,14 @@ Route::group([
     $router->any('pensiun-akan', 'PensiunController@akan_pensiun')->name('pensiun.akan-pensiun');     
     $router->any('pensiun-mpp', 'PensiunController@mpp')->name('pensiun.mpp');    
     $router->any('pensiun-tusk', 'PensiunController@tusk')->name('pensiun.tusk');    
+    $router->any('pensiun-akan2mpp-form/{e}', 'PensiunController@akan2mppForm')->name('pensiun.akan2mpp.form'); 
+    $router->any('pensiun-tusk2album-form/{e}', 'PensiunController@tusk2AlbumForm')->name('pensiun.tusk2album.form'); 
+    $router->any('pensiun-mpp2tusk-form/{e}', 'PensiunController@mpp2TuskForm')->name('pensiun.mpp2tusk.form'); 
+    $router->any('pensiun-mpp2album-form/{e}', 'PensiunController@mpp2AlbumForm')->name('pensiun.mpp2album.form'); 
+
     $router->any('pensiun-album', 'PensiunController@album')->name('pensiun.album');    
     $router->any('dt-akan-pensiun', 'PensiunController@dt_akan_pensiun')->name('pensiun.akan_pensiun.dt');   
-    $router->any('dt-mpp', 'PensiunController@dt_akan_pensiun')->name('pensiun.mpp.dt');
+    $router->any('dt-mpp', 'PensiunController@dt_mpp')->name('pensiun.mpp.dt');
     $router->any('dt-tusk', 'PensiunController@dt_tusk')->name('pensiun.tusk.dt');
     $router->any('dt-album', 'PensiunController@dt_album')->name('pensiun.album.dt');
 

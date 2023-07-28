@@ -22,4 +22,10 @@ class RiwayatPensiun extends Model
         $query->where('tgl_pensiun', '<=', $dt_akan_pensiun);
         $query->where('tgl_pensiun','>=',Carbon::now());
     }
+    public function scopeMpp($query){
+        $query->whereNotNull('mpp')->where('mpp','v')->whereNull('tusk');
+    }
+    public function scopeTusk($query){
+        $query->whereNotNull('tusk')->where('tusk','v');
+    }
 }

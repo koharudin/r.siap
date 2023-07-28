@@ -13,10 +13,13 @@ class Employee extends Model
     public $primaryKey = 'id';
     public $timestamps  = true;
 
-
+    public const STATUS_PENSIUN = 3;
    
     public function scopeAktif($query){
         $query->whereIn('status_pegawai_id',[0,1,2]);
+    }
+    public function scopePensiun($query){
+        $query->whereIn('status_pegawai_id',[3]);
     }
     public function getBup()
     {
@@ -51,6 +54,10 @@ class Employee extends Model
     public function obj_agama()
     {
         return $this->hasOne(Agama::class, 'id', 'agama_id');
+    }
+    public function obj_riwayat_pensiun()
+    {
+        return $this->hasOne(RiwayatPensiun::class, 'employee_id', 'id');
     }
     public function obj_riwayat_pangkat()
     {
