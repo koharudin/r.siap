@@ -3,25 +3,6 @@
         <h3 class="box-title">Penghargaan</h3>
 
         <div class=" pull-right">
-            <div class="row">
-                <div class="col">
-                    <select class="form-control" aria-label="Default select example">
-                        <option selected value="1">USULAN YANG AKAN MENDAPAT</option>
-                        <option value="2">YANG TELAH MENDAPAT</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <select class="form-control" aria-label="Default select example">
-                        <option selected value="1">SATYALANCANA KARYA SATYA X (PERUNGGU)</option>
-                        <option value="2">SATYALANCANA KARYA SATYA XX (PERAK)</option>
-                        <option value="3">SATYALANCANA KARYA SATYA XXX (EMAS)</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <a class='btn btn-primary'>Tampilkan</a>
-                </div>
-            </div>
-
 
 
         </div>
@@ -29,6 +10,24 @@
 
     <!-- /.box-header -->
     <div class="box-body">
+        <form id="form-search">
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">KRITERIA</label>
+                <select class="form-control" name="kriteria">
+                    <option>USULAN</option>
+                    <option>SUDAH MENDAPAT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Jenis Penghargaan</label>
+                <select class="form-control" name="jenis">
+                    <option>SATYALANCANA KARYA SATYA PERAK</option>
+                    <option>SATYALANCANA KARYA SATYA PERUNGGU</option>
+                    <option>SATYALANCANA KARYA SATYA EMAS</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">CARI</button>
+        </form>
         <div class="table-responsive">
             <table class="table table-bordered yajra-datatable" style="width:100%">
                 <thead>
@@ -58,7 +57,15 @@
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/id.json',
                 },
-                ajax: "{{route('admin.penghargaan.dt')}}",
+                ajax2: "{{route('admin.penghargaan.dt')}}",
+                "ajax": {
+                    'type': 'POST',
+                    'url': "{{route('admin.penghargaan.dt')}}",
+                    "data": function(d) {
+                        d.extra_search = $('#form-search').serializeArray();
+                        d._token = "{{ csrf_token() }}";
+                    },
+                },
                 columns: [{
                         data: 'nip_baru',
                         name: 'nip_baru'

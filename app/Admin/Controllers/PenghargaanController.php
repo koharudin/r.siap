@@ -27,6 +27,15 @@ class PenghargaanController extends Controller
     }
     public function dt()
     {
+        $params = request('extra_search');
+        foreach($params as $param){
+            if(@$param['name'] =='kriteria'){
+                //$param['value']    
+            }
+            if(@$param['name'] =='jenis'){
+                //$param['value']
+            }
+        } 
         $query = Employee::with(['obj_riwayat_jabatan','obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
         $query->orderBy('first_name','asc');
         return  DataTables::eloquent($query)
