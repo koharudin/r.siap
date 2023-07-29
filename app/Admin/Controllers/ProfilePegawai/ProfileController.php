@@ -16,6 +16,7 @@ use Encore\Admin\Form\Tab;
 use Encore\Admin\Grid;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Widgets\Tab as WidgetsTab;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -162,6 +163,12 @@ class ProfileController
                             ]);
                         }
                     }
+                    else {
+                        return $_this->getDokumenUrl([
+                            'klasifikasi_id' => $_this->klasifikasi_id,
+                            'id' => $this->id,
+                        ]);
+                    }
                     return '-';
                 });
             }
@@ -219,34 +226,57 @@ class ProfileController
     }
     public function show($profile_id, $id, Content $content)
     {
-        return $content
+        $c = $this->detail($id);
+        $_this = $this;
+        $c->panel()
+            ->tools(function ($tools) use ($_this) {
+                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
+                    $tools->disableDelete();
+                }
+                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                    $tools->disableEdit();
+                }
+            });;
+        $content
             ->title($this->title())
-            ->description($this->description['show'] ?? trans('admin.show'))
-            ->body($this->detail($id));
+            ->description($this->description['show'] ?? trans('admin.show'));
+        $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $this->getEmployee()]);
+        return $content;
     }
+
     public function edit($profile_id, $id, Content $content)
     {
         Permission::check("edit-{$this->activeTab}");
-        $form  = $this->form()->edit($id);
+        $form  = $this->form();
         $profile_id = $this->getProfileId();
+        $form->edit($id);
+
+        $this->setDokumenPendukung($form);
         $owner_id = $form->model()->employee_id;
         if ($profile_id != $owner_id) {
             abort(401, "Wrong owner. Profile ID $profile_id . Owner ID $owner_id");
         }
-        $c = $form->edit($id);
         $content
             ->title($this->title())
             ->description($this->description['create'] ?? trans('admin.create'));
-        $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $this->getEmployee()]);
+        $content->view("v_profile_sidebar", ['g' => $form, 'links' => $this->links(), 'e' => $this->getEmployee()]);
         return $content;
     }
     public function update($profile_id, $id)
     {
-        return $this->form()->update($id);
+        Permission::check("edit-{$this->activeTab}");
+        $form = $this->form();
+        $this->setDokumenPendukung($form);
+        return $form->update($id);
+    }
+    public function destroy($id)
+    {
+        Permission::check("delete-{$this->activeTab}");
+        return $this->form()->destroy($id);
     }
     public function getProfileId()
     {
-        return request()->profile_id;
+        return request()->profile_uid ? request()->profile_uid : request()->profile_id;
     }
     public function getEmployee()
     {
@@ -254,8 +284,33 @@ class ProfileController
         $e = Employee::findOrFail($profile_id);
         return $e;
     }
-    public function destroy($id)
+
+    public function setDokumenPendukung(Form &$form)
     {
-        return $this->form()->destroy($id);
+        if ($this->use_document) {
+            $_this = $this;
+            $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_dokumen')->name(function ($file) use ($_this) {
+                return $_this->getEmployee()->nip_baru . "_" . md5(uniqid()) .".". $file->guessExtension();
+            });
+            $form->saving(function (Form $form) {
+            });
+            $form->submitted(function (Form $form) {
+                $form->ignore('dokumen');
+            });
+            $form->saved(function (Form $form) use ($d, $_this) {
+                $file = request()->file('dokumen');
+                if ($file) {
+                    $newFileName = $d->prepare($file);
+                    $keys = explode("#", $form->model()->simpeg_id);
+                    $arr = [
+                        'id' => $form->model()->id,
+                        'klasifikasi_id' => $_this->klasifikasi_id,
+                        'pk1' => sizeof($keys) == 2 ? $keys[0] : null,
+                        'pk2' => sizeof($keys) == 2 ? $keys[1] : null,
+                    ];
+                    $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
+                }
+            });
+        }
     }
 }

@@ -34,6 +34,12 @@ class UserController extends AdminController
         $grid->column('name', trans('admin.name'));
         $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
 
+        $grid->expandFilter();
+        $grid->filter(function($filter){
+            $filter->disableIdFilter();
+            $filter->ilike('username', 'USERNAME');
+            $filter->ilike('name', 'NAMA');
+        });
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             if ($actions->getKey() == 1) {
                 $actions->disableDelete();
@@ -94,6 +100,7 @@ class UserController extends AdminController
         $connection = config('admin.database.connection');
 
         $form->display('id', 'ID');
+        $form->hidden("password_x");
         $form->text('username', trans('admin.username'))
             ->creationRules(['required', "unique:{$connection}.{$userTable}"])
             ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
@@ -119,6 +126,7 @@ class UserController extends AdminController
                 //$form->password = Hash::make($form->password);
                 $form->password_x = md5($form->password);
             }
+
         });
 
         return $form;

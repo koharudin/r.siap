@@ -19,15 +19,16 @@ class CheckProfile
      */
     public function handle(Request $request, Closure $next)
     {
+
         if($request->profile_id=="me" || $request->profile_id == null)
         {
             if(Admin::user()->isRole('pegawai')){
                 $nip = Auth::user()->username;
                 $e = Employee::where('nip_baru',$nip)->get()->first();
-                $request->profile_id=$e->id;
+                $request->profile_uid=$e->id;
                 return $next($request);
             }   
-            abort(401, 'This action is unauthorized.');
+            return abort(401, 'This action is unauthorized.');
         }
         return $next($request);
     }

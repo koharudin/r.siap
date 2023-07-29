@@ -107,6 +107,7 @@ class RiwayatGajiController extends  ProfileController
         $form->text('pejabat_penetap_nama', _('PEJABAT PENETAP NAMA'));
         $form->text('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
         $form->text('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
+
         $form->saving(function (Form $form) {
             if($form->pejabat_penetap_id){
                 $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();

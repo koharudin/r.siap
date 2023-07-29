@@ -7,7 +7,7 @@
                 <p class="text-muted text-center">{{$e->nip_baru}}</p>
                 <ul class="list-group list-group-unbordered">
                     @foreach($links as $k=>$v)
-                    <a class="btn btn-default btn-block" href="{{url('/admin/profile',[$e->id,$v])}}">
+                    <a class="btn btn-default btn-block" href="{{url('/admin/profile',[request('profile_id'),$v])}}">
                         <i class=""></i> {{$k}}
                     </a>
                     @endforeach

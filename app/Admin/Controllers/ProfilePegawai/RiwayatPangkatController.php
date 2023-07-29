@@ -119,13 +119,8 @@ class RiwayatPangkatController extends ProfileController
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
 
-        $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_dokumen')->uniqueName();
-
-        $form->submitted(function (Form $form) use ($d) {
-            $form->ignore('dokumen');
-        });
         $_this = $this;
-        $form->saving(function (Form $form) use ($d, $_this) {
+        $form->saving(function (Form $form) use ($_this) {
             if ($form->pejabat_penetap_id) {
                 $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
                 if ($r) {
@@ -135,22 +130,7 @@ class RiwayatPangkatController extends ProfileController
                 }
             }
         });
-        $form->saved(function (Form $form) use ($d, $_this) {
-            $file = request()->file('dokumen');
-            if ($file) {
-                $newFileName = $d->prepare($file);
-                $keys = explode("#", $form->model()->simpeg_id);
-                $arr = [
-                    'id' => $form->model()->id,
-                    'klasifikasi_id' => 5,
-                    'pk1' => sizeof($keys) == 2 ? $keys[0] : null,
-                    'pk2' => sizeof($keys) == 2 ? $keys[1] : null,
-                ];
-                $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
-            }
 
-            return back();
-        });
         return $form;
     }
 }

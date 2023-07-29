@@ -19,6 +19,7 @@ class RiwayatMutasiController extends ProfileController
 {
     public $activeTab = 'riwayat_mutasi';
     public $klasifikasi_id = 7;
+    public $use_document = true;
     /**
      * Title for current resource.
      *
@@ -116,7 +117,7 @@ class RiwayatMutasiController extends ProfileController
         $form->text('pejabat_penetap_jabatan', __('JABATAN'));
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
-        
+    
         $form->saving(function (Form $form) {
             if($form->pejabat_penetap_id){
                 $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
