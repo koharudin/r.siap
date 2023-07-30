@@ -13,7 +13,7 @@ use Encore\Admin\Show;
 class RiwayatBahasaController  extends ProfileController
 {
     public $activeTab = 'riwayat_penguasaan_bahasa';
-    public $klasifikasi_id = 13; 
+    public $klasifikasi_id = 32; 
     /**
      * Title for current resource.
      *

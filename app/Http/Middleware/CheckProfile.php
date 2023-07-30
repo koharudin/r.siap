@@ -28,7 +28,11 @@ class CheckProfile
                 $request->profile_uid=$e->id;
                 return $next($request);
             }   
-            return abort(401, 'This action is unauthorized.');
+            if(request()->ajax()){
+                 admin_error("Error", "Akses tidak diijinkan");
+                 exit;
+            }
+            else return abort(401, 'This action is unauthorized.');
         }
         return $next($request);
     }

@@ -125,9 +125,6 @@ class ProfileController
         if (@$arr['id']) {
             $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
         }
-        if (!$dokumen && @$arr['pk1']) {
-            $dokumen = DokumenPegawai::where('pk1', $arr['pk1'])->where('klasifikasi_id', $arr['klasifikasi_id'])->where('pk2', $arr['pk2'])->get()->first();
-        }
         if ($dokumen) {
             if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') return 'File tidak ditemukan.';
             else {
@@ -152,24 +149,10 @@ class ProfileController
             if ($this->use_document) {
                 $_this = $this;
                 $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
-                    if ($this->simpeg_id) {
-                        $arr = explode("#", $this->simpeg_id);
-                        if (sizeof($arr) == 2) {
-                            return $_this->getDokumenUrl([
-                                'pk1' => $employee->simpeg_id,
-                                'pk2' => $arr[1],
-                                'klasifikasi_id' => $_this->klasifikasi_id,
-                                'id' => $this->id,
-                            ]);
-                        }
-                    }
-                    else {
-                        return $_this->getDokumenUrl([
-                            'klasifikasi_id' => $_this->klasifikasi_id,
-                            'id' => $this->id,
-                        ]);
-                    }
-                    return '-';
+                    return $_this->getDokumenUrl([
+                        'klasifikasi_id' => $_this->klasifikasi_id,
+                        'id' => $this->id,
+                    ]);
                 });
             }
             if (!Admin::user()->can("create-{$this->activeTab}")) {
