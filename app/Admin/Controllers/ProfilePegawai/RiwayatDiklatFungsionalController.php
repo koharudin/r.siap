@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridDiklat;
 use App\Models\RiwayatDiklatFungsional;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
