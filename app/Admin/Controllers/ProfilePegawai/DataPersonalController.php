@@ -31,7 +31,9 @@ class DataPersonalController extends  ProfileController
         $form->column(1 / 2, function ($form) {
             //$form->fill($this->data());
             $form->hidden('id', 'ID');
-       
+            $form->image('foto','FOTO')->disk("minio_foto")->name(function($file){
+               return $this->data['nip_baru']."_".md5(uniqid()).".".$file->guessExtension();
+            })->hidePreview();
             // Add an input box of type text
             $form->text('first_name', 'NAMA');
            
