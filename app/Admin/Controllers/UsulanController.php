@@ -225,8 +225,8 @@ class UsulanController extends Controller
     public function do_verifikasi($id,Content $content){
         if(request()->isMethod('POST')){
 
-            
-        });
+
+        };
         $o = RiwayatUsulan::with(['obj_kategori_layanan'])->findOrFail($id);
         $f = new $o->obj_kategori_layanan->form_request_class;
         $f->action(route("admin.usulan.do_verifikasi",['id'=>$id]));

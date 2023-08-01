@@ -48,6 +48,8 @@ Route::group([
     });
     $router->get('/', 'HomeController@index')->name('home');
     $router->get('/download/dokumen/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
+    $router->get('/download/foto/{f}', 'HomeController@download_foto')->name('download.foto');
+    
     $router->resource('test', TestController::class);
     $router->resource('manage_agama', ManageAgama::class);
     $router->resource('manage_pendidikan', ManagePendidikanController::class);

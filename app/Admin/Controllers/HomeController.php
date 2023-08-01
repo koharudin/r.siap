@@ -46,4 +46,12 @@ class HomeController extends Controller
         }
         else abort(404);
     }
+    public function download_foto($f){
+        $file = base64_decode($f);
+        $disk = Storage::disk("minio_foto");
+        if($disk->exists($file)){
+           return $disk->download($file);
+        }
+        else abort(404);
+    }
 }

@@ -17,7 +17,7 @@ class Employee extends Model
     public const STATUS_PENSIUN = 3;
    
     public function showPhoto(){
-        return Storage::disk('minio_foto')->url($this->foto);
+        return route('admin.download.foto',['f'=>base64_encode($this->foto)]);
     }
     public function scopeAktif($query){
         $query->whereIn('status_pegawai_id',[0,1,2]);
