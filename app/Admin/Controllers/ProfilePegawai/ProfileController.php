@@ -188,7 +188,9 @@ class ProfileController
 
     public function store()
     {
-        return $this->form()->saving(function (Form $form) {
+        $form = $this->form();
+        $this->setDokumenPendukung($form);
+        return $form->saving(function (Form $form) {
             $form->employee_id = request()->route('profile_id');
         })->store();
     }
