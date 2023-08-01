@@ -201,6 +201,7 @@ class ProfileController
     {
         Permission::check("create-{$this->activeTab}");
         $c = $this->form();
+        $this->setDokumenPendukung($c);
         $content
             ->title($this->title())
             ->description($this->description['create'] ?? trans('admin.create'));
