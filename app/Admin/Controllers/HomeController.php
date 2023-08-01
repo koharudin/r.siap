@@ -42,7 +42,7 @@ class HomeController extends Controller
         $file = base64_decode($f);
         $disk = Storage::disk("minio_dokumen");
         if($disk->exists($file)){
-           return $disk->download($file);
+           return $disk->response($file);
         }
         else abort(404);
     }
@@ -50,7 +50,7 @@ class HomeController extends Controller
         $file = base64_decode($f);
         $disk = Storage::disk("minio_foto");
         if($disk->exists($file)){
-           return $disk->download($file);
+           return $disk->response($file);
         }
         else abort(404);
     }
