@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
+use App\Admin\Selectable\GridDiklat;
+use App\Admin\Selectable\GridUnitKerja;
 use App\Models\RiwayatDiklatTeknis;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -93,7 +95,7 @@ class RiwayatDiklatTeknisController  extends ProfileController
         $form->date('tgl_selesai', __('TGL SELESAI'))->default(date('Y-m-d'));
         $form->text('no_sttpp', __('NO STTPP'));
         $form->date('tgl_sttpp', __('TGL STTPP'))->default(date('Y-m-d'));
-        $form->text('diklat_id', __('DIKLAT ID'));
+        $form->belongsTo('diklat_id', GridDiklat::class, 'DIKLAT ID');
 
         $form->saving(function (Form $form) {
            $form->jenis_diklat = 1; //diklat teknis
