@@ -70,7 +70,20 @@ Route::group([
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
     $router->resource('manage_penghargaan', ManagePenghargaan::class);
     $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
-    $router->resource('usulanku', UsulanKuController::class);
+
+    Route::group(['prefix'=>'usulan','middleware'=>['checkProfile']],function(Router $router2) use($router){
+        $router->any('saya','UsulanController@me')->name("usulan.saya");
+        $router->post('proses','UsulanController@process')->name("usulan.proses");
+        $router->any('ajukan_baru','UsulanController@ajukan_baru');
+        $router->any('kategori/{id}/ajukan','UsulanController@new_request')->name("usulan.ajukan_baru.kategori");
+        $router->any('kategori/{kategori_id}/ubah/{record_ref_id}','UsulanController@ubahFromRecord')->name("ubah-usulan-from-record");
+        $router->any('kategori/{kategori_id}/hapus/{record_ref_id}','UsulanController@hapusFromRecord')->name("hapus-usulan-from-record");
+        $router->get('{id}/detail','UsulanController@detail')->name("usulan.detail");
+        $router->any('{id}/edit','UsulanController@edit')->name("usulan.edit");
+        $router->get('{id}/verifikasi','UsulanController@do_verifikasi')->name("usulan.do_verifikasi");
+        $router->any('verifikasi','UsulanController@verifikasi');
+    });
+ 
 
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');

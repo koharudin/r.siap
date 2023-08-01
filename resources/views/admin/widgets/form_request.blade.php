@@ -1,26 +1,26 @@
 <form {!! $attributes !!}>
     <div class="box-body fields-group">
-
         @foreach($fields as $field)
-            {!! $field->render() !!}
-            <div class='form-group'>
-                <div class='col-sm-2'>
+        {!! $field->render() !!}
+        <div class='form-group'>
+            <div class='col-sm-2'>
 
-                </div>
-                <div class='col-sm-10'>
-                <span class='label label-info'>{{@$oldData[$field->variables()['id']]}}</span>  
-                </div>
             </div>
+            @if($field->getView()!='admin::form.hidden')
+            <div class='col-sm-10'>
+                <span class='label label-danger'>{{@$oldData[$field->variables()['id']]}}</span>
+            </div>
+            @endif
+        </div>
         @endforeach
 
     </div>
 
     @if ($method != 'GET')
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     @endif
-    
+
     <!-- /.box-body -->
-    @if(count($buttons) > 0)
     <div class="box-footer">
         <div class="col-md-{{$width['label']}}"></div>
 
@@ -30,13 +30,25 @@
                 <button type="reset" class="btn btn-warning pull-right">{{ trans('admin.reset') }}</button>
             </div>
             @endif
-
-            @if(in_array('submit', $buttons))
-            <div class="btn-group pull-right">
-                <button type="submit" class="btn btn-info pull-right">{{ trans('admin.submit') }}</button>
+            <input type="hidden" name="btn_action_">
+            <div class=" pull-left">
+                @if($able2draft)
+                <button type="submit" name="btn_action" value="DRAFT" class="btn bg-maroon btn-flat margin"> <i class='fa fa-save'></i> DRAFT </button>
+                @endif 
             </div>
-            @endif
+            <div class=" pull-right">
+
+                @if($able2send)
+                <button type="submit" name="btn_action" value="KIRIM" class="btn bg-olive btn-flat margin"><i class='fa fa-arrow-right'></i> KIRIM </button>
+                @endif
+            </div>
         </div>
     </div>
-    @endif
+    <script>
+        (function(jQuery) {
+            $("[name=btn_action]").click(function() {
+                $("[name=btn_action_]").val($(this).val());
+            });
+        })();
+    </script>
 </form>

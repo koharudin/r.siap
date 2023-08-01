@@ -27,6 +27,8 @@ class FormFoto extends FormRequest
      */
     public function handle(Request $request)
     {
+        admin_success("berhasil submit foto ".json_encode($request->all()));
+        return back();
        
     }
     public function oldForm(Form $form){
