@@ -1,7 +1,7 @@
 <form {!! $attributes !!}>
     <div class="box-body fields-group">
         @foreach($fields as $field)
-        {!! $field->render() !!}
+        {!! $field->readonly()->render() !!}
         <div class='form-group'>
             <div class='col-sm-2'>
 
@@ -25,23 +25,7 @@
         <div class="col-md-{{$width['label']}}"></div>
 
         <div class="col-md-{{$width['field']}}">
-            @if(in_array('reset', $buttons))
-            <div class="btn-group pull-left">
-                <button type="reset" class="btn btn-warning pull-right">{{ trans('admin.reset') }}</button>
-            </div>
-            @endif
-            <input type="hidden" name="btn_action_">
-            <div class=" pull-left">
-                @if($able2draft)
-                <button type="submit" name="btn_action" value="DRAFT" class="btn bg-default btn-flat margin"> <i class='fa fa-save'></i> DRAFT </button>
-                @endif 
-            </div>
-            <div class=" pull-right">
 
-                @if($able2send)
-                <button type="submit" name="btn_action" value="KIRIM" class="btn bg-primary btn-flat margin"><i class='fa fa-arrow-right'></i> KIRIM </button>
-                @endif
-            </div>
         </div>
     </div>
     <script>

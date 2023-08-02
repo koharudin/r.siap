@@ -7,6 +7,7 @@ use App\Admin\Selectable\GridPendidikan;
 use App\Http\Traits\FormRiwayatPendidikanTrait;
 use App\Models\KategoriLayanan;
 use App\Models\RiwayatPendidikan;
+use App\Models\RiwayatPensiun;
 use App\Models\RiwayatUsulan;
 use Encore\Admin\Form\Row;
 use Encore\Admin\Grid;
@@ -66,5 +67,35 @@ class FormRiwayatPendidikan extends FormRequest
         if ($this->record_ref_id) {
             return $this->refData();
         }
+    }
+
+    public function onTerima(RiwayatUsulan $usulan){
+        $data = json_decode($usulan->new_data,true);
+        if($usulan->ref_id){
+            $record = RiwayatPendidikan::find($usulan->ref_id);
+            if($usulan->action ==2){
+                foreach($record->toArray() as $key=>$val){
+                    if(array_key_exists($key,$data)){
+                        $record->{$key} = $data[$key];
+                    }
+                }
+                $record->save();
+            }
+            if($usulan->action ==1){
+                $record = new RiwayatPendidikan();
+                $record->employee_id = $usulan->employee_id;
+                foreach($record->toArray() as $key=>$val){
+                    if(array_key_exists($key,$data)){
+                        $record->{$key} = $data[$key];
+                    }
+                }
+                $record->save();
+            }
+            if($usulan->action ==1){
+                $record = RiwayatPendidikan::find($usulan->ref_id);
+                $record->delete();
+            }
+        }
+
     }
 }

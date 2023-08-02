@@ -12,4 +12,6 @@ class StatusUsulan extends Model
 
     public const DRAFT  = 1;
     public const SEND = 2;
+    public const TOLAK = 4;
+    public const TERIMA = 5;
 }

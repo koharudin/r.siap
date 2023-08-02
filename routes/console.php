@@ -1,6 +1,9 @@
 <?php
 
+use App\Admin\Forms\Profile\FormRiwayatPendidikan;
+use App\Admin\Forms\Requests\FormRiwayatPendidikan as RequestsFormRiwayatPendidikan;
 use App\Models\Employee;
+use App\Models\RiwayatUsulan;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -14,7 +17,13 @@ use Illuminate\Support\Facades\Artisan;
 | simple approach to interacting with each command's IO methods.
 |
 */
-
+Artisan::command('cek', function () {
+    $usulan = RiwayatUsulan::find(20);
+    $f = new RequestsFormRiwayatPendidikan();
+    $f->onTerima($usulan);
+    return;
+    $this->info("done");
+})->purpose('Display an inspiring quote');
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');

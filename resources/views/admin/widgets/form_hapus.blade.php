@@ -31,17 +31,15 @@
             </div>
             @endif
             <input type="hidden" name="btn_action_">
+            @if($able2verify)
             <div class=" pull-left">
-                @if($able2draft)
-                <button type="submit" name="btn_action" value="DRAFT" class="btn bg-default btn-flat margin"> <i class='fa fa-save'></i> DRAFT </button>
-                @endif 
+                <button type="submit" name="btn_action" value="TOLAK" class="btn bg-danger btn-flat margin"> <i class='fa fa-remove'></i> BATAL </button>
+
             </div>
             <div class=" pull-right">
-
-                @if($able2send)
-                <button type="submit" name="btn_action" value="KIRIM" class="btn bg-primary btn-flat margin"><i class='fa fa-arrow-right'></i> KIRIM </button>
-                @endif
+                <button type="submit" name="btn_action" value="TERIMA" class="btn bg-primary btn-flat margin"><i class='fa fa-check'></i> HAPUS </button>
             </div>
+            @endif
         </div>
     </div>
     <script>

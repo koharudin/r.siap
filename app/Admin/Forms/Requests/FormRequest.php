@@ -21,6 +21,7 @@ class FormRequest extends Form
     protected $profile_id;
     protected $record_ref_id;
     protected $kategori_id;
+    protected $view;
     /**
      * The form title.
      *
@@ -66,14 +67,15 @@ class FormRequest extends Form
                 $actions->disableView();
                 $actions->disableEdit();
                 $actions->disableDelete();
-                $actions->add(new UbahUsulanAction($_this->getKategoriId()));
-                $actions->add(new HapusUsulanAction($_this->getKategoriId()));
+                $actions->add(new UbahUsulanAction($_this->getKategoriId(),$this->getKey()));
+                $actions->add(new HapusUsulanAction($_this->getKategoriId(),$this->getKey()));
             });
             return $grid;
         }
         return $this;
     }
-    public function createRequestFromRecord($kategori_id,$record_ref_id,$status_id){
+    
+    public function createRequestDropFromRecord($kategori_id,$record_ref_id,$status_id){
         $usulan = new RiwayatUsulan();
         $usulan->kategori_layanan_id = $kategori_id;
         $usulan->ref_id = $record_ref_id;
@@ -81,6 +83,19 @@ class FormRequest extends Form
         $usulan->new_data = json_encode(request()->all());
         $usulan->old_data = json_encode($this->refData());
         $usulan->status_id = $status_id;
+        $usulan->action = 3;
+        $changes = $usulan->getDirty();
+        $usulan->save();
+    }
+    public function createRequestChangeFromRecord($kategori_id,$record_ref_id,$status_id){
+        $usulan = new RiwayatUsulan();
+        $usulan->kategori_layanan_id = $kategori_id;
+        $usulan->ref_id = $record_ref_id;
+        $usulan->requestor = Admin::user()->getAuthIdentifier();
+        $usulan->new_data = json_encode(request()->all());
+        $usulan->old_data = json_encode($this->refData());
+        $usulan->status_id = $status_id;
+        $usulan->action = 2;
         $changes = $usulan->getDirty();
         $usulan->save();
 
@@ -153,6 +168,7 @@ class FormRequest extends Form
    
     public $able2draft = true;
     public $able2send = true;
+    public $able2verify = false;
     public function render()
     {
         $this->prepareForm();
@@ -161,12 +177,13 @@ class FormRequest extends Form
 
         $vars = $this->getVariables();
         $vars['oldData'] = $this->oldData();
+        $vars['able2verify'] = $this->able2verify;
         $vars['able2draft'] = $this->able2draft;
         $vars['able2send'] = $this->able2send;
         $vars['record_id'] = $this->record_id;
         $vars['record_ref_id'] = $this->record_ref_id;
         $vars['kategori_layanan_id']=$this->kategori_id;
-        $form = view('admin::widgets.form_request', $vars)->render();
+        $form = view($this->view, $vars)->render();
 
         if (!($title = $this->title()) || !$this->inbox) {
             return $form;
@@ -174,6 +191,13 @@ class FormRequest extends Form
 
         return (new Box($title, $form))->render();
     }
+    public function view($view){
+        $this->view = $view;
+    }
+    public function onTerima(RiwayatUsulan $usulan){
 
-    
+    }
+    public function onTolak(RiwayatUsulan $usulan){
+        
+    }
 }

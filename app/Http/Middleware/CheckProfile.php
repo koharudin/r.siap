@@ -32,7 +32,7 @@ class CheckProfile
                  admin_error("Error", "Akses tidak diijinkan");
                  exit;
             }
-            else return abort(401, 'This action is unauthorized.');
+            else return abort(401, 'Akses tidak diijinkan. Hanya Role Pegawai');
         }
         return $next($request);
     }
