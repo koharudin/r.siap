@@ -75,6 +75,18 @@ class FormRequest extends Form
         return $this;
     }
     
+    public function createRequestNewRecord($kategori_id,$record_ref_id,$status_id){
+        $usulan = new RiwayatUsulan();
+        $usulan->kategori_layanan_id = $kategori_id;
+        $usulan->ref_id = $record_ref_id;
+        $usulan->requestor = Admin::user()->getAuthIdentifier();
+        $usulan->new_data = json_encode(request()->all());
+        $usulan->old_data = json_encode($this->refData());
+        $usulan->status_id = $status_id;
+        $usulan->action = 1;
+        $changes = $usulan->getDirty();
+        $usulan->save();
+    }
     public function createRequestDropFromRecord($kategori_id,$record_ref_id,$status_id){
         $usulan = new RiwayatUsulan();
         $usulan->kategori_layanan_id = $kategori_id;
@@ -96,6 +108,7 @@ class FormRequest extends Form
         $usulan->old_data = json_encode($this->refData());
         $usulan->status_id = $status_id;
         $usulan->action = 2;
+        $usulan->employee_id = Admin::user()->obj_employee->id;
         $changes = $usulan->getDirty();
         $usulan->save();
 
@@ -153,9 +166,6 @@ class FormRequest extends Form
             $record = RiwayatUsulan::findOrFail($this->getRecordId());
             $data =  json_decode($record->new_data, true);
             return $data;
-        }
-        if($this->record_ref_id){
-            return $this->refData();
         }
     }
     public function oldData()

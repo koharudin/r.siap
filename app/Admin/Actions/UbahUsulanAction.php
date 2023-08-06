@@ -21,7 +21,7 @@ class UbahUsulanAction extends RowAction
      */
     public function href()
     {
-        return route('admin.ubah-usulan-from-record', [
+        return route('admin.usulan.record.ubah', [
             'kategori_id' => $this->kategori_id,
             'record_ref_id' => $this->record_id
         ]);

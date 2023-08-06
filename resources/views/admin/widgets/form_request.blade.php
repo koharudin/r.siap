@@ -6,7 +6,9 @@
             <div class='col-sm-2'>
 
             </div>
-            @if($field->getView()!='admin::form.hidden')
+            @if($field->getView()=='admin::form.file')
+                <a target='_blank' class='btn btn-danger' href="{{@$oldData[$field->variables()['id']]}}">File</a>
+            @elseif($field->getView()!='admin::form.hidden')
             <div class='col-sm-10'>
                 <span class='label label-danger'>{{@$oldData[$field->variables()['id']]}}</span>
             </div>

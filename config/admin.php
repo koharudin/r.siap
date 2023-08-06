@@ -125,7 +125,7 @@ return [
             'admin' => [
                 //'driver' => 'eloquent',
                 'driver' => 'custom',
-                'model'  => Encore\Admin\Auth\Database\Administrator::class,
+                'model'  => App\Models\Administrator::class,
             ],
         ],
 
@@ -178,7 +178,7 @@ return [
 
         // User tables and model.
         'users_table' => 'admin_users',
-        'users_model' => Encore\Admin\Auth\Database\Administrator::class,
+        'users_model' => App\Models\Administrator::class,
 
         // Role table and model.
         'roles_table' => 'admin_roles',
@@ -300,7 +300,7 @@ return [
     | This value is used to set the background image of login page.
     |
     */
-    'login_background_image' => 'http://192.168.1.4:9000/foto/4884273[1].jpg',
+    'login_background_image' => 'http://192.168.1.100:9000/foto/4884273[1].jpg',
 
     /*
     |--------------------------------------------------------------------------

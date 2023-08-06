@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 Artisan::command('cek', function () {
-    $usulan = RiwayatUsulan::find(20);
-    $f = new RequestsFormRiwayatPendidikan();
-    $f->onTerima($usulan);
-    return;
-    $this->info("done");
+    $credentials['username'] = 'muhammad.zahrudin@anri.go.id';
+    $user = config('admin.database.users_model')::whereHas('obj_employee',function($q)use($credentials){
+        $q->where('email_kantor',$credentials['username']);
+    })->get()->first();
+    dd($user);
 })->purpose('Display an inspiring quote');
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

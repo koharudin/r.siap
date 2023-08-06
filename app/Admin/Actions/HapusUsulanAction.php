@@ -21,7 +21,7 @@ class HapusUsulanAction extends RowAction
      */
     public function href()
     {
-        return route('admin.hapus-usulan-from-record',[
+        return route('admin.usulan.record.hapus',[
             'kategori_id'=>$this->kategori_id,
             'record_ref_id'=>$this->record_id
         ]);

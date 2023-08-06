@@ -18,12 +18,15 @@ use App\Models\RiwayatUsulan;
 use App\Models\RiwayatUsulanLog;
 use App\Models\StatusUsulan;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Form\Row;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row as LayoutRow;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Box;
+use Encore\Admin\Widgets\Form as WidgetsForm;
 use Encore\Admin\Widgets\MultipleSteps;
 
 class UsulanController extends Controller
@@ -37,6 +40,11 @@ class UsulanController extends Controller
     public function me(Content $content)
     {
         $grid  = new Grid(new RiwayatUsulan());
+        $grid->model()->where('employee_id', 578);
+        $totalUsulan =RiwayatUsulan::all()->count();
+        $grid->header(function ($query)use($totalUsulan){
+            return "<h2>Total Usulan : ".$totalUsulan."</h2>";
+        });
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
             ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
@@ -45,7 +53,7 @@ class UsulanController extends Controller
         $grid->tools(function ($tools) {
             $tools->append("<a class='btn btn-sm btn-primary' href='".route('admin.usulan.buat_baru')."'>Buat Baru</a>");
         });
-        $grid->model()->load(['obj_status']);
+        //$grid->model()->load(['obj_status']);
         $grid->disableRowSelector();
         $grid->disableBatchActions();
         $grid->disableCreateButton();
@@ -74,12 +82,16 @@ class UsulanController extends Controller
             }
             return $o;
         });
-        $grid->column('created_at', 'Diajukan pada')->display(function ($o) {
+        $grid->column('created_at', 'Dibuat pada')->display(function ($o) {
             return $this->created_at->diffForHumans();
         });
         $grid->column('updated_at', 'Perubahan pada')->display(function ($o) {
             return $this->updated_at->diffForHumans();
         });
+        $grid->filter(function ($filter) {
+            $filter->disableIDFilter();
+        });
+        $grid->disableFilter();
         $grid->actions(function ($actions) {
             $actions->disableView();
             $actions->disableEdit();
@@ -87,29 +99,30 @@ class UsulanController extends Controller
             $actions->add(new CustomRowAction("Ubah Usulan", route("admin.usulan.edit", ['id' => $this->getKey()])));
             $actions->add(new CustomRowAction("Detail Usulan", route("admin.usulan.detail", ['id' => $this->getKey()])));
         });
-        $grid->model()->where('employee_id', 578);
         return $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($grid);
     }
 
-    public function ajukan_baru(Content $content)
+    public function buat_baru(Content $content)
     {
+
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
             ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Buat Baru']
         );
-        $steps = [
-            'choose_kategori'     => FormChooseCategory::class,
-            'detail_kategori'     => FormDetailCategory::class,
-        ];
-        $forms = MultipleSteps::make($steps);
+        $form = new WidgetsForm();
+        $form->action(route('admin.usulan.buat_baru'));
+        $form->select("kategori_id",'Kategori Layanan')->options(KategoriLayanan::all()->pluck('name','id'));
+        if (request()->isMethod('POST')) {
+            return redirect(route('admin.usulan.kategori',['id'=>request('kategori_id')]));
+        }
         return $content
             ->title("Pengajuan Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($forms);
+            ->body(new Box("Pilih Layanan",$form->render())); 
     }
     public function new_request($kategori_id, Content $content)
     {
@@ -120,7 +133,10 @@ class UsulanController extends Controller
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        // $f->action(route("ubah-usulan-from-record",['kategori_id'=>$kategori_id,'record_ref_id'=>$record_ref_id]));
+        $user = Admin::user()->load(['obj_employee']);
+        if($user->obj_employee){
+            $f->setRecordRefId($user->obj_employee->id);
+        }
         $f->setKategoriId($kategori_id);
         $f->view('admin::widgets.form_request');
         if (request()->isMethod('POST')) {
@@ -131,7 +147,7 @@ class UsulanController extends Controller
             if (request('btn_action_') == 'KIRIM') {
                 $status_id = 2;
             }
-            return $f->createRequestNewRecord($kategori_id, $status_id);
+            return $f->createRequestNewRecord($kategori_id,$user->obj_employee->id, $status_id);
         }
         return $content
             ->title("Pembuatan Usulan")
@@ -150,7 +166,7 @@ class UsulanController extends Controller
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        $f->action(route("admin.ubah-usulan-from-record", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
+        $f->action(route("admin.usulan.record.ubah", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
         $f->setKategoriId($kategori_id);
         $f->setRecordRefId($record_ref_id);
         $f->view('admin::widgets.form_request');
@@ -198,7 +214,7 @@ class UsulanController extends Controller
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        $f->action(route("admin.hapus-usulan-from-record", ['kategori_id' => $kategori_id,'record_ref_id'=>$record_ref_id]));
+        $f->action(route("admin.usulan.record.hapus", ['kategori_id' => $kategori_id,'record_ref_id'=>$record_ref_id]));
         $f->setKategoriId($kategori_id);
         $f->setRecordRefId($record_ref_id);
         $f->view('admin::widgets.form_hapus');

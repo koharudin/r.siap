@@ -76,16 +76,17 @@ Route::group([
     Route::group(['prefix'=>'layanan','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->any('usulan/saya','UsulanController@me')->name("usulan.saya");
         $router->post('usulan/proses','UsulanController@process')->name("usulan.proses");
-        $router->any('usulan/buat_baru','UsulanController@ajukan_baru')->name("usulan.buat_baru");
-        $router->any('kategori/{id}/ajukan','UsulanController@new_request')->name("usulan.ajukan_baru.kategori");
-        $router->any('kategori/{kategori_id}/ubah/{record_ref_id}','UsulanController@ubahFromRecord')->name("ubah-usulan-from-record");
-        $router->any('kategori/{kategori_id}/hapus/{record_ref_id}','UsulanController@hapusFromRecord')->name("hapus-usulan-from-record");
+        $router->any('usulan/buat_baru','UsulanController@buat_baru')->name("usulan.buat_baru");
+        $router->any('usulan/kategori/{id}','UsulanController@new_request')->name("usulan.kategori");
+        $router->any('usulan/kategori/{id}/ajukan','UsulanController@new_request')->name("usulan.ajukan_baru.kategori");
+        $router->any('usulan/kategori/{kategori_id}/{record_ref_id}/ubah','UsulanController@ubahFromRecord')->name("usulan.record.ubah");
+        $router->any('usulan/kategori/{kategori_id}/{record_ref_id}/hapus','UsulanController@hapusFromRecord')->name("usulan.record.hapus");
         $router->get('usulan/{id}/detail','UsulanController@detail')->name("usulan.detail");
         $router->any('usulan/{id}/edit','UsulanController@edit')->name("usulan.edit");
-        $router->post('usulan/{id}/do_verifikasi','VerifikasiUsulanController@do')->name("usulan.do_verifikasi");
-        $router->get('usulan/{id}/form_verifikasi','VerifikasiUsulanController@form')->name("usulan.form_verifikasi");
-        $router->any('usulan/verifikasi','VerifikasiUsulanController@grid')->name("usulan.grid_verifikasi");
-        $router->any('usulan/verifikasi/{id}/detail','VerifikasiUsulanController@detail')->name("verifikasi.detail");
+        $router->post('verifikasi/usulan/{id}/do','VerifikasiUsulanController@do')->name("usulan.do_verifikasi");
+        $router->get('verifikasi/usulan/{id}/form','VerifikasiUsulanController@form')->name("usulan.form_verifikasi");
+        $router->any('verifikasi/usulan','VerifikasiUsulanController@grid')->name("usulan.grid_verifikasi");
+        $router->any('verifikasi/usulan/{id}/detail','VerifikasiUsulanController@detail')->name("verifikasi.detail");
     });
  
 

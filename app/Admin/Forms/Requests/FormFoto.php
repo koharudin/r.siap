@@ -3,11 +3,14 @@
 namespace App\Admin\Forms\Requests;
 
 use App\Admin\Forms\Requests\FormRequest;
+use App\Models\Employee;
 use App\Models\KategoriLayanan;
+use App\Models\RiwayatUsulan;
 use Encore\Admin\Form\Row;
 use Encore\Admin\Widgets\Form;
 use Encore\Admin\Widgets\StepForm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FormFoto extends FormRequest
 {
@@ -19,46 +22,32 @@ class FormFoto extends FormRequest
     public $title = 'Foto';
 
     /**
-     * Handle the form request.
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request)
-    {
-        admin_success("berhasil submit foto ".json_encode($request->all()));
-        return back();
-       
-    }
-    public function oldForm(Form $form){
-        $form->display("xx");
-    }
-    /**
      * Build a form here.
      */
     public function form()
     {
-        $this->text("first_name","NAMA");
-        $this->image("foto","Foto")->disk('minio_foto');     
+        $this->image("foto","Foto")->disk('minio_request');     
+        $this->disableReset();
+        $this->disableSubmit();
     }
 
-    
-    /**
-     * The data of the form.
-     *
-     * @return array $data
-     */
-    public function data()
+    public function data(){
+        return parent::data();
+    }
+    public function refData()
     {
-        return [
-            'first_name'=>'Andin',
-            'kategori_layanan_id'       => null
-        ];
+        $record = Employee::find($this->getRecordRefId());
+        return $record->toArray();
     }
     public function oldData(){
-        return [
-            'first_name' => 'Ayudhia'
-        ];
+        if ($this->record_id) {
+            $record = RiwayatUsulan::findOrFail($this->getRecordId());
+            return json_decode($record->old_data,true);
+        }
+        if ($this->record_ref_id) {
+            $data = $this->refData(); 
+            $data['foto'] = Storage::disk('minio_foto')->url($data['foto']);
+            return $data;
+        }
     }
 }

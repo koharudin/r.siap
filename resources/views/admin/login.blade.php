@@ -36,7 +36,7 @@
                 </div>
                 <div class="w-100">
                   <p class="social-media d-flex justify-content-end">
-                    
+
                   </p>
                 </div>
               </div>
@@ -47,7 +47,16 @@
                 @endforeach
                 @endif
                 <div class="form-group mb-3">
-                  <label class="label" for="name">Username</label>
+                  <label class="label" for="jenis">Jenis</label>
+                  <select class="form-control  select2" name='jenis' data-value="{{ old('jenis') }}">
+
+                    <option value=2 @if(old('jenis')==2) SELECTED @endif>USERNAME/NIP</option>
+                    <option value=1 @if(old('jenis')==1) SELECTED @endif>PIN ABSEN</option>
+                    <option value=3 @if(old('jenis')==3) SELECTED @endif>EMAIL DINAS</option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="label" for="username">Username</label>
                   <input type="text" class="form-control" name="username" placeholder="{{ trans('admin.username') }}" value="{{ old('username') }}" required>
                 </div>
                 @if($errors->has('password'))
@@ -64,7 +73,7 @@
                   <button type="submit" class="form-control btn btn-primary rounded submit px-3">{{ trans('admin.login') }}</button>
                 </div>
               </form>
-              
+
             </div>
           </div>
         </div>

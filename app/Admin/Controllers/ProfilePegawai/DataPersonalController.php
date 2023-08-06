@@ -39,11 +39,11 @@ class DataPersonalController extends  ProfileController
            
             //$form->display("obj_agama.name", "AGAMA");
             $form->text('nip_baru', 'NIP');
-            $form->text('tgl_pensiun', 'TANGGAL PENSIUN');
+            $form->date('tgl_pensiun', 'TANGGAL PENSIUN');
             $form->text('gelar_depan', 'GELAR DEPAN');
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');
-            $form->text('birth_date', 'TANGGAL LAHIR');
+            $form->date('birth_date', 'TANGGAL LAHIR');
             $form->belongsTo('unit_id',GridUnitKerja::class,'UNIT KERJA');
             
         });
@@ -52,6 +52,7 @@ class DataPersonalController extends  ProfileController
             $form->select('sex', 'JENIS KELAMIN')->options(JenisKelamin::all()->pluck("name", "id"));
             $form->select('status_kawin', 'STATUS PERNIKAHAN')->options(StatusPernikahan::all()->pluck('name', 'id'));
             $form->select('golongan_darah', 'GOLONGAN DARAH')->options(GolonganDarah::all()->pluck('id', 'id'));
+            $form->textarea('alamat', 'ALAMAT');
             $form->text('no_hp', 'HANDPHONE');
             $form->text('email', 'EMAIL');
             $form->text('email_kantor', 'EMAIL DINAS');
@@ -60,6 +61,7 @@ class DataPersonalController extends  ProfileController
             $form->text('npwp', 'NPWP');
             $form->text('askes', 'ASKES');
             $form->text('nik', 'NIK');
+            $form->display('pin_absen', 'PIN ABSEN');
         });
 
 

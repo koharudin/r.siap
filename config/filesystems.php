@@ -59,6 +59,15 @@ return [
             'region' => env('MINIO_ACCESS_REGION'),
             'bucket' => 'foto',
         ],
+        'minio_request' => [
+            'driver' => 's3',
+            'endpoint' => env('MINIO_ENDPOINT', ''),
+            'use_path_style_endpoint' => true,
+            'key' => env('MINIO_ACCESS_KEY'),
+            'secret' => env('MINIO_ACCESS_SECRET'),
+            'region' => env('MINIO_ACCESS_REGION'),
+            'bucket' => 'request',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
