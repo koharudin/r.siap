@@ -2,52 +2,36 @@
 
 namespace App\Admin\Forms\Requests;
 
-use App\Admin\Forms\Requests\FormRequest;
 use App\Models\Employee;
-use App\Models\KategoriLayanan;
 use App\Models\RiwayatUsulan;
-use Encore\Admin\Form\Row;
-use Encore\Admin\Widgets\Form;
-use Encore\Admin\Widgets\StepForm;
+use Encore\Admin\Form;
+use Encore\Admin\Form\Field;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class FormFoto extends FormRequest
+class FormFoto extends FF
 {
     /**
      * The form title.
      *
      * @var string
      */
-    public $title = 'Foto';
+    public $title = 'Foto Pegawai';
 
-    /**
-     * Build a form here.
-     */
-    public function form()
-    {
-        $this->image("foto","Foto")->disk('minio_request');     
-        $this->disableReset();
-        $this->disableSubmit();
-    }
 
-    public function data(){
-        return parent::data();
+    public function form(){
+        $this->text('first_name');
+        $this->image('foto')->disk('minio_foto');
+        return $this;
     }
-    public function refData()
-    {
-        $record = Employee::find($this->getRecordRefId());
-        return $record->toArray();
+    public function onCreateForm(){
+        $record= Employee::findOrFail($this->employee_id);
+        $data = [
+            'foto'=>$record->foto,
+            'first_name'=>$record->first_name
+        ];
+        request()->session()->flash('old_data', $data);
+        return parent::edit($data);
     }
-    public function oldData(){
-        if ($this->record_id) {
-            $record = RiwayatUsulan::findOrFail($this->getRecordId());
-            return json_decode($record->old_data,true);
-        }
-        if ($this->record_ref_id) {
-            $data = $this->refData(); 
-            $data['foto'] = Storage::disk('minio_foto')->url($data['foto']);
-            return $data;
-        }
-    }
+    
 }

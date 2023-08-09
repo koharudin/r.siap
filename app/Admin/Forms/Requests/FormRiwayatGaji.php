@@ -1,37 +1,49 @@
 <?php
 
-namespace App\Admin\Controllers\ProfilePegawai;
+namespace App\Admin\Forms\Requests;
 
+use App\Admin\Forms\Requests\FormRequest;
+use App\Admin\Selectable\GridJabatan;
 use App\Admin\Selectable\GridPejabatPenetap;
+use App\Admin\Selectable\GridPendidikan;
+use App\Admin\Selectable\GridUnitKerja;
+use App\Http\Traits\FormRiwayatPendidikanTrait;
+use App\Models\Eselon;
 use App\Models\JenisKenaikanGaji;
+use App\Models\JenisKP;
+use App\Models\KategoriLayanan;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
+use App\Models\Pendidikan;
+use App\Models\RiwayatAngkaKredit;
 use App\Models\RiwayatGaji;
-use Encore\Admin\Auth\Permission;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
+use App\Models\RiwayatJabatan;
+use App\Models\RiwayatMutasi;
+use App\Models\RiwayatPangkat;
+use App\Models\RiwayatPendidikan;
+use App\Models\RiwayatPensiun;
+use App\Models\RiwayatSumpah;
+use App\Models\RiwayatUsulan;
+use App\Models\StatusJabatan;
+use App\Models\TipeJabatan;
+use App\Models\UnitKerja;
 use Encore\Admin\Form;
+use Encore\Admin\Form\Row;
 use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
-use Encore\Admin\Show;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class RiwayatGajiController extends  ProfileController
+class FormRiwayatGaji extends FF
 {
-    public $activeTab = 'riwayat_gaji';
-    public $klasifikasi_id = 9;
     /**
-     * Title for current resource.
+     * The form title.
      *
      * @var string
      */
-    protected $title = 'Riwayat Gaji';
+    public $title = 'Riwayat Gaji';
 
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
-    protected function grid()
+
+    public function grid()
     {
         $grid = new Grid(new RiwayatGaji());
         $grid->model()->orderBy('tgl_sk','asc');
@@ -55,41 +67,12 @@ class RiwayatGajiController extends  ProfileController
         $grid->column('gaji_pokok', __('GAJI POKOK'));
         return $grid;
     }
-
     /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
+     * Build a form here.
      */
-    protected function detail($id)
+    public function form()
     {
-        $show = new Show(RiwayatGaji::findOrFail($id));
-
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field('tmt_sk', __('TMT SK'));
-        $show->field('pejabat_penetap_id', __('Pejabat penetap id'));
-        $show->field('pejabat_penetap_nama', __('PEJABAT PENETAP NAMA'));
-        $show->field('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
-        $show->field('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
-        $show->field('masakerja_tahun', __('MASA KERJA TAHUN'));
-        $show->field('masakerja_bulan', __('MASA KERJA BULAN'));
-        $show->field('jenis_kenaikan', __('JENIS KENAIKAN'));
-        $show->field('gaji_pokok', __('GAJI POKOK'));
-
-        return $show;
-    }
-
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
-    protected function form()
-    {
-        $form = new Form(new RiwayatGaji());
-
+        $form = $this;
         $form->hidden('employee_id', __('Employee id'));
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
@@ -118,6 +101,18 @@ class RiwayatGajiController extends  ProfileController
                 }
             }
         });
-        return $form;
+    }
+    public function onCreateForm()
+    {
+        $data = [];
+        return parent::edit($data);
+    }
+    public function onRefCreateForm($ref_id)
+    {
+        $record = RiwayatGaji::findOrFail($ref_id);
+        $data = $record->toArray();
+        $old_data = $record->toArray();
+        request()->session()->flash('old_data', $old_data);
+        return $this->edit($data);
     }
 }

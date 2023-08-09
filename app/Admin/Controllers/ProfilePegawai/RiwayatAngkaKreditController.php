@@ -39,7 +39,7 @@ class RiwayatAngkaKreditController extends ProfileController
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('unit_kerja', __('UNIT KERJA'));
         $grid->column('obj_pangkat.name', __('PANGKAT'));
-        $grid->column('ak_lama', _('AK LAMA'));
+        $grid->column('ak_lama', __('AK LAMA'));
         $grid->column('ak_baru', __('AK BARU'));
         $grid->column('tmt_pak', __('TMT PAK'));
      
@@ -64,7 +64,7 @@ class RiwayatAngkaKreditController extends ProfileController
         $show->field('jabatan', __('JABATAN'));
         $show->field('unit_kerja', __('UNIT KERJA'));
         $show->field('pangkat_id', __('PANGKAT'));
-        $show->field('ak_lama', _('AK LAMA'));
+        $show->field('ak_lama', __('AK LAMA'));
         $show->field('ak_baru', __('AK BARU'));
         $show->field('keterangan', __('KETERANGAN'));
         $show->field('tmt_pak', __('TMT PAK'));
@@ -90,7 +90,7 @@ class RiwayatAngkaKreditController extends ProfileController
         $form->belongsTo('unit_kerja_id',GridUnitKerja::class,'UNIT KERJA');
         $form->display('unit_kerja', __('UNIT KERJA'));
         $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck("name","id"));
-        $form->decimal('ak_lama', _('AK LAMA'));
+        $form->decimal('ak_lama', __('AK LAMA'));
         $form->decimal('ak_baru', __('AK BARU'));
         $form->textarea('keterangan', __('KETERANGAN'));
         $form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));

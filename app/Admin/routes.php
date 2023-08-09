@@ -78,8 +78,8 @@ Route::group([
         $router->post('usulan/proses','UsulanController@process')->name("usulan.proses");
         $router->any('usulan/buat_baru','UsulanController@buat_baru')->name("usulan.buat_baru");
         $router->any('usulan/kategori/{id}','UsulanController@new_request')->name("usulan.kategori");
-        $router->any('usulan/kategori/{id}/ajukan','UsulanController@new_request')->name("usulan.ajukan_baru.kategori");
-        $router->any('usulan/kategori/{kategori_id}/{record_ref_id}/ubah','UsulanController@ubahFromRecord')->name("usulan.record.ubah");
+        $router->any('usulan/kategori/{id}/create','UsulanController@new_request_kategori')->name("usulan.ajukan_baru.kategori");
+        $router->any('usulan/kategori/{kategori_id}/{record_ref_id}/edit','UsulanController@ubahFromRecord')->name("usulan.record.ubah");
         $router->any('usulan/kategori/{kategori_id}/{record_ref_id}/hapus','UsulanController@hapusFromRecord')->name("usulan.record.hapus");
         $router->get('usulan/{id}/detail','UsulanController@detail')->name("usulan.detail");
         $router->any('usulan/{id}/edit','UsulanController@edit')->name("usulan.edit");

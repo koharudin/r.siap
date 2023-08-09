@@ -40,18 +40,19 @@ class UsulanController extends Controller
     public function me(Content $content)
     {
         $grid  = new Grid(new RiwayatUsulan());
-        $grid->model()->where('employee_id', 578);
-        $totalUsulan =RiwayatUsulan::all()->count();
-        $grid->header(function ($query)use($totalUsulan){
-            return "<h2>Total Usulan : ".$totalUsulan."</h2>";
+        $grid->model()->where('employee_id', Admin::user()->obj_employee->id);
+        $grid->model()->orderBy('updated_at','desc');
+        $totalUsulan = RiwayatUsulan::all()->count();
+        $grid->header(function ($query) use ($totalUsulan) {
+            return "<h2>Total Usulan : " . $totalUsulan . "</h2>";
         });
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Buat Baru']
         );
         $grid->tools(function ($tools) {
-            $tools->append("<a class='btn btn-sm btn-primary' href='".route('admin.usulan.buat_baru')."'>Buat Baru</a>");
+            $tools->append("<a class='btn btn-sm btn-primary' href='" . route('admin.usulan.buat_baru') . "'><i class='fa fa-plus'></i> Buat Baru</a>");
         });
         //$grid->model()->load(['obj_status']);
         $grid->disableRowSelector();
@@ -60,13 +61,11 @@ class UsulanController extends Controller
         $grid->disableColumnSelector();
         $grid->column('obj_kategori_layanan.name', 'Kategori Layanan');
         $grid->column('action', 'Aksi')->display(function ($o) {
-            if($o==1){
+            if ($o == 1) {
                 return "Buat Baru";
-            }
-            else if($o==2){
+            } else if ($o == 2) {
                 return "Perubahan data";
-            }
-            else if($o==3){
+            } else if ($o == 3) {
                 return "Penghapusan data";
             }
         });
@@ -110,35 +109,33 @@ class UsulanController extends Controller
 
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Buat Baru']
         );
         $form = new WidgetsForm();
         $form->action(route('admin.usulan.buat_baru'));
-        $form->select("kategori_id",'Kategori Layanan')->options(KategoriLayanan::all()->pluck('name','id'));
+        $form->select("kategori_id", 'Kategori Layanan')->options(KategoriLayanan::all()->pluck('name', 'id'));
         if (request()->isMethod('POST')) {
-            return redirect(route('admin.usulan.kategori',['id'=>request('kategori_id')]));
+            return redirect(route('admin.usulan.kategori', ['id' => request('kategori_id')]));
         }
         return $content
             ->title("Pengajuan Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body(new Box("Pilih Layanan",$form->render())); 
+            ->body(new Box("Pilih Layanan", $form->render()));
     }
     public function new_request($kategori_id, Content $content)
     {
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Buat Usulan']
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        $user = Admin::user()->load(['obj_employee']);
-        if($user->obj_employee){
-            $f->setRecordRefId($user->obj_employee->id);
-        }
-        $f->setKategoriId($kategori_id);
-        $f->view('admin::widgets.form_request');
+        $f->setAction(route('admin.usulan.kategori', ['id' => $kategori_id]));
+        $f->form();
+        $f->employee_id = Admin::user()->obj_employee->id;
+        $f->onCreateForm();
         if (request()->isMethod('POST')) {
             $status_id = 0;
             if (request('btn_action_') == 'DRAFT') {
@@ -147,29 +144,57 @@ class UsulanController extends Controller
             if (request('btn_action_') == 'KIRIM') {
                 $status_id = 2;
             }
-            return $f->createRequestNewRecord($kategori_id,$user->obj_employee->id, $status_id);
+            admin_success('Pesan', 'Data usulan berhasil dibuat');
+            $f->store($kategori_id,null, $status_id, 1);
+            return redirect(route('admin.usulan.saya'));
         }
         return $content
             ->title("Pembuatan Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($f->init());
+            ->body($f->show());
     }
-    public function doDraft()
+    public function new_request_kategori($kategori_id, Content $content)
     {
+        $content->breadcrumb(
+            ['text' => 'Dashboard', 'url' => route('admin.home')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Buat Usulan']
+        );
+        $kategori = KategoriLayanan::findOrFail($kategori_id);
+        $f = new $kategori->form_request_class;
+        $f->setAction(route('admin.usulan.kategori', ['id' => $kategori_id]));
+        $f->form();
+        $f->employee_id = Admin::user()->obj_employee->id;
+        $f->onCreateForm();
+        if (request()->isMethod('POST')) {
+            $status_id = 0;
+            if (request('btn_action_') == 'DRAFT') {
+                $status_id = 1;
+            }
+            if (request('btn_action_') == 'KIRIM') {
+                $status_id = 2;
+            }
+            admin_success('Pesan', 'Data usulan berhasil dibuat');
+            $f->store($kategori_id,null, $status_id, 2);
+            return redirect(route('admin.usulan.saya'));
+        }
+        return $content
+            ->title("Pembuatan Usulan")
+            ->description($this->description['index'] ?? trans('admin.list'))
+            ->body($f);
     }
     public function ubahFromRecord($kategori_id, $record_ref_id, Content $content)
     {
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Usulan Dari Riwayat']
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        $f->action(route("admin.usulan.record.ubah", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
-        $f->setKategoriId($kategori_id);
-        $f->setRecordRefId($record_ref_id);
-        $f->view('admin::widgets.form_request');
+        $f->setAction(route("admin.usulan.record.ubah", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
+        $f->form();
+        $f->onRefCreateForm($record_ref_id);
         if (request()->isMethod('POST')) {
             $status_id = 0;
             if (request('btn_action_') == 'DRAFT') {
@@ -178,7 +203,9 @@ class UsulanController extends Controller
             if (request('btn_action_') == 'KIRIM') {
                 $status_id = 2;
             }
-            return $f->createRequestChangeFromRecord($kategori_id, $record_ref_id, $status_id);
+            admin_success('Pesan', 'Data usulan berhasil dibuat');
+            $f->store($kategori_id, $record_ref_id, $status_id,2);
+            return redirect(route('admin.usulan.saya'));
         }
 
 
@@ -209,12 +236,12 @@ class UsulanController extends Controller
 
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Hapus Usulan']
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
         $f = new $kategori->form_request_class;
-        $f->action(route("admin.usulan.record.hapus", ['kategori_id' => $kategori_id,'record_ref_id'=>$record_ref_id]));
+        $f->action(route("admin.usulan.record.hapus", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
         $f->setKategoriId($kategori_id);
         $f->setRecordRefId($record_ref_id);
         $f->view('admin::widgets.form_hapus');
@@ -226,7 +253,7 @@ class UsulanController extends Controller
             if (request('btn_action_') == 'KIRIM') {
                 $status_id = 2;
             }
-            return $f->createRequestDropFromRecord($kategori_id, $record_ref_id, $status_id);
+            return $f->createRequestDropFromRecord($kategori_id, $record_ref_id, $status_id,3);
         }
         return $content
             ->title("Usulan Penghapusan Data")
@@ -237,13 +264,14 @@ class UsulanController extends Controller
     {
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Detail Usulan']
         );
         $o = RiwayatUsulan::with(['obj_kategori_layanan'])->findOrFail($id);
         $f = new $o->obj_kategori_layanan->form_request_class;
-        $f->setRecordId($id);
-        $f->view('admin::widgets.form_detail');
+        $f->form();
+        $f->onEditForm($id);
+        $f->setView('admin.form-request-detail');
         $grid = new Grid(new RiwayatUsulanLog());
         $grid->setTitle("Daftar Log");
         $grid->disableRowSelector();
@@ -252,13 +280,13 @@ class UsulanController extends Controller
         $grid->disableColumnSelector();
         $grid->disableExport();
         $grid->disableFilter();
-        $grid->model()->where('request_id',$id);
-        $grid->model()->orderBy('created_at','asc');
-        $grid->column('log','KETERANGAN');
-        $grid->column('created_at','WAKTU')->display(function($o){
-            return $this->created_at->format('Y-m-d H:i:s');
+        $grid->model()->where('request_id', $id);
+        $grid->model()->orderBy('created_at', 'asc');
+        $grid->column('log', 'KETERANGAN');
+        $grid->column('created_at', 'WAKTU')->display(function ($o) {
+            return $this->created_at->format('d-m-Y H:i:s');
         });
-        $grid->column('obj_user.username','OLEH');
+        $grid->column('obj_user.username', 'OLEH');
         return $content
             ->title("Detail Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
@@ -270,36 +298,51 @@ class UsulanController extends Controller
         // add breadcrumb since v1.5.7
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
-            ['text' => 'Usulan Raya', 'url' => route('admin.usulan.saya')],
+            ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
             ['text' => 'Ubah Usulan']
         );
-        if (request()->isMethod('POST')) {
-            $record = RiwayatUsulan::with(['obj_kategori_layanan'])->findOrFail($id);
-            $form = new $record->obj_kategori_layanan->form_request_class;
-            $form->setRecordId($id);
-            if (request()->isMethod('POST')) {
-                $status_id = 0;
-                if (request('btn_action_') == 'DRAFT') {
-                    $status_id = 1;
-                }
-                if (request('btn_action_') == 'KIRIM') {
-                    $status_id = 2;
-                }
-                return $form->editRequest($record, $status_id);
-            }
-        }
+
         $o = RiwayatUsulan::with(['obj_kategori_layanan'])->findOrFail($id);
+
         $f = new $o->obj_kategori_layanan->form_request_class;
-        $f->action(route("admin.usulan.edit", ['id' => $id]));
-        $f->setRecordId($id);
-        $f->view('admin::widgets.form_request');
+        $f->form();
+        $f->setAction(route('admin.usulan.edit',['id'=>$id]));
+        $f->onEditForm($id);
         if ($o->status == StatusUsulan::SEND) {
             $f->able2draft = false;
             $f->able2send = false;
         }
+        if (request()->isMethod('POST')) {
+            $status_id = 0;
+            if (request('btn_action_') == 'DRAFT') {
+                $status_id = 1;
+            }
+            if (request('btn_action_') == 'KIRIM') {
+                $status_id = 2;
+            }
+            admin_success('Pesan', 'Data usulan berhasil diperbaharui');
+            $f->update($id,null,$status_id,2);
+            return redirect(route('admin.usulan.saya'));
+        }
+        $grid = new Grid(new RiwayatUsulanLog());
+        $grid->setTitle("Daftar Log");
+        $grid->disableRowSelector();
+        $grid->disableCreateButton();
+        $grid->disableActions();
+        $grid->disableColumnSelector();
+        $grid->disableExport();
+        $grid->disableFilter();
+        $grid->model()->where('request_id', $id);
+        $grid->model()->orderBy('created_at', 'asc');
+        $grid->column('log', 'KETERANGAN');
+        $grid->column('created_at', 'WAKTU')->display(function ($o) {
+            return $this->created_at->format('d-m-Y H:i:s');
+        });
+        $grid->column('obj_user.username', 'OLEH');
         return $content
             ->title("Ubah Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($f);
+            ->body($f)
+            ->body($grid);
     }
 }

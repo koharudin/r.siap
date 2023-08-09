@@ -1,30 +1,38 @@
 <?php
 
-namespace App\Admin\Controllers\ProfilePegawai;
+namespace App\Admin\Forms\Requests;
 
+use App\Admin\Forms\Requests\FormRequest;
+use App\Admin\Selectable\GridDiklat;
+use App\Admin\Selectable\GridPendidikan;
+use App\Http\Traits\FormRiwayatPendidikanTrait;
+use App\Models\KategoriLayanan;
+use App\Models\Pendidikan;
+use App\Models\RiwayatDiklatFungsional;
+use App\Models\RiwayatDiklatStruktural;
+use App\Models\RiwayatDiklatTeknis;
 use App\Models\RiwayatKursus;
-use Encore\Admin\Controllers\AdminController;
+use App\Models\RiwayatPendidikan;
+use App\Models\RiwayatPensiun;
+use App\Models\RiwayatUsulan;
 use Encore\Admin\Form;
+use Encore\Admin\Form\Row;
 use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use Encore\Admin\Widgets\StepForm;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class RiwayatKursusController extends ProfileController
+class FormRiwayatKursus extends FF
 {
-    public $activeTab = 'riwayat_kursus';
-    public $klasifikasi_id = 15;
     /**
-     * Title for current resource.
+     * The form title.
      *
      * @var string
      */
-    protected $title = 'Riwayat Kursus';
+    public $title = 'Riwayat Diklat Kursus';
 
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
-    protected function grid()
+
+    public function grid()
     {
         $grid = new Grid(new RiwayatKursus());
         $grid->model()->orderBy('tahun','asc');
@@ -46,40 +54,12 @@ class RiwayatKursusController extends ProfileController
         });
         return $grid;
     }
-
     /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
+     * Build a form here.
      */
-    protected function detail($id)
+    public function form()
     {
-        $show = new Show(RiwayatKursus::findOrFail($id));
-
-        $show->field('id', __('Id'));
-        $show->field('nama', __('NAMA'));
-        $show->field('tempat', __('TEMPAT'));
-        $show->field('penyelenggara', __('PENYELENGGARA'));
-        $show->field('angkatan', __('ANGKATAN'));
-        $show->field('tahun', __('TAHUN'));
-        $show->field('tgl_mulai', __('TGL MULAI'));
-        $show->field('tgl_selesai', __('TGL SELESAI'));
-        $show->field('no_sttpp', __('NO PIAGAM'));
-        $show->field('tgl_sttpp', __('TGL PIAGAM'));
-        $show->field('lama_jam', __('LAMA JAM'));
-
-        return $show;
-    }
-
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
-    protected function form()
-    {
-        $form = new Form(new RiwayatKursus());
+        $form = $this;
         $form->hidden('employee_id', __('Employee id'));
         $form->text('nama', __('NAMA'));
         $form->text('tempat', __('TEMPAT'));
@@ -93,5 +73,18 @@ class RiwayatKursusController extends ProfileController
         $form->number('lama_jam', __('LAMA JAM'));
 
         return $form;
+    }
+    public function onCreateForm()
+    {
+        $data = [];
+        return parent::edit($data);
+    }
+    public function onRefCreateForm($ref_id)
+    {
+        $record = RiwayatKursus::findOrFail($ref_id);
+        $data = $record->toArray();
+        $old_data = $record->toArray();
+        request()->session()->flash('old_data', $old_data);
+        return $this->edit($data);
     }
 }
