@@ -61,7 +61,7 @@ class FormRiwayatDiklatStruktural extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -76,7 +76,8 @@ class FormRiwayatDiklatStruktural extends FF
         $form->date('tgl_sttpp', __('TGL STTPP'))->default(date('Y-m-d'));
         $form->number('jumlah_jam', __('JUMLAH JAM'));
         $form->text('diklat', __('DIKLAT'));
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

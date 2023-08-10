@@ -39,11 +39,13 @@ class VerifikasiUsulanController extends Controller
 
     public function do($id, Content $content)
     {
+        
         $usulan = RiwayatUsulan::findOrFail($id);
         if ($usulan->status_id == StatusUsulan::TOLAK || $usulan->status_id == StatusUsulan::TERIMA) {
             admin_error("Pesan", "DATA USULAN TIDAK DAPAT DIPROSES VERIFIKASI. ");
             return back();
         }
+        $usulan->keterangan = request('keterangan_usulan');
         if (request('btn_action_') == 'TOLAK') {
             admin_success("Pesan", "Data usulan ditolak");
             $usulan->status_id = StatusUsulan::TOLAK;
@@ -56,6 +58,7 @@ class VerifikasiUsulanController extends Controller
             $log->log  = "USULAN DITOLAK";
             $log->save();
         }
+       
         if (request('btn_action_') == 'TERIMA') {
             DB::transaction(function() use($usulan){
                 $usulan->status_id = StatusUsulan::TERIMA;
@@ -82,10 +85,10 @@ class VerifikasiUsulanController extends Controller
         );
         $o = RiwayatUsulan::with(['obj_employee','obj_kategori_layanan'])->findOrFail($id);
         $f = new $o->obj_kategori_layanan->form_request_class;
-        $f->form();
-        $f->onEditForm($id);
+        $f->form()->readOnly();
         $f->record = $o;
-        $f->text("keterangan", "Alasan");
+        $f->textarea("keterangan_usulan", "Alasan")->required(true);
+        $f->onEditForm($id);
         $f->setView('admin::form-request-verifikasi');
         $f->setAction(route("admin.usulan.do_verifikasi", ['id' => $id]));
         if ($o->status_id == StatusUsulan::SEND) {

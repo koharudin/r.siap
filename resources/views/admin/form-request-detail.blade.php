@@ -29,7 +29,7 @@
                     <div class='col-sm-2'>
 
                     </div>
-                    @if($field->getView()=='admin::form.file')
+                    @if($field->getView()=='admin::form.file' && $field->variables()['id'] != 'dokumen_pendukung_usulan')
                     <a target='_blank' class='btn btn-danger' href="{{@session('old_data')[$field->variables()['id']]}}">File</a>
                     @elseif($field->getView()!='admin::form.hidden')
                     <div class='col-sm-10'>

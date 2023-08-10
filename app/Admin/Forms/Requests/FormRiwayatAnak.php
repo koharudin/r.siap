@@ -71,7 +71,7 @@ class FormRiwayatAnak extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -85,7 +85,8 @@ class FormRiwayatAnak extends FF
         $form->date('bln_dibayar', __('BLN DIBAYAR'))->default(date('Y-m-d'));
         $form->date('bln_akhir_dibayar', __('BLN AKHIR DIBAYAR'))->default(date('Y-m-d'));
 
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

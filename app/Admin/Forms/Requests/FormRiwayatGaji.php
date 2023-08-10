@@ -70,7 +70,7 @@ class FormRiwayatGaji extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -101,6 +101,8 @@ class FormRiwayatGaji extends FF
                 }
             }
         });
+        
+        return $this;
     }
     public function onCreateForm()
     {

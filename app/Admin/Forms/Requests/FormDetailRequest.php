@@ -35,7 +35,7 @@ class FormDetailRequest extends Form
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $this->select('kategori_layanan_id','Kategori Layanan')->options(KategoriLayanan::orderBy('order','asc')->get()->pluck('name','id'));
     }

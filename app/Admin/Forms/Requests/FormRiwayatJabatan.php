@@ -65,7 +65,7 @@ class FormRiwayatJabatan extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -93,8 +93,6 @@ class FormRiwayatJabatan extends FF
         $form->text('pejabat_penetap_jabatan', __('JABATAN'));
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
-        $form->divider();
-        $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_request')->uniqueName();
 
         $form->submitted(function (Form $form) use ($d) {
             $form->ignore('dokumen');
@@ -117,6 +115,8 @@ class FormRiwayatJabatan extends FF
                 }
             }
         });
+        
+        return $this;
     }
     public function onCreateForm()
     {

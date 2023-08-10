@@ -63,7 +63,10 @@ class FF extends Form
         }
         DB::transaction(function () use ($status_id, $kategori_layanan_id, $action, $ref_id) {
             $inserts = $this->prepareInsert($this->updates);
+            
             $usulan = new RiwayatUsulan();
+            $usulan->dokumen_pendukung = @$inserts['dokumen_pendukung_usulan'];
+            unset($inserts['dokumen_pendukung_usulan']);
             $usulan->new_data = json_encode($inserts);
             $usulan->employee_id = Admin::user()->obj_employee->id;
             $usulan->status_id = $status_id;
@@ -129,6 +132,10 @@ class FF extends Form
         DB::transaction(function () use ($id, $status_id, $action) {
             $updates = $this->prepareUpdate($this->updates);
             $usulan = RiwayatUsulan::findOrFail($id);
+            if(@$updates['dokumen_pendukung_usulan']){
+                $usulan->dokumen_pendukung = @$updates['dokumen_pendukung_usulan'];
+            }
+            unset($updates['dokumen_pendukung_usulan']);
             $usulan->new_data = json_encode($updates);
             $usulan->status_id = $status_id;
             $usulan->action = $action;
@@ -156,6 +163,8 @@ class FF extends Form
     {
         $record = RiwayatUsulan::findOrFail($id);
         $data = json_decode($record->new_data, true);
+        $data['dokumen_pendukung_usulan'] = $record->dokumen_pendukung;
+        $data['keterangan_usulan'] = $record->keterangan;
         $old_data = json_decode($record->old_data, true);
         request()->session()->flash('old_data', $old_data);
         return $this->edit($data);
@@ -206,6 +215,18 @@ class FF extends Form
             $grid->model()->where('employee_id', $this->employee_id);
             return $grid;
         }
+       
         return $this;
+    }
+    public function form(){
+        $this->buildForm();
+        $this->divider();
+        $this->file('dokumen_pendukung_usulan','DOKUMEN PENDUKUNG')->disk('minio_request')->uniqueName()->required(true);
+        return $this;
+    }
+    public function readOnly(){
+        foreach($this->fields() as $field){
+            $field->readOnly();
+        }
     }
 }

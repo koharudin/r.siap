@@ -79,7 +79,7 @@ class FormRiwayatNikah extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->select('jenis_pekerjaan', __('JENIS PEKERJAAN'))->options(JenisPekerjaan::all()->pluck('name','id'));

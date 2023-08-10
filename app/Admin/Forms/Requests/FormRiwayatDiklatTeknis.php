@@ -57,7 +57,7 @@ class FormRiwayatDiklatTeknis extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -76,7 +76,8 @@ class FormRiwayatDiklatTeknis extends FF
         $form->saving(function (Form $form) {
            $form->jenis_diklat = 1; //diklat teknis
         });
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

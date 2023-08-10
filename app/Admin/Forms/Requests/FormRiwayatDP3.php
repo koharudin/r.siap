@@ -53,7 +53,7 @@ class FormRiwayatDP3 extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -66,7 +66,8 @@ class FormRiwayatDP3 extends FF
         $form->decimal('prakarsa', __('PRAKARSA'));
         $form->decimal('kepemimpinan', __('KEPEMIMPINAN'));
 
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

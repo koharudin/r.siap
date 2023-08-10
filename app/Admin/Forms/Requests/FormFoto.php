@@ -19,9 +19,10 @@ class FormFoto extends FF
     public $title = 'Foto Pegawai';
 
 
-    public function form(){
+    public function buildForm(){
         $this->text('first_name');
         $this->image('foto')->disk('minio_foto');
+        
         return $this;
     }
     public function onCreateForm(){

@@ -68,7 +68,7 @@ class FormRiwayatOrangTua extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->select('status')->options(['1'=>'Ayah','2'=>'Ibu'])->required(true);

@@ -36,7 +36,7 @@ class FormDetailCategory extends StepForm
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $this->display('name','Nama Kategori');
         $this->display('deskripsi','Deskripsi');

@@ -68,7 +68,7 @@ class FormRiwayatMertua extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->select('status')->options(['3'=>'Mertua Ayah','4'=>'Mertua Ibu'])->required(true);
@@ -81,7 +81,8 @@ class FormRiwayatMertua extends FF
         $form->textarea('alamat', __('ALAMAT'));
         $form->text('telepon', __('TELEPON'));
 
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

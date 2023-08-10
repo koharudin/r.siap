@@ -57,7 +57,7 @@ class FormRiwayatKursus extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -72,7 +72,8 @@ class FormRiwayatKursus extends FF
         $form->date('tgl_sttpp', __('TGL PIAGAM'))->default(date('Y-m-d'));
         $form->number('lama_jam', __('LAMA JAM'));
 
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {

@@ -128,6 +128,7 @@ class UsulanController extends Controller
     }
     public function new_request($kategori_id, Content $content)
     {
+       
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
             ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
@@ -158,6 +159,7 @@ class UsulanController extends Controller
     }
     public function new_request_kategori($kategori_id, Content $content)
     {
+       
         $content->breadcrumb(
             ['text' => 'Dashboard', 'url' => route('admin.home')],
             ['text' => 'Usulan Saya', 'url' => route('admin.usulan.saya')],
@@ -178,7 +180,8 @@ class UsulanController extends Controller
                 $status_id = 2;
             }
             admin_success('Pesan', 'Data usulan berhasil dibuat');
-            $f->store($kategori_id,null, $status_id, 2);
+            dd("ww");
+            $f->store($kategori_id,null, $status_id, 1);
             return redirect(route('admin.usulan.saya'));
         }
         return $content

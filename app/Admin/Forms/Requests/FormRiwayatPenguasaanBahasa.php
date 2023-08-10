@@ -74,7 +74,7 @@ class FormRiwayatPenguasaanBahasa extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -85,6 +85,7 @@ class FormRiwayatPenguasaanBahasa extends FF
         $form->text('lembaga_sertifikasi', __('LEMBAGA SERTIFIKASI'));
         $form->text('skor', __('SKOR'));
         $form->date('tgl_expired', __('TGL KADALUARSA'))->default(date('Y-m-d'));
+        
         return $form;
     }
     public function onCreateForm()

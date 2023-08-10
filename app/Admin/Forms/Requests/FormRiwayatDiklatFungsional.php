@@ -61,7 +61,7 @@ class FormRiwayatDiklatFungsional extends FF
     /**
      * Build a form here.
      */
-    public function form()
+    public function buildForm()
     {
         $form = $this;
         $form->hidden('employee_id', __('Employee id'));
@@ -81,7 +81,8 @@ class FormRiwayatDiklatFungsional extends FF
         $form->saving(function (AdminForm $form) {
            $form->jenis_diklat = 2; //diklat fungsional
         });
-        return $form;
+        
+        return $this;
     }
     public function onCreateForm()
     {
