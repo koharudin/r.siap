@@ -117,7 +117,7 @@ class UsulanController extends Controller
         );
         $form = new WidgetsForm();
         $form->action(route('admin.usulan.buat_baru'));
-        $form->select("kategori_id", 'Kategori Layanan')->options(KategoriLayanan::all()->pluck('name', 'id'));
+        $form->select("kategori_id", 'Kategori Layanan')->options(KategoriLayanan::orderBy('name')->get()->pluck('name', 'id'));
         if (request()->isMethod('POST')) {
             return redirect(route('admin.usulan.kategori', ['id' => request('kategori_id')]));
         }
