@@ -20,4 +20,7 @@ class KategoriLayanan extends Model
         parent::__construct($attributes);
         $this->setTitleColumn('name');
     }
+    public function scopeEnabled($query){
+        $query->where('enabled',1);
+    }
 }
