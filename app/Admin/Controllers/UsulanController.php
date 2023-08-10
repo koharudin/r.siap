@@ -95,7 +95,10 @@ class UsulanController extends Controller
             $actions->disableView();
             $actions->disableEdit();
             $actions->disableDelete();
-            $actions->add(new CustomRowAction("Ubah Usulan", route("admin.usulan.edit", ['id' => $this->getKey()])));
+            if(!($this->row->status_id ==3 ||$this->row->status_id ==4 ||$this->row->status_id ==5)){
+                $actions->add(new CustomRowAction("Ubah Usulan", route("admin.usulan.edit", ['id' => $this->getKey()])));
+            }
+            
             $actions->add(new CustomRowAction("Detail Usulan", route("admin.usulan.detail", ['id' => $this->getKey()])));
         });
         return $content
@@ -151,7 +154,7 @@ class UsulanController extends Controller
         return $content
             ->title("Pembuatan Usulan")
             ->description($this->description['index'] ?? trans('admin.list'))
-            ->body($f->show());
+            ->body($f->show($kategori_id));
     }
     public function new_request_kategori($kategori_id, Content $content)
     {
@@ -240,11 +243,14 @@ class UsulanController extends Controller
             ['text' => 'Hapus Usulan']
         );
         $kategori = KategoriLayanan::findOrFail($kategori_id);
+        if (request()->isMethod('GET')) {
+            admin_warning("Pesan", "Anda yakin mau mengusulkan untuk menghapus data ini?");
+        }
         $f = new $kategori->form_request_class;
-        $f->action(route("admin.usulan.record.hapus", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
-        $f->setKategoriId($kategori_id);
-        $f->setRecordRefId($record_ref_id);
-        $f->view('admin::widgets.form_hapus');
+        $f->form();
+        $f->onRefCreateForm($record_ref_id);
+        $f->setAction(route("admin.usulan.record.hapus", ['kategori_id' => $kategori_id, 'record_ref_id' => $record_ref_id]));
+        $f->setView('admin::form-request-hapus');
         if (request()->isMethod('POST')) {
             $status_id = 0;
             if (request('btn_action_') == 'DRAFT') {
@@ -253,7 +259,9 @@ class UsulanController extends Controller
             if (request('btn_action_') == 'KIRIM') {
                 $status_id = 2;
             }
-            return $f->createRequestDropFromRecord($kategori_id, $record_ref_id, $status_id,3);
+            admin_success('Pesan', 'Data usulan berhasil dibuat');
+            $f->store($kategori_id, $record_ref_id, $status_id,3);
+            return redirect(route('admin.usulan.saya'));
         }
         return $content
             ->title("Usulan Penghapusan Data")

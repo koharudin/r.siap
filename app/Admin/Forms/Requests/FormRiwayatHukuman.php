@@ -1,32 +1,62 @@
 <?php
 
-namespace App\Admin\Controllers\ProfilePegawai;
+namespace App\Admin\Forms\Requests;
 
+use App\Admin\Forms\Requests\FormRequest;
+use App\Admin\Selectable\GridDiklat;
 use App\Admin\Selectable\GridPejabatPenetap;
+use App\Admin\Selectable\GridPendidikan;
+use App\Admin\Selectable\GridUnitKerja;
+use App\Http\Traits\FormRiwayatPendidikanTrait;
 use App\Models\Hukuman;
+use App\Models\JenisBahasa;
+use App\Models\JenisKelamin;
+use App\Models\JenisPekerjaan;
+use App\Models\KategoriLayanan;
+use App\Models\KemampuanBicara;
 use App\Models\PejabatPenetap;
+use App\Models\Pendidikan;
+use App\Models\RiwayatAnak;
+use App\Models\RiwayatDiklatFungsional;
+use App\Models\RiwayatDiklatStruktural;
+use App\Models\RiwayatDiklatTeknis;
+use App\Models\RiwayatDp3;
 use App\Models\RiwayatHukuman;
-use Encore\Admin\Controllers\AdminController;
+use App\Models\RiwayatKinerja;
+use App\Models\RiwayatKursus;
+use App\Models\RiwayatNikah;
+use App\Models\RiwayatOrangTua;
+use App\Models\RiwayatOrganisasi;
+use App\Models\RiwayatPendidikan;
+use App\Models\RiwayatPengalamanKerja;
+use App\Models\RiwayatPenguasaanBahasa;
+use App\Models\RiwayatPensiun;
+use App\Models\RiwayatPotensiDiri;
+use App\Models\RiwayatRekamMedis;
+use App\Models\RiwayatSaudara;
+use App\Models\RiwayatSeminar;
+use App\Models\RiwayatUjiKompetensi;
+use App\Models\RiwayatUsulan;
+use App\Models\StatusAnak;
+use App\Models\StatusMenikah;
+use App\Models\UnitKerja;
 use Encore\Admin\Form;
+use Encore\Admin\Form\Row;
 use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use Encore\Admin\Widgets\StepForm;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class RiwayatHukumanController  extends ProfileController
+class FormRiwayatHukuman extends FF
 {
-    public $activeTab = 'riwayat_hukuman';
     /**
-     * Title for current resource.
+     * The form title.
      *
      * @var string
      */
-    protected $title = 'Riwayat Hukuman';
+    public $title = 'Riwayat Hukuman';
 
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
-    protected function grid()
+    public function grid()
     {
         $grid = new Grid(new RiwayatHukuman());
         $grid->model()->orderBy('tmt_sk','asc');
@@ -50,45 +80,12 @@ class RiwayatHukumanController  extends ProfileController
 
         return $grid;
     }
-
     /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
+     * Build a form here.
      */
-    protected function detail($id)
+    public function form()
     {
-        $show = new Show(RiwayatHukuman::findOrFail($id));
-
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field(('pelanggaran'), __(('PELANGGARAN')));
-        $show->field('tmt_sk', __('TMT SK'));
-        $show->divider('');
-        $show->field('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
-        $show->field('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
-        $show->field('pejabat_penetap_nama', __('PEJABAT PENETAP NAMA'));
-        $show->field('tmt_akhir', __('TMT AKHIR'));
-        $show->field('pejabat_penetap_akhir_jabatan', __('PEJABAT PENETAP AKHIR JABATAN'));
-        $show->field('pejabat_penetap_akhir_nip', __('PEJABAT PENETAP AKHIR NIP'));
-        $show->field('pejabat_penetap_akhir_nama', __('PEJABAT PENETAP AKHIR NAMA'));
-        $show->field('sk_akhir', __('SK AKHIR'));
-        $show->field('tgl_sk_akhir', __('TGL  AKHIR'));
-        $show->field('hukuman_id', __('HUKUMAN'));
-
-        return $show;
-    }
-
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
-    protected function form()
-    {
-        $form = new Form(new RiwayatHukuman());
-
+        $form = $this;
         $form->hidden('employee_id', __('Employee id'));
         
         $form->textarea(('pelanggaran'), __(('PELANGGARAN')));
@@ -135,7 +132,19 @@ class RiwayatHukumanController  extends ProfileController
                 }
             }
         });
-        
         return $form;
+    }
+    public function onCreateForm()
+    {
+        $data = [];
+        return parent::edit($data);
+    }
+    public function onRefCreateForm($ref_id)
+    {
+        $record = RiwayatHukuman::findOrFail($ref_id);
+        $data = $record->toArray();
+        $old_data = $record->toArray();
+        request()->session()->flash('old_data', $old_data);
+        return $this->edit($data);
     }
 }

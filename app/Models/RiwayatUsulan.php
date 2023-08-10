@@ -20,5 +20,11 @@ class RiwayatUsulan extends Model
     public function obj_kategori_layanan(){
         return $this->hasOne(KategoriLayanan::class,'id','kategori_layanan_id');
     } 
+    public function scopeInboxVerifikasi($query){
+        $query->whereIn('status_id',[2,3,4,5]);
+    }
+    public function scopeTerbaru($query){
+        $query->orderBy('updated_at','desc');
+    }
     
 }
