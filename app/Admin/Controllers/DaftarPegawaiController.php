@@ -18,7 +18,7 @@ class DaftarPegawaiController extends Controller
     public $title  = 'Daftar Pegawai';
     public function index(Content $content)
     {
-        
+
         return $content
             ->title($this->title)
             ->body($this->grid());
@@ -26,7 +26,7 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
-        $grid->model()->orderBy('first_name','asc');
+        $grid->model()->orderBy('first_name', 'asc');
         $grid->paginate(10);
         $grid->actions(function ($actions) {
             $actions->disableDelete();
@@ -36,16 +36,17 @@ class DaftarPegawaiController extends Controller
         });
         $grid->disableCreateButton();
         $grid->disableRowSelector();
-        $grid->column('first_name', __('NAMA'));
-        $grid->column('nip_baru', __('NIP'));
+        $grid->column('first_name', __('PEGAWAI'))->display(function ($o) {
+            return $this->first_name . " <br> " . $this->nip_baru;
+        });
         $grid->column('email_kantor', __('EMAIL KANTOR'));
         $grid->column('email', __('EMAIL'));
-        $grid->expandFilter();  
-        $grid->filter(function($filter){    
+        $grid->expandFilter();
+        $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             $filter->where(function ($query) {
-                $query->where('first_name','ilike',"%".$this->input.'%');
-        },'Nama Pegawai');
+                $query->where('first_name', 'ilike', "%" . $this->input . '%');
+            }, 'Nama Pegawai');
             $filter->like('nip_baru', 'NIP Pegawai');
         });
         return $grid;
