@@ -27,7 +27,7 @@
       <div class="row justify-content-center">
         <div class="col-md-12 col-lg-10">
           <div class="wrap d-md-flex">
-            <div class="img" style="background-image: url({{ admin_asset("login/images/bg-logo.png")}});background-size:cover">
+            <div class="img" style="background-image: url({{env('CLIENT_BACKGROUND')}});background-size:cover">
             </div>
             <div class="login-wrap p-4 p-md-5">
               <div class="d-flex">

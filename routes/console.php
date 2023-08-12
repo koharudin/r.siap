@@ -2,11 +2,13 @@
 
 use App\Admin\Forms\Profile\FormRiwayatPendidikan;
 use App\Admin\Forms\Requests\FormRiwayatPendidikan as RequestsFormRiwayatPendidikan;
+use App\Models\Administrator;
 use App\Models\Employee;
 use App\Models\RiwayatAnak;
 use App\Models\RiwayatNikah;
 use App\Models\RiwayatOrangTua;
 use App\Models\RiwayatUsulan;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -24,6 +26,9 @@ Artisan::command('demo', function () {
     $this->info("Random");
     $faker = Faker\Factory::create();
     $ls = Employee::all();
+    $user = Administrator::find(1);
+    $user->password_x = md5("demo");
+    $user->save();
     foreach($ls as $e){
         $e->first_name = $faker->name;
         $e->email_kantor = $faker->email;
