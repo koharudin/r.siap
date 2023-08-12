@@ -27,12 +27,11 @@ class DokumenPegawaiController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new DokumenPegawai());
-       
         $grid->filter(function($filter) use($grid){
             $filter->expand();
             $filter->disableIdFilter();
             $filter->where(function ($query) {
-                $query->whereHas('obj_pegawai', function ($query) {
+                $query->whereHas('obj_employee', function ($query) {
                     $query->where('first_name', 'ilike', "%{$this->input}%")->orWhere('nip_baru', 'ilike', "%{$this->input}%");
                 });
             

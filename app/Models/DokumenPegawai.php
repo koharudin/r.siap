@@ -11,7 +11,7 @@ class DokumenPegawai extends Model
      public function obj_klasifikasi_dokumen (){
           return $this->hasOne(KlasifikasiDokumen::class,'id','klasifikasi_id');
      }
-     public function obj_pegawai (){
+     public function obj_employee (){
           return $this->hasOne(Employee::class,'simpeg_id','pk1');
      }
 }

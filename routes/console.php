@@ -3,6 +3,9 @@
 use App\Admin\Forms\Profile\FormRiwayatPendidikan;
 use App\Admin\Forms\Requests\FormRiwayatPendidikan as RequestsFormRiwayatPendidikan;
 use App\Models\Employee;
+use App\Models\RiwayatAnak;
+use App\Models\RiwayatNikah;
+use App\Models\RiwayatOrangTua;
 use App\Models\RiwayatUsulan;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -17,6 +20,40 @@ use Illuminate\Support\Facades\Artisan;
 | simple approach to interacting with each command's IO methods.
 |
 */
+Artisan::command('demo', function () {
+    $this->info("Random");
+    $faker = Faker\Factory::create();
+    $ls = Employee::all();
+    foreach($ls as $e){
+        $e->first_name = $faker->name;
+        $e->email_kantor = $faker->email;
+        $e->email = $faker->email;
+        $e->karpeg = $faker->numberBetween(4500,4900);
+        $e->nik = $faker->numberBetween(2000000000,21000000000);
+        $e->no_hp = "0821-1292-".$faker->numberBetween(1000,4444);
+        $e->alamat = $faker->paragraph(1);
+        $e->save();
+    }
+    $ls = RiwayatAnak::all();
+    foreach($ls as $e){
+        $e->name = $faker->name;
+        $e->save();
+    }
+
+    $ls = RiwayatOrangTua::all();
+    foreach($ls as $e){
+        $e->name = $faker->name;
+        $e->birth_date = $faker->date;
+        $e->save();
+    }
+    $ls = RiwayatNikah::all();
+    foreach($ls as $e){
+        $e->name = $faker->name;
+        $e->birth_date = $faker->date;
+        $e->buku_nikah = "NKH/".$faker->numberBetween(2000,3000);
+        $e->save();
+    }
+});
 Artisan::command('cek', function () {
     $credentials['username'] = 'muhammad.zahrudin@anri.go.id';
     $user = config('admin.database.users_model')::whereHas('obj_employee',function($q)use($credentials){

@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Presensi\JenisCuti as PresensiJenisCuti;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
@@ -53,5 +54,9 @@ class HomeController extends Controller
            return $disk->response($file);
         }
         else abort(404);
+    }
+    public function absensi(Content $content){
+        return PresensiJenisCuti::all();
+        //return $content->body('Ho');
     }
 }

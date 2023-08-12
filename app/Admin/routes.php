@@ -10,7 +10,9 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-
+    Route::group(['prefix'=>'api'],function(Router $router){
+        $router->get('employee','ApiController@list_employees');
+    });
     Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->resource('/', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
@@ -73,6 +75,19 @@ Route::group([
     $router->resource('manage_penghargaan', ManagePenghargaan::class);
     $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
 
+    $router->resource('manage_hari_libur', ManageHariLibur::class);
+    $router->resource('manage_jenis_cuti', ManageJenisCuti::class);
+    $router->resource('manage_riwayat_cuti', ManageRiwayatCuti::class);
+    $router->any('manage_riwayat_izin/massal','ManageRiwayatIzin@massal')->name('manage_riwayat_izin.buat_massal');
+    $router->any('manage_riwayat_pejaker/massal','ManageRiwayatPejaker@massal')->name('manage_riwayat_pejaker.buat_massal');
+    $router->any('manage_riwayat_tubel/massal','ManageRiwayatTubel@massal')->name('manage_riwayat_tubel.buat_massal');
+    $router->resource('manage_riwayat_izin', ManageRiwayatIzin::class);
+    $router->resource('manage_riwayat_izin_lain', ManageRiwayatIzinLain::class);
+    $router->resource('manage_riwayat_lupa_finger', ManageRiwayatLupaFinger::class);
+    $router->resource('manage_riwayat_pejaker', ManageRiwayatPejaker::class);
+    $router->resource('manage_riwayat_tubel', ManageRiwayatTubel::class);
+    
+
     Route::group(['prefix'=>'layanan','middleware'=>['checkProfile']],function(Router $router2) use($router){
         $router->any('usulan/saya','UsulanController@me')->name("usulan.saya");
         $router->post('usulan/proses','UsulanController@process')->name("usulan.proses");
@@ -89,7 +104,7 @@ Route::group([
         $router->any('verifikasi/usulan/{id}/detail','VerifikasiUsulanController@detail')->name("verifikasi.detail");
     });
  
-
+    $router->any('absensi','HomeController@absensi');
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
