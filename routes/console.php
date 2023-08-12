@@ -28,6 +28,7 @@ Artisan::command('demo', function () {
         $e->first_name = $faker->name;
         $e->email_kantor = $faker->email;
         $e->email = $faker->email;
+        $e->birth_date = $faker->date;
         $e->karpeg = $faker->numberBetween(4500,4900);
         $e->nik = $faker->numberBetween(2000000000,21000000000);
         $e->no_hp = "0821-1292-".$faker->numberBetween(1000,4444);
