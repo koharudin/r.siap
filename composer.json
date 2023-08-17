@@ -8,7 +8,7 @@
         "php": "^7.3|^8.0",
         "encore/laravel-admin": "^1.8",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.7",
         "jxlwqq/data-table": "^1.0",
         "jxlwqq/echarts": "^1.0",
         "laravel-admin-ext/chartjs": "^1.0",
