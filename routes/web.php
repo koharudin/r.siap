@@ -92,6 +92,11 @@ Route::group([
                 return redirect(route('admin.home'));
             }
         }
-        return redirect('http://localhost:8001/oauth/authorize?client_id=siap&response_type=code&state=123');
+        $params = [];
+        $params['client_id'] = env('SSO_CLIENT_ID');
+        $params['response_type'] ='code';
+        $params['state'] =md5(uniqid('sso_state'));
+
+        return redirect(env('SSO_AUTHORIZE_URL')."?".http_build_query($params));
     })->name('auth.sso');
 });
