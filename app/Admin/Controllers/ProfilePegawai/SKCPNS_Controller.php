@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Admin\Selectable\GridPejabatPenetap;
+use App\Models\DokumenPegawai;
 use App\Models\Employee;
 use App\Models\JenisPensiun;
 use App\Models\Pangkat;
@@ -31,7 +32,19 @@ class SKCPNS_Controller extends  ProfileController
     public function form()
     {
 
+        $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->whereHas('obj_employee',function($query){
+            $query->where('id',$this->getProfileId());
+        })->get()->first();
+        
         $form = new Form(new RiwayatSKCPNS());
+        if($dokumen){
+            $url = route('admin.download.dokumen', [
+                'f' => base64_encode($dokumen->file)
+            ]);
+            $form->tools(function($tools) use($url){
+                $tools->add('<a href="'.$url.'" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
+            });
+        }
         $form->hidden('employee_id', 'ID');
         // Add an input box of type text
         $form->select('pangkat_id', 'PANGKAT (GOL RUANG)')->options(Pangkat::all()->pluck('name', 'id'));
