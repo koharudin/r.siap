@@ -35,9 +35,13 @@ class SKPNS_Controller extends  ProfileController
     public function form()
     {
         
-        $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->whereHas('obj_employee',function($query){
-            $query->where('id',$this->getProfileId());
+        $r = RiwayatSKPNS::whereHas('obj_employee',function($q) {
+            $q->where('id',$this->getProfileId());
         })->get()->first();
+        $dokumen  = null;
+        if($r){
+            $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->where('ref_id',$r->id)->get()->first();
+        }
 
         $form = new Form(new RiwayatSKPNS());
         if($dokumen){

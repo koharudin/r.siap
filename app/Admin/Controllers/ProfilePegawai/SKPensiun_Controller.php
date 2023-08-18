@@ -27,10 +27,13 @@ class SKPensiun_Controller extends  ProfileController
     }
     public function form()
     {
-        $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->whereHas('obj_employee',function($query){
-            $query->where('id',$this->getProfileId());
+        $r = RiwayatPensiun::whereHas('obj_employee',function($q) {
+            $q->where('id',$this->getProfileId());
         })->get()->first();
-        
+        $dokumen  = null;
+        if($r){
+            $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->where('ref_id',$r->id)->get()->first();
+        }
         $form = new Form(new RiwayatPensiun());
         if($dokumen){
             $url = route('admin.download.dokumen', [
@@ -51,7 +54,7 @@ class SKPensiun_Controller extends  ProfileController
         $form->text('masa_kerja_tahun', 'MASA KERJA TAHUN');
         $form->text('masa_kerja_bulan', 'MASA KERJA BULAN');
         $form->text('unit_kerja', 'UNIT KERJA');
-
+        $this->setDokumenPendukung($form);
         $form->tools(function ($tools) {
             $tools->disableList();
             $tools->disableView();
