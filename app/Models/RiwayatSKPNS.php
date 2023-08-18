@@ -8,6 +8,10 @@ class RiwayatSKPNS extends Model
 {
     public $table  = 'riwayat_skpns';
     protected $dates = ['tmt_pns','tgl_sk'];
+    public function obj_employee(){
+        return $this->hasOne(Employee::class,'id','employee_id');
+    }
+
     public static function boot()
     {
         parent::boot();
