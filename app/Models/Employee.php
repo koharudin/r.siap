@@ -17,7 +17,10 @@ class Employee extends Model
     public const STATUS_PENSIUN = 3;
    
     public function showPhoto(){
-        return route('admin.download.foto',['f'=>base64_encode($this->foto)]);
+        if($this->foto && !($this->foto =='' || $this->foto ==' ' || $this->foto =='  ')){
+            return route('admin.download.foto',['f'=>base64_encode($this->foto)]);
+        }
+        return null;
     }
     public function scopeAktif($query){
         $query->whereIn('status_pegawai_id',[0,1,2]);
