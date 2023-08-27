@@ -4,6 +4,7 @@ namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Admin\Selectable\GridUnitKerja;
 use App\Models\Agama;
+use App\Models\DokumenPegawai;
 use App\Models\Employee;
 use App\Models\GolonganDarah;
 use App\Models\JenisKelamin;
@@ -61,10 +62,30 @@ class DataPersonalController extends  ProfileController
             $form->text('npwp', 'NPWP');
             $form->text('askes', 'ASKES');
             $form->text('nik', 'NIK');
-            $form->display('pin_absen', 'PIN ABSEN');
+            $form->text('pin_absen', 'PIN ABSEN');
+            $form->image('dokumen_ktp','KTP')->disk("minio_dokumen")->name(function($file){
+                return $this->data['nip_baru']."_".md5(uniqid()).".".$file->guessExtension();
+             })->hidePreview()->downloadable();
         });
 
-
+        $form->submitted(function (Form $form) {
+            $form->ignore('dokumen_ktp');
+        });
+        $form->saved(function (Form $form)  {
+            $file = request()->file('dokumen_ktp');
+            if ($file) {
+                $d = $form->fields()->first(function($f){
+                    return ($f->column() == 'dokumen_ktp');
+                });
+                $newFileName = $d->prepare($file);
+                $keys = explode("#", $form->model()->simpeg_id);
+                $arr = [
+                    'id' => $form->model()->id,
+                    'klasifikasi_id' => 1
+                ];
+                DataPersonalController::saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
+            }
+        });
         $form->tools(function ($tools) {
             $tools->disableList();
             $tools->disableView();
@@ -81,6 +102,14 @@ class DataPersonalController extends  ProfileController
         $r = Employee::with(['obj_agama'])->where('id', $this->getProfileId())->get()->first();
         if ($r) {
             $form  =  $form->edit($r->id);
+            $data = $form->model()->toArray();
+            $dok=DokumenPegawai::where('klasifikasi_id',1)->where('ref_id',$this->getProfileId())->get()->first();
+            if($dok){
+                $data = array_merge($data,['dokumen_ktp'=>$dok->file]);
+            }
+            $form->fields()->each(function($field) use($data){
+                $field->fill($data);
+            });
             $form->setAction('data_personal/' . $r->id);
             $form->setTitle(' ');
         } else {

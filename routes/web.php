@@ -15,6 +15,7 @@
 use App\Admin\Controllers\DaftarPegawaiController;
 use App\Models\Administrator;
 use App\Models\Agama;
+use App\Models\DokumenPegawai;
 use Doctrine\DBAL\Schema\Index;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Contracts\Cache\Store;
@@ -26,6 +27,10 @@ use Illuminate\Support\Facades\Http;
 
 Route::get('/', function () {
     return redirect('/admin');
+});
+Route::get('/d', function () {
+    $doc = DokumenPegawai::where('id',request('id'))->get()->first();
+    return Storage::disk('minio_dokumen')->response($doc->file);
 });
 Route::get('/test', function () {
     $minio = Storage::disk('minio');
