@@ -24,9 +24,19 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use MBence\OpenTBSBundle\Services\OpenTBS;
 
 Route::get('/', function () {
     return redirect('/admin');
+});
+Route::get('/test-opentbs',function(){
+    $TBS = new OpenTBS();
+    // load your template
+    $file = base_path().'\templates\demo_ms_word.docx';
+    $TBS->LoadTemplate($file);
+    $TBS->MergeField('r',array('first_name'=>'Test'));
+    // send the file
+    $TBS->Show(OPENTBS_DOWNLOAD, 'drh.docx');
 });
 Route::get('/d', function () {
     $doc = DokumenPegawai::where('id',request('id'))->get()->first();
