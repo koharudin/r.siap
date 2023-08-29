@@ -17,6 +17,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class RiwayatPangkatController extends ProfileController
 {
@@ -106,7 +107,12 @@ class RiwayatPangkatController extends ProfileController
         $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'));
 
         $form->decimal('kredit', __('KREDIT'));
-        $form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::all()->pluck('name', 'id'));
+        $form->select('pangkat_id', __('PANGKAT'))->options(function ($id) {
+            $r = Pangkat::find($id);
+            if ($r) {
+                return [$r->id => $r->text];
+            }
+        })->ajax(URL::to('/api/list_pangkat'));
         $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::all()->pluck('name', 'id'));
         $form->text('keterangan', __('KETERANGAN'));
         $form->text('jenis_ket', __('JENIS KET'));

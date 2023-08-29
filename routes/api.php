@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Pangkat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,17 @@ Route::get('/kedudukan_pernikahan',function (Request $request) {
         $l[] = [
             'id'=>$k,
             'text'=>$v
+        ];
+    }
+    return ['data'=>$l];
+});
+Route::get('/list_pangkat',function (Request $request) {
+    $ls = Pangkat::all();
+    $l = [];
+    foreach($ls  as $r){
+        $l[] = [
+            'id'=>$r->id,
+            'text'=>$r->text
         ];
     }
     return ['data'=>$l];
