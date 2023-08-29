@@ -9,4 +9,8 @@ class Pangkat extends Model
      public $table  = 'pangkat';
      public $primaryKey = 'id';
      public $incrementing = false;
+
+     public function getTextAttribute(){
+          return $this->name." ({$this->kode})";
+     }
 }

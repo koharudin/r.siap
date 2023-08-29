@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "barryvdh/laravel-dompdf": "^2.0",
         "encore/laravel-admin": "^1.8",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.7",
@@ -18,6 +19,9 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "mbence/opentbs-bundle": "^1.9",
+        "ncjoes/office-converter": "^1.0",
+        "phpoffice/phpword": "^1.1",
         "yajra/laravel-datatables-oracle": "^9.21",
         "zhpefe/select-tree": "^1.2"
     },
