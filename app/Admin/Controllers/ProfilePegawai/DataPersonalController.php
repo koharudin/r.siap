@@ -134,12 +134,36 @@ class DataPersonalController extends  ProfileController
         $arr_e['t_sex'] = $e->t_sex; 
         $arr_e['t_statuskawin'] = $e->t_statuskawin; 
         $arr_e['t_agama'] = $e->t_agama; 
+        $arr_e['t_tipe_pegawai'] = $e->t_tipe_pegawai; 
+
+        $e->load('obj_riwayat_pangkat');
+        $e_pkt = $e->obj_riwayat_pangkat->last();
+        $pkt_arr = $e_pkt->toArray();
+        $pkt_arr['t_tmt_pangkat'] = $e_pkt->t_tmt_pangkat;
+        $pkt_arr['t_pangkat_golongan'] = $e_pkt->t_pangkat_golongan;
+        $pkt_arr['t_masa_kerja'] = $e_pkt->t_masa_kerja;
+
+        $e->load('obj_riwayat_jabatan');
+        $e_jab = $e->obj_riwayat_jabatan->last();
+        $jab_arr = $e_jab->toArray();
+        $jab_arr['t_jenis_jabatan'] = $e_jab->t_tipe_jabatan;
+        $jab_arr['t_tmt_jabatan'] = $e_jab->t_tmt_jabatan;
+
+        $e->load('obj_riwayat_pendidikan');
+        $e_pend = $e->obj_riwayat_pendidikan->last();
+        $pend_arr = $e_pend->toArray();
+        $pend_arr['tingkat_pendidikan'] = $e_pend->t_pendidikan;
+
+        
         $TBS = new OpenTBS();
         \Carbon\Carbon::setLocale('id');
         // load your template
         $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_singkat.docx';
         $TBS->LoadTemplate($file);
         $TBS->MergeField('e',$arr_e);
+        $TBS->MergeField('pkt',$pkt_arr);
+        $TBS->MergeField('jab',$jab_arr);
+        $TBS->MergeField('pend',$pend_arr);
         $now = Carbon::now();
         $today = $now->isoFormat('dddd, D MMMM Y');
         $today_ymd = $now->isoFormat('YMMDD');

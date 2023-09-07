@@ -127,5 +127,8 @@ class Employee extends Model
     public function getTAgamaAttribute(){
         return Agama::find($this->agama_id)->name;
     }
+    public function getTTipePegawaiAttribute(){
+        return StatusPegawai::find($this->status_pegawai_id)->name;
+    }
     public $dates = ['birth_date','tgl_pensiun'];
 }

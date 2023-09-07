@@ -60,4 +60,12 @@ class RiwayatJabatan extends Model
             // ... code here
         });
     }
+
+    public function getTTipeJabatanAttribute(){
+        return TipeJabatan::find($this->tipe_jabatan_id)->name;
+    }
+    public function getTTMTJabatanAttribute(){
+        return $this->tmt_jabatan->format('d-m-Y');
+    }
+    
 }
