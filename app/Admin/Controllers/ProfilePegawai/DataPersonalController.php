@@ -14,6 +14,8 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Form;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\URL;
 
 class DataPersonalController extends  ProfileController
 {
@@ -29,6 +31,11 @@ class DataPersonalController extends  ProfileController
     public function form()
     {
         $form = new Form(new Employee());
+        $profile_id = $this->getProfileId();
+        $form->tools(function($tools) use($profile_id) {
+            $tools->add('<a href="'.route('admin.cetak-drh-singkat',['profile_id'=>$profile_id]).'" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i>&nbsp;&nbsp;Cetak DRH Singkat</a>');
+            $tools->add('<a href="'.route('admin.cetak-drh-lengkap',['profile_id'=>$profile_id]).'" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Cetak DRH Lengkap</a>');
+        });
         $form->column(1 / 2, function ($form) {
             //$form->fill($this->data());
             $form->hidden('id', 'ID');
@@ -116,5 +123,11 @@ class DataPersonalController extends  ProfileController
             $form->setAction('data_personal');
         }
         return $form;
+    }
+    public function cetak_drh_singkat(){
+        echo "singkat";
+    }
+    public function cetak_drh_lengkap(){
+        echo "lengkap";
     }
 }

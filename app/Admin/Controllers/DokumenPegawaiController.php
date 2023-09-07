@@ -41,15 +41,14 @@ class DokumenPegawaiController extends AdminController
         $grid->column('obj_klasifikasi_dokumen.name', __('KLASIFIKASI'));
         $grid->column('nama', __('Nama'));
         $grid->file('file', __('File'))->display(function($file){
-            $disk = Storage::disk('minio_dokumen');
-            if(Str::of($file)->trim()->isNotEmpty()){
-                if($disk->exists($file)) {
-                    $url = $disk->temporaryUrl(
-                        $file, now()->addMinutes(5)
-                    );
-                    return "<a target='_blank' href='{$url}'>Lihat</a>";
-                }   
+            $file = trim($file," ");
+            if($file!=''){
+                $url = route('admin.download.dokumen', [
+                    'f' => base64_encode($file)
+                ]);
+                return "<a target='_blank' href='{$url}'>Lihat</a>";
             }
+            else return "-";
         });
         $grid->column('pk1', __('PK1'));
         $grid->column('pk2', __('PK2'));

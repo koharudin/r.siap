@@ -14,8 +14,12 @@ Route::group([
         $router->get('employee','ApiController@list_employees');
     });
     Route::group(['prefix'=>'profile/{profile_id}','middleware'=>['checkProfile']],function(Router $router2) use($router){
+        $router->get('data_personal/cetak-drh-singkat', 'ProfilePegawai\DataPersonalController@cetak_drh_singkat')->name('cetak-drh-singkat');
+        $router->get('data_personal/cetak-drh-lengkap', 'ProfilePegawai\DataPersonalController@cetak_drh_lengkap')->name('cetak-drh-lengkap');
+
         $router->resource('/', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
         $router->resource('data_personal', ProfilePegawai\DataPersonalController::class)->parameter('data_personal','id');
+
         $router->resource('riwayat_orangtua', ProfilePegawai\RiwayatOrangTuaController::class)->parameter('riwayat_orangtua','id');
         $router->resource('riwayat_mertua', ProfilePegawai\RiwayatMertuaController::class)->parameter('riwayat_mertua','id');
         $router->resource('riwayat_nikah', ProfilePegawai\RiwayatNikahController::class)->parameter('riwayat_nikah','id');
