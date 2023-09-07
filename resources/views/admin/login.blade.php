@@ -72,6 +72,10 @@
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
                   <button type="submit" class="form-control btn btn-primary rounded submit px-3">{{ trans('admin.login') }}</button>
                 </div>
+                <div class="form-group">
+                  <center><a href="{{route('auth.sso')}}" class='btn btn-primary rounded submit px-3'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
+                  </center>
+                </div>
               </form>
 
             </div>
