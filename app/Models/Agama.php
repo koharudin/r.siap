@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Agama extends Model
 {
     use HasFactory;
-    public $name;
     public $timestamps = false;
     public $table = 'agama';
+    public $primaryKey = 'id';
 }

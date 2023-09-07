@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\GolonganDarah;
 use App\Models\JenisKelamin;
 use App\Models\StatusPernikahan;
+use Carbon\Carbon;
 use Encore\Admin\Auth\Permission;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
@@ -16,6 +17,7 @@ use Encore\Admin\Widgets\Box;
 use Encore\Admin\Form;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\URL;
+use MBence\OpenTBSBundle\Services\OpenTBS;
 
 class DataPersonalController extends  ProfileController
 {
@@ -125,9 +127,29 @@ class DataPersonalController extends  ProfileController
         return $form;
     }
     public function cetak_drh_singkat(){
-        echo "singkat";
+        $e = $this->getEmployee();
+        $arr_e = $e->toArray();
+        $arr_e['t_nama_gelar'] = $e->nama_gelar;
+        $arr_e['t_ttd'] = $e->ttd;
+        $arr_e['t_sex'] = $e->t_sex; 
+        $arr_e['t_statuskawin'] = $e->t_statuskawin; 
+        $arr_e['t_agama'] = $e->t_agama; 
+        $TBS = new OpenTBS();
+        \Carbon\Carbon::setLocale('id');
+        // load your template
+        $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_singkat.docx';
+        $TBS->LoadTemplate($file);
+        $TBS->MergeField('e',$arr_e);
+        $now = Carbon::now();
+        $today = $now->isoFormat('dddd, D MMMM Y');
+        $today_ymd = $now->isoFormat('YMMDD');
+        $TBS->MergeField('o', array('date' => $today));
+        // send the file
+        //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
+        $TBS->Show(OPENTBS_DOWNLOAD, "drh_{$e->nip_baru}_{$today_ymd}.docx");
     }
     public function cetak_drh_lengkap(){
         echo "lengkap";
     }
 }
+
