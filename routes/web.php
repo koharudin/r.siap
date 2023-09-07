@@ -105,6 +105,7 @@ Route::get('/test-conv1', function () {
     $converter->convertTo('output-file.pdf'); //generates pdf file in same directory as test-file.docx
 });
 Route::get('/test-opentbs', function () {
+    
     $TBS = new OpenTBS();
     \Carbon\Carbon::setLocale('id');
     // load your template
@@ -114,7 +115,8 @@ Route::get('/test-opentbs', function () {
     $today = Carbon::now()->isoFormat('dddd, D MMMM Y');
     $TBS->MergeField('o', array('date' => $today));
     // send the file
-    $TBS->Show(OPENTBS_FILE, 'drh2.docx');
+    //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
+    $TBS->Show(OPENTBS_DOWNLOAD, 'drh2.docx');
 });
 Route::get('/d', function () {
     $doc = DokumenPegawai::where('id', request('id'))->get()->first();

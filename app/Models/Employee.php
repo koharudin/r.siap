@@ -97,5 +97,38 @@ class Employee extends Model
         }
         return $this->birth_date->diffInMonths($from);
     }
+    public function getNamaGelarAttribute(){
+        $long_name =[];
+        if($this->gelar_depan){
+            $long_name[] = $this->gelar_depan;
+        }
+        $long_name[] = $this->first_name;
+        if($this->gelar_belakang){
+            $long_name[] = $this->gelar_belakang;
+        }
+        return trim(implode(" ",$long_name));
+    }
+    public function getTTDAttribute(){
+        $txt =[];
+        if($this->birth_place){
+            $txt[] = $this->birth_place;
+        }
+        if($this->birth_date){
+            $txt[] = $this->birth_date->format('d-m-Y');
+        }
+        return trim(implode(", ",$txt));
+    }
+    public function getTSexAttribute(){
+        return JenisKelamin::find($this->sex)->name;
+    }
+    public function getTStatusKawinAttribute(){
+        return StatusPernikahan::find($this->status_kawin)->name;
+    }
+    public function getTAgamaAttribute(){
+        return Agama::find($this->agama_id)->name;
+    }
+    public function getTTipePegawaiAttribute(){
+        return StatusPegawai::find($this->status_pegawai_id)->name;
+    }
     public $dates = ['birth_date','tgl_pensiun'];
 }

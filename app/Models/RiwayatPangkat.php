@@ -92,5 +92,14 @@ class RiwayatPangkat extends Model
         return $this->hasOne(JenisKP::class, 'id', 'jenis_kp');
     }
 
+    public function getTTMTPangkatAttribute(){
+        return $this->tmt_pangkat->format('d-m-Y');
+    }
+    public function getTPangkatGolonganAttribute(){
+        return $this->obj_pangkat->name." - ".$this->obj_pangkat->kode;
+    }
+    public function getTMasaKerjaAttribute(){
+        return $this->masakerja_thn." Tahun ".$this->masakerja_bln." Bulan";
+    }
     protected $dates = ['tmt_pangkat', 'tgl_sk'];
 }
