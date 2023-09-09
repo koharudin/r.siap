@@ -273,19 +273,25 @@ class ProfileController
 
     public function setDokumenPendukung(Form &$form)
     {
-        if ($this->use_document) {
+        if($this->use_document) {
             $_this = $this;
-            $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_dokumen')->name(function ($file) use ($_this) {
-                return $_this->getEmployee()->nip_baru . "_" . md5(uniqid()) .".". $file->guessExtension();
+            $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->rules([
+                'mimes:pdf',
+                'max:2048'
+            ], [
+                'mimes' => 'DOKUMEN HANYA DIPERBOLEHKAN FORMAT PDF',
+                'max' => 'UKURAN DOKUMEN MELEBIHI 2MB'
+            ])->disk('minio_dokumen')->name(function($file) use($_this) {
+                return $_this->getEmployee()->nip_baru."_".md5(uniqid()).".".$file->guessExtension();
             });
-            $form->saving(function (Form $form) {
+            $form->saving(function(Form $form) {
             });
-            $form->submitted(function (Form $form) {
+            $form->submitted(function(Form $form) {
                 $form->ignore('dokumen');
             });
-            $form->saved(function (Form $form) use ($d, $_this) {
+            $form->saved(function(Form $form) use($d, $_this) {
                 $file = request()->file('dokumen');
-                if ($file) {
+                if($file) {
                     $newFileName = $d->prepare($file);
                     $keys = explode("#", $form->model()->simpeg_id);
                     $arr = [
