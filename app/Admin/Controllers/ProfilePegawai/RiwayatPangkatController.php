@@ -23,6 +23,7 @@ class RiwayatPangkatController extends ProfileController
 {
     public $activeTab = 'riwayat_pangkat';
     public $klasifikasi_id = 5;
+	
     /**
      * Title for current resource.
      *
@@ -39,19 +40,34 @@ class RiwayatPangkatController extends ProfileController
     {
         $employee = $this->getEmployee();
         $grid = new Grid(new RiwayatPangkat());
+		
         $grid->model()->orderBy('tgl_sk', 'asc');
+		$grid->column('obj_pangkat.name', __('PANGKAT'));
+		$grid->column('obj_pangkat.kode', __('GOLONGAN'));
         $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
-            if ($o) {
+        $grid->column('tgl_sk', __('TGL SK'))->display(function($o) {
+            if($o) {
                 return $this->tgl_sk->format('d-m-Y');
             }
             return "-";
         });
-        $grid->column('obj_pangkat.name', __('PANGKAT'));
+		$grid->column('tmt_pangkat', __('TMT PANGKAT'))->display(function($o) {
+            if($o) {
+                return $this->tmt_pangkat->format('d-m-Y');
+            }
+            return "-";
+        });
         $grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-        $grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
-        $grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
-        $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
+        //$grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
+        //$grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
+        //$grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
         return $grid;
     }
 
@@ -96,46 +112,42 @@ class RiwayatPangkatController extends ProfileController
     protected function form()
     {
         $form = new Form(new RiwayatPangkat());
-        $form->hidden('employee_id', __('Employee id'));
-        $form->text('stlud', __('STLUD'));
-        $form->text('no_stlud', __('NO STLUD'));
-        $form->date('tgl_stlud', __('TGL STLUD'))->default(date('Y-m-d'));
-        $form->text('no_nota', __('NO NOTA'));
-        $form->date('tgl_nota', __('TGL NOTA'))->default(date('Y-m-d'));
-        $form->text('no_sk', __('NO SK'));
-        $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
-        $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'));
-
-        $form->decimal('kredit', __('KREDIT'));
-        $form->select('pangkat_id', __('PANGKAT'))->options(function ($id) {
-            $r = Pangkat::find($id);
-            if ($r) {
-                return [$r->id => $r->text];
-            }
-        })->ajax(URL::to('/api/list_pangkat'));
-        $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::all()->pluck('name', 'id'));
-        $form->text('keterangan', __('KETERANGAN'));
-        $form->text('jenis_ket', __('JENIS KET'));
-        $form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));
-        $form->number('masakerja_thn', __('MASA KERJA TAHUN'));
-        $form->number('masakerja_bln', __('MASA KERJA BULAN'));
+		
+        $form->hidden('employee_id', __('Employee ID'));
+        //$form->text('stlud', __('STLUD'));
+        //$form->text('no_stlud', __('NO STLUD'));
+        //$form->date('tgl_stlud', __('TGL STLUD'))->default(date('Y-m-d'));
+		$form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::selectRaw("concat(name, ' (', kode, ')') as nama, id")->pluck('nama', 'id'))->required();        
+		$form->text('no_sk', __('NO SK'))->required();
+        $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'))->required();
+        $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'))->required();
+        $form->text('no_nota', __('NO PERTEK'))->required();
+        $form->date('tgl_nota', __('TGL PERTEK'))->default(date('Y-m-d'))->required();
+        $form->decimal('kredit', __('ANGKA KREDIT UTAMA'))->required();
+		$form->decimal('kredit_tambahan', __('ANGKA KREDIT TAMBAHAN'))->required();
+		$form->date('tmt_pak', __('TMT PAK'))->default(date('Y-m-d'));
+        $form->select('jenis_kp', __('JENIS KP'))->options(JenisKP::where('sapk_jenis_kp_id', '!=', null)->pluck('name', 'id'))->required();
+		$form->number('masakerja_thn', __('MASA KERJA TAHUN'))->required();
+        $form->number('masakerja_bln', __('MASA KERJA BULAN'))->required();
+        //$form->text('keterangan', __('KETERANGAN'));
+        //$form->text('jenis_ket', __('JENIS KET'));
         $form->divider("Pejabat Penetap");
-        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
-        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
-        $form->text('pejabat_penetap_nip', __('NIP'));
-        $form->text('pejabat_penetap_nama', __('NAMA'));
+        //$form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
+		$form->text('pejabat_penetap_nama', __('PENETAP NAMA'));
+        //$form->text('pejabat_penetap_nip', __('PENETAP NIP'));
+		$form->text('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
 
-        $_this = $this;
-        $form->saving(function (Form $form) use ($_this) {
-            if ($form->pejabat_penetap_id) {
-                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
-                if ($r) {
+        /* $_this = $this;
+        $form->saving(function(Form $form) use($_this) {
+            if($form->pejabat_penetap_id) {
+                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                if($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
                     $form->pejabat_penetap_nama = $r->nama;
                 }
             }
-        });
+        }); */
 
         return $form;
     }
