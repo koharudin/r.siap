@@ -66,6 +66,16 @@ class Employee extends Model
     {
         return $this->hasOne(RiwayatPensiun::class, 'employee_id', 'id');
     }
+    public function obj_riwayat_prestasi_kerja()
+    {
+        return $this->hasMany(RiwayatKinerja::class, 'employee_id', 'id')->orderBy('tgl_penilaian', 'asc');
+    }
+
+    public function obj_riwayat_uji_kompetensi()
+    {
+        return $this->hasMany(RiwayatUjiKompetensi::class, 'employee_id', 'id')->orderBy('tanggal', 'asc');
+    }
+
     public function obj_riwayat_pangkat()
     {
         return $this->hasMany(RiwayatPangkat::class, 'employee_id', 'id')->orderBy('tmt_pangkat', 'asc');
@@ -73,6 +83,10 @@ class Employee extends Model
     public function obj_riwayat_pendidikan()
     {
         return $this->hasMany(RiwayatPendidikan::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
+    public function obj_riwayat_mutasi()
+    {
+        return $this->hasMany(RiwayatMutasi::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
     }
     public function obj_riwayat_jabatan()
     {
@@ -82,13 +96,29 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
     }
+    public function obj_riwayat_diklat_fungsional()
+    {
+        return $this->hasMany(RiwayatDiklatFungsional::class, 'employee_id', 'id')->diklatfungsional()->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
+    }
     public function obj_riwayat_diklat_teknis()
     {
-        return $this->hasMany(RiwayatDiklatTeknis::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
+        return $this->hasMany(RiwayatDiklatTeknis::class, 'employee_id', 'id')->diklatteknis()->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
     }
     public function obj_riwayat_hukuman()
     {
         return $this->hasMany(RiwayatHukuman::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
+    }
+    public function obj_riwayat_penghargaan()
+    {
+        return $this->hasMany(RiwayatPenghargaan::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
+    }
+    public function obj_riwayat_seminar()
+    {
+        return $this->hasMany(RiwayatSeminar::class, 'employee_id', 'id')->orderBy('tgl_mulai', 'asc');
+    }
+    public function obj_riwayat_kursus()
+    {
+        return $this->hasMany(RiwayatKursus::class, 'employee_id', 'id')->orderBy('tgl_mulai', 'asc');
     }
     public function getUsiaAttribute($from=null)
     {

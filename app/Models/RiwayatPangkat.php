@@ -91,9 +91,12 @@ class RiwayatPangkat extends Model
     {
         return $this->hasOne(JenisKP::class, 'id', 'jenis_kp');
     }
-
+    
     public function getTTMTPangkatAttribute(){
         return $this->tmt_pangkat->format('d-m-Y');
+    }
+    public function getTJenisKPAttribute(){
+        return $this->obj_jenis_kenaikan_pangkat->name;
     }
     public function getTPangkatGolonganAttribute(){
         return $this->obj_pangkat->name." - ".$this->obj_pangkat->kode;

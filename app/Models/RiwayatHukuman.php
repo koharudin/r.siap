@@ -14,6 +14,9 @@ class RiwayatHukuman extends Model
     public function obj_hukuman(){
         return $this->hasOne(Hukuman::class,'id','hukuman_id');
     }
+    public function getTTMTSKAttribute(){
+        return $this->tmt_sk->format('d-m-Y');
+    }
 
     public $dates = ['tgl_sk','tmt_sk','tgl_sk_akhir'];
 }

@@ -40,7 +40,7 @@ class RiwayatPenghargaanController extends ProfileController
             }
             return "-";
         });
-        $grid->column('pejabat_penetap', __('PEJABAT PENETAP'));
+        $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
         $grid->column('tahun', __('TAHUN'));
         $grid->column('jenis_penghargaan', __('JENIS PENGHARGAAN'));
 

@@ -8,6 +8,7 @@ use App\Models\DokumenPegawai;
 use App\Models\Employee;
 use App\Models\GolonganDarah;
 use App\Models\JenisKelamin;
+use App\Models\RiwayatPangkat;
 use App\Models\StatusPernikahan;
 use Carbon\Carbon;
 use Encore\Admin\Auth\Permission;
@@ -170,10 +171,174 @@ class DataPersonalController extends  ProfileController
         $TBS->MergeField('o', array('date' => $today));
         // send the file
         //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
-        $TBS->Show(OPENTBS_DOWNLOAD, "drh_{$e->nip_baru}_{$today_ymd}.docx");
+        $TBS->Show(OPENTBS_DOWNLOAD, "drhsingkat_{$e->nip_baru}_{$today_ymd}.docx");
     }
     public function cetak_drh_lengkap(){
-        echo "lengkap";
+        $e = $this->getEmployee();
+        $arr_e = $e->toArray();
+        $arr_e['t_nama_gelar'] = $e->nama_gelar;
+        $arr_e['t_ttd'] = $e->ttd;
+        $arr_e['t_sex'] = $e->t_sex; 
+        $arr_e['t_statuskawin'] = $e->t_statuskawin; 
+        $arr_e['t_agama'] = $e->t_agama; 
+        $arr_e['t_tipe_pegawai'] = $e->t_tipe_pegawai; 
+        $e->load('obj_riwayat_jabatan');
+        $jabatan =  $e->obj_riwayat_jabatan->last();
+        $arr_e['jabatan']=$jabatan?$jabatan->nama_jabatan:'-';
+        $e->load('obj_satker');
+        $arr_e['t_unit_kerja']=$e->obj_satker->name;
+        $e->load('obj_riwayat_pangkat');
+        $pkt_cpns = $e->obj_riwayat_pangkat->filter(function($o){
+            return $o->is_cpns_pns == RiwayatPangkat::SK_CPNS;
+        });
+        $pkt_cpns = $pkt_cpns->first();
+        $arr_e['t_tmt_cpns']=$pkt_cpns?$pkt_cpns->tmt_pangkat->format('d-m-Y'):'-';
+        $pkt_pns = $e->obj_riwayat_pangkat->filter(function($o){
+            return $o->is_cpns_pns == RiwayatPangkat::SK_PNS;
+        });
+        $pkt_pns = $pkt_pns->first();
+        $arr_e['t_tmt_pns']=$pkt_pns?$pkt_pns->tmt_pangkat->format('d-m-Y'):'-';
+        $arr_e['t_masa_kerja']='';
+
+        $TBS = new OpenTBS();
+        \Carbon\Carbon::setLocale('id');
+        // load your template
+        $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_lengkap.docx';
+        $TBS->LoadTemplate($file);
+        $TBS->MergeField('e',$arr_e);
+        $now = Carbon::now();
+        $today = $now->isoFormat('dddd, D MMMM Y');
+        $today_ymd = $now->isoFormat('YMMDD');
+        $TBS->MergeField('o', array('date' => $today));
+        $e->load('obj_riwayat_pendidikan');
+        //dd($e->obj_riwayat_pendidikan);
+        $TBS->MergeBlock('rp',$e->obj_riwayat_pendidikan);
+
+        $e->load('obj_riwayat_pangkat');
+        $pkt_arr = [];
+        $e->obj_riwayat_pangkat->each(function($t) use(&$pkt_arr){
+            $r_arr = $t->toArray();
+            $r_arr['t_tmt'] = $t->t_tmt_pangkat;
+            $r_arr['t_pangkat_golongan_ruang'] = $t->t_pangkat_golongan;
+            $r_arr['t_jeniskp'] = $t->t_jeniskp;
+            $pkt_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('pkt',$pkt_arr);
+
+        $e->load('obj_riwayat_prestasi_kerja');
+        $kin_arr = [];
+        $e->obj_riwayat_prestasi_kerja->each(function($t) use(&$kin_arr){
+            $r_arr = $t->toArray();
+            $r_arr['t_tmt'] = $t->t_tmt_pangkat;
+            $r_arr['t_pangkat_golongan_ruang'] = $t->t_pangkat_golongan;
+            $r_arr['t_jeniskp'] = $t->t_jeniskp;
+            $kin_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('kin',$kin_arr);
+
+
+        $e->load('obj_riwayat_uji_kompetensi');
+        $uk_arr = [];
+        $e->obj_riwayat_uji_kompetensi->each(function($t) use(&$uk_arr){
+            $r_arr = $t->toArray();
+            $r_arr['tahun'] = $t->t_tahun;
+            $uk_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('uk',$uk_arr);
+
+
+        $e->load('obj_riwayat_jabatan');
+        $jab_arr = [];
+        $e->obj_riwayat_jabatan->each(function($t) use(&$jab_arr){
+            $r_arr = $t->toArray();
+            $r_arr['t_tmt'] = $t->t_tmt_jabatan;
+            $r_arr['t_unit'] = $t->unit_text;
+            $r_arr['t_jeniskp'] = $t->t_jeniskp;
+            $jab_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('jab',$jab_arr);
+
+        $e->load('obj_riwayat_mutasi');
+        $mut_arr = [];
+        $e->obj_riwayat_mutasi->each(function($t) use(&$mut_arr){
+            $r_arr = $t->toArray();
+            $r_arr['t_tgl_sk'] = $t->t_tgl_sk;
+            $mut_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('mut',$mut_arr);
+
+        $e->load('obj_riwayat_penghargaan');
+        $aw_arr = [];
+        $e->obj_riwayat_penghargaan->each(function($t) use(&$aw_arr){
+            $r_arr = $t->toArray();
+            $r_arr['name'] = $t->nama_penghargaan;
+            $r_arr['pejabat_penetap'] = $t->pejabat_penetap_jabatan;
+            $aw_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('aw',$aw_arr);
+
+        $e->load('obj_riwayat_hukuman');
+        $huk_arr = [];
+        $e->obj_riwayat_hukuman->each(function($t) use(&$huk_arr){
+            $r_arr = $t->toArray();
+            $r_arr['name'] = $t->obj_hukuman->name;
+            $r_arr['t_tmt_sk'] = $t->t_tmt_sk;
+            $huk_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('huk',$huk_arr);
+
+        $e->load('obj_riwayat_diklat_struktural');
+        $dstruk_arr = [];
+        $e->obj_riwayat_diklat_struktural->each(function($t) use(&$dstruk_arr){
+            $r_arr = $t->toArray();
+            $r_arr['name'] = $t->nama_diklat;
+            $r_arr['jp'] = $t->jumlah_jam;
+            $dstruk_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('ko1',$dstruk_arr);
+
+        $e->load('obj_riwayat_diklat_fungsional');
+        $dfung_arr = [];
+        $e->obj_riwayat_diklat_fungsional->each(function($t) use(&$dfung_arr){
+            $r_arr = $t->toArray();
+            $r_arr['name'] = $t->nama_diklat;
+            $r_arr['jp'] = $t->jumlah_jam;
+            $dfung_arr[] = $r_arr;
+        });
+        
+        $TBS->MergeBlock('ko2',$dfung_arr);
+
+        $e->load('obj_riwayat_diklat_teknis');
+        $dfung_arr = [];
+        $e->obj_riwayat_diklat_teknis->each(function($t) use(&$dfung_arr){
+            $r_arr = $t->toArray();
+            $r_arr['name'] = $t->nama_diklat;
+            $r_arr['jp'] = $t->jumlah_jam;
+            $dfung_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('ko3',$dfung_arr);
+
+        $e->load('obj_riwayat_seminar');
+        $d_arr = [];
+        $e->obj_riwayat_seminar->each(function($t) use(&$d_arr){
+            $r_arr = $t->toArray();
+            $r_arr['tahun'] = $t->t_tahun;
+            $d_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('ko4',$d_arr);
+
+
+        $e->load('obj_riwayat_kursus');
+        $d_arr = [];
+        $e->obj_riwayat_kursus->each(function($t) use(&$d_arr){
+            $r_arr = $t->toArray();
+            $d_arr[] = $r_arr;
+        });
+        $TBS->MergeBlock('ko5',$d_arr);
+
+        // send the file
+        //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
+        $TBS->Show(OPENTBS_DOWNLOAD, "drhlengkap_{$e->nip_baru}_{$today_ymd}.docx");
     }
 }
 

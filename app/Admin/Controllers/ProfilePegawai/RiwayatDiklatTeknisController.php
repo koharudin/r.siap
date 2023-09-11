@@ -29,7 +29,7 @@ class RiwayatDiklatTeknisController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatDiklatTeknis());
-        $grid->model()->where('jenis_diklat',1); 
+        $grid->model()->diklatteknis();
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('tempat', __('TEMPAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
