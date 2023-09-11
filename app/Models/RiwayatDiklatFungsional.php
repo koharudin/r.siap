@@ -13,4 +13,9 @@ class RiwayatDiklatFungsional extends Model
     }
     
     public $dates = ['tgl_mulai', 'tgl_selesai'];
+
+    public function obj_id()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
 }
