@@ -58,13 +58,6 @@ class RiwayatPangkatController extends ProfileController
             return "-";
         });
         $grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-		$grid->column('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
         //$grid->column('pejabat_penetap_nip', __('PENETAP NIP'));
         //$grid->column('pejabat_penetap_nama', __('PENETAP NAMA'));
         //$grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
