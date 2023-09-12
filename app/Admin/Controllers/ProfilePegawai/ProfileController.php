@@ -179,6 +179,9 @@ class ProfileController
             $c = $grid->render();
         } else if (method_exists($this, 'form')) {
             $form = $this->form();
+            $form->disableCreatingCheck();
+            $form->disableEditingCheck();
+            $form->disableViewCheck();
             $c = $form;
         }
         $employee = $this->getEmployee();
@@ -234,6 +237,9 @@ class ProfileController
     {
         Permission::check("edit-{$this->activeTab}");
         $form  = $this->form();
+        $form->disableCreatingCheck();
+        $form->disableEditingCheck();
+        $form->disableViewCheck();
         $profile_id = $this->getProfileId();
         $form->edit($id);
 
