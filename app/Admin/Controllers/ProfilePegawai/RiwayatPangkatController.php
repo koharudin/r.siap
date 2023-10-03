@@ -4,6 +4,7 @@ namespace App\Admin\Controllers\ProfilePegawai;
 
 use Illuminate\Http\UploadedFile;
 use App\Admin\Selectable\GridPejabatPenetap;
+use App\Admin\Controllers\SiasnController;
 use App\Models\DokumenPegawai;
 use App\Models\JenisKP;
 use App\Models\Pangkat;
@@ -38,12 +39,15 @@ class RiwayatPangkatController extends ProfileController
      */
     protected function grid()
     {
-        $employee = $this->getEmployee();
         $grid = new Grid(new RiwayatPangkat());
 		
-        $grid->model()->orderBy('tgl_sk', 'asc');
+        $grid->model()->orderBy('tmt_pangkat', 'asc');
+        $grid->column('obj_pegawai.nip_baru', 'NIP')->display(function($value) {
+            $this->nip = $value;
+            return $value;
+        })->hide();
+        $grid->column('obj_pangkat.kode', __('GOLONGAN'));
 		$grid->column('obj_pangkat.name', __('PANGKAT'));
-		$grid->column('obj_pangkat.kode', __('GOLONGAN'));
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'))->display(function($o) {
             if($o) {
@@ -73,27 +77,142 @@ class RiwayatPangkatController extends ProfileController
     protected function detail($id)
     {
         $show = new Show(RiwayatPangkat::findOrFail($id));
+        $apiData = SiasnController::get_nip_pangkat($id);
+        $this->apiData = $apiData;
+        // var_dump($apiData);
+        // die();
 
-        $show->field('stlud', __('STLUD'));
-        $show->field('no_stlud', __('NO STLUD'));
-        $show->field('tgl_stlud', __('TGL STLUD'));
-        $show->field('no_nota', __('NO NOTA'));
-        $show->field('tgl_nota', __('TGL NOTA'));
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field('tmt_pangkat', __('TMT PANGKAT'));
-        $show->field('kredit', __('KREDIT'));
-        $show->field('obj_pangkat.name', __('PANGKAT'));
-        $show->field('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-        $show->field('keterangan', __('KETERANGAN'));
-        $show->field('jenis_ket', __('JENIS KET'));
-        $show->field('tmt_pak', __('TMT PAK'));
-        $show->field('masakerja_thn', __('MASA KERJA TAHUN'));
-        $show->field('masakerja_bln', __('MASA KERJA BULAN'));
-        $show->divider("PEJABAT PENETAP");
-        $show->field('penetap_nip', __('PENETAP NIP'));
-        $show->field('penetap_nama', __('PENETAP NAMA'));
-        $show->field('penetap_jabatan', __('PENETAP JABATAN'));
+        $show->field(__('PANGKAT/GOLONGAN'))->as(function() {
+            return (!empty($this->obj_pangkat)) ? $this->obj_pangkat->name.' - '.$this->obj_pangkat->kode : "-";
+        });
+        $show->field('api_data1', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['golongan']) and $apiData['golongan'] != "") {
+                $value = $apiData['golongan'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('no_sk', 'NO SK')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data2', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['skNomor']) and $apiData['skNomor'] != "") {
+                $value = $apiData['skNomor'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('tgl_sk', 'TGL SK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data3', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['skTanggal']) and $apiData['skTanggal'] != "") {
+                $value = $apiData['skTanggal'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('tmt_pangkat', 'TMT PANGKAT')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data4', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['tmtGolongan']) and $apiData['tmtGolongan'] != "") {
+                $value = $apiData['tmtGolongan'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('no_nota', 'NO PERTEK')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data5', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['noPertekBkn']) and $apiData['noPertekBkn'] != "") {
+                $value = $apiData['noPertekBkn'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('tgl_nota', 'TGL PERTEK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data6', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['tglPertekBkn']) and $apiData['tglPertekBkn'] != "") {
+                $value = $apiData['tglPertekBkn'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('kredit', 'ANGKA KREDIT UTAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data7', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['jumlahKreditUtama']) and $apiData['jumlahKreditUtama'] != "") {
+                $value = $apiData['jumlahKreditUtama'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('kredit_tambahan', 'ANGKA KREDIT TAMBAHAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data8', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['jumlahKreditTambahan']) and $apiData['jumlahKreditTambahan'] != "") {
+                $value = $apiData['jumlahKreditTambahan'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('obj_jenis_kenaikan_pangkat.name', 'JENIS KP')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data9', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['jenisKPNama']) and $apiData['jenisKPNama'] != "") {
+                $value = $apiData['jenisKPNama'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('masakerja_thn', 'MASA KERJA TAHUN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data10', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['masaKerjaGolonganTahun']) and $apiData['masaKerjaGolonganTahun'] != "") {
+                $value = $apiData['masaKerjaGolonganTahun'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('masakerja_bln', 'MASA KERJA BULAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data11', 'data siasn')->unescape()->as(function() use($apiData) {
+            $value = "-";
+            if(isset($apiData['masaKerjaGolonganBulan']) and $apiData['masaKerjaGolonganBulan'] != "") {
+                $value = $apiData['masaKerjaGolonganBulan'];
+            }
+            return "<span style='color: blue;'>".$value."</span>";
+        });
+        $show->divider();
+        $show->field('tmt_pak', 'TMT PAK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('penetap_nama', 'PENETAP NAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('penetap_jabatan', 'PENETAP JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+
         return $show;
     }
 
@@ -110,7 +229,7 @@ class RiwayatPangkatController extends ProfileController
         //$form->text('stlud', __('STLUD'));
         //$form->text('no_stlud', __('NO STLUD'));
         //$form->date('tgl_stlud', __('TGL STLUD'))->default(date('Y-m-d'));
-		$form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::selectRaw("concat(name, ' (', kode, ')') as nama, id")->pluck('nama', 'id'))->required();        
+		$form->select('pangkat_id', __('PANGKAT'))->options(Pangkat::selectRaw("concat(name, ' - ', kode) as nama, id")->pluck('nama', 'id'))->required();        
 		$form->text('no_sk', __('NO SK'))->required();
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'))->required();
         $form->date('tmt_pangkat', __('TMT PANGKAT'))->default(date('Y-m-d'))->required();

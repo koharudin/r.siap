@@ -6,6 +6,7 @@ use App\Admin\Forms\Config;
 use App\Admin\Forms\Settings;
 use App\Models\DokumenPegawai;
 use App\Models\Employee;
+use App\Http\Controllers\SiasnController;
 use Encore\Admin\Auth\Permission;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -120,64 +121,83 @@ class ProfileController
             $dokumen->save();
         }
     }
+
     public function getDokumenUrl($arr)
     {
-        if (@$arr['id']) {
+        $href = '';
+        if(@$arr['id']) {
             $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
         }
-        if ($dokumen) {
-            if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') return 'File tidak ditemukan.';
-            else {
+        if($dokumen) {
+            if(str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') {
+                $href = 'File SIAP tidak ada.';
+            } else {
                 $url = route('admin.download.dokumen', [
                     'f' => base64_encode($dokumen->file)
                 ]);
-                return "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Download</a>";
+                $href = "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIAP</b></a>";
             }
+        } else {
+            $href = 'File SIAP tidak ada.';
         }
-        return "-";
+        if(!empty(@$arr['dok_uri'])) {
+            $url = route('admin.download.dokumensiasn', [
+                'f' => base64_encode(@$arr['id_siasn']),
+                'g' => base64_encode(@$arr['klasifikasi_id']),
+                'h' => base64_encode(@$arr['nip'])
+            ]);
+            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIASN</b></a>";
+        } else {
+            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'>File SIASN tidak ada.";
+        }
+        return $href;
     }
+    
     public function index(Content $content)
     {
         $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($this->header()->render());
-        if (method_exists($this, 'grid')) {
+        if(method_exists($this, 'grid')) {
             $grid = $this->grid();
             $grid->paginate(10);
             $employee = $this->getEmployee();
-            if ($this->use_document) {
+            if($this->use_document) {
                 $_this = $this;
-                $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
+                $grid->column('dokumen', 'DOKUMEN')->display(function($cb) use($employee, $_this) {
                     return $_this->getDokumenUrl([
                         'klasifikasi_id' => $_this->klasifikasi_id,
                         'id' => $this->id,
+                        'dok_uri' => $this->dok_siasn,
+                        'nip' => $this->nip,
+                        'id_siasn' => $this->id_siasn,
                     ]);
                 });
             }
-            if (!Admin::user()->can("create-{$this->activeTab}")) {
+            if(!Admin::user()->can("create-{$this->activeTab}")) {
                 $grid->disableCreateButton();
             }
             $_this = $this;
-            $grid->actions(function ($actions) use ($_this) {
-                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
+            $grid->actions(function($actions) use($_this) {
+                if(!Admin::user()->can("delete-{$_this->activeTab}")) {
                     $actions->disableDelete();
                 }
-                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                if(!Admin::user()->can("edit-{$_this->activeTab}l")) {
                     $actions->disableEdit();
                 }
             });
-            $grid->tools(function ($tools) use ($_this) {
-                $tools->batch(function ($batch) use ($_this) {
-                    if (!Admin::user()->can("delete-{$this->activeTab}")) {
+            $grid->tools(function($tools) use($_this) {
+                $tools->batch(function($batch) use($_this) {
+                    if(!Admin::user()->can("delete-{$this->activeTab}")) {
                         $batch->disableDelete();
                     }
                 });
             });
             $grid->disableRowSelector();
-            $grid->model()->where('employee_id',  $this->getProfileId());
+            $grid->model()->where('employee_id', $this->getProfileId());
             $c = $grid->render();
-        } else if (method_exists($this, 'form')) {
+        } else if(method_exists($this, 'form')) {
             $form = $this->form();
             $c = $form;
         }
@@ -210,19 +230,56 @@ class ProfileController
         $content->view("v_profile_sidebar", ['g' => $c, 'links' => $this->links(), 'e' => $this->getEmployee()]);
         return $content;
     }
+
     public function show($profile_id, $id, Content $content)
     {
         $c = $this->detail($id);
         $_this = $this;
         $c->panel()
-            ->tools(function ($tools) use ($_this) {
-                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
+            ->tools(function($tools) use($_this, $id) {
+                if(!Admin::user()->can("delete-{$_this->activeTab}")) {
                     $tools->disableDelete();
                 }
-                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                if(!Admin::user()->can("edit-{$_this->activeTab}l")) {
                     $tools->disableEdit();
                 }
-            });;
+                if((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
+                    $tools->append('<a id="customButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
+                    $url = route('admin.download.datasiasn', [
+                        'f' => $id,
+                        'g' => $_this->klasifikasi_id,
+
+                    ]);
+                    
+                    $script = <<<SCRIPT
+                        <script>
+                            $(document).ready(function() {
+                                $('#customButton').on('click', function() {
+                                    Swal.fire({
+                                        title: "Anda yakin ambil data dari SIASN?",
+                                        type: "info",
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#DD6B55",
+                                        confirmButtonText: "Konfirmasi",
+                                        showLoaderOnConfirm: true,
+                                        cancelButtonText: "Batalkan",
+                                    }).then((result) => {
+                                        if(result.isConfirmed) {
+                                            console.log('Confirmed!');
+                                            window.location.href = 'https://www.google.com';
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                    SCRIPT;
+
+                    $tools->append($script);
+                    // $tools->append('<a class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
+                    // $tools->append('<a style="margin-right: 10px;" class="btn btn-sm btn-warning"><i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Kirim ke SIASN</a>');
+                    if(isset($_this->apiData) and $_this->apiData != '') var_dump($_this->apiData);
+                }
+            });
         $content
             ->title($this->title())
             ->description($this->description['show'] ?? trans('admin.show'));

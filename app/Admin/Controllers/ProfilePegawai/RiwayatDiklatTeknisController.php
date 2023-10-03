@@ -49,6 +49,13 @@ class RiwayatDiklatTeknisController extends ProfileController
             return "-";
         });
         $grid->column('jumlah_jam', __('JUMLAH JAM'));
+        $grid->column('flag_integrasi', __('INTEGRASI SIASN'))->display(function($o) {
+            if($o == 2) {
+                return "Sudah";
+            } else if($o == 1 or $o == null) {
+                return "Belum";
+            }
+        });
         return $grid;
     }
 
