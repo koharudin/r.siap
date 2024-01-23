@@ -314,4 +314,47 @@ class SiasnController
         // header('Content-Disposition: inline; filename="download.pdf"');
         // echo $response;
     }
+
+    public function save_hukuman($id, $akhirHukumanTanggal, $alasanHukumanDisiplinId, $golonganId, $hukumanTanggal, $jenisHukumanId, $jenisTingkatHukumanId,
+        $kedudukanHukumId, $masaBulan, $masaTahun, $nomorPp, $pnsOrangId, $skNomor, $skTanggal, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/hukdis/save',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode([
+                "id" => $id,
+                "akhirHukumanTanggal" => $akhirHukumanTanggal,
+                "alasanHukumanDisiplinId" => $alasanHukumanDisiplinId,
+                "golonganId" => $golonganId,
+                "hukumanTanggal" => $hukumanTanggal,
+                "jenisHukumanId" => $jenisHukumanId,
+                "jenisTingkatHukumanId" => $jenisTingkatHukumanId,
+                "kedudukanHukumId" => $kedudukanHukumId,
+                "masaBulan" => $masaBulan,
+                "masaTahun" => $masaTahun,
+                "nomorPp" => $nomorPp,
+                "pnsOrangId" => $pnsOrangId,
+                "skNomor" => $skNomor,
+                "skTanggal" => $skTanggal,
+            ]),
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Content-Type: application/json',
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=6f8f0bbd43d57a472988156061717ab2; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        return $result;
+    }
 }

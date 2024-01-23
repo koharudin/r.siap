@@ -14,6 +14,10 @@ class RiwayatJabatan extends Model
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');
     }
+    public function obj_unit_kerja()
+    {
+        return $this->hasOne(UnitKerja::class, 'id', 'unit_id');
+    }
     public function obj_jabatan_fungsional()
     {
         return $this->hasOne(Jabatan::class, 'id', 'jabatan_id');

@@ -20,60 +20,70 @@
   <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-6 text-center mb-5">
-          <h2 class="heading-section">{{config('admin.name')}}</h2>
+        <div class="col-md-6 text-center mb-3">
+          <h2 class="heading-section">APLIKASI SIAP-ANRI</h2>
         </div>
       </div>
       <div class="row justify-content-center">
         <div class="col-md-12 col-lg-10">
           <div class="wrap d-md-flex">
-            <div class="img" style="background-image: url({{env('CLIENT_BACKGROUND')}});background-size:cover">
+            <div class="img" style="background-image: url({{ env('CLIENT_BACKGROUND') }}); background-size: contain">
             </div>
             <div class="login-wrap p-4 p-md-5">
-              <div class="d-flex">
+              <!-- <div class="d-flex">
                 <div class="w-100">
-                  <h3 class="mb-4">&nbsp;</h3>
+                  <h3 class="mb-4">SELAMAT DATANG DI APLIKASI SIAP-ANRI</h3>
                 </div>
                 <div class="w-100">
                   <p class="social-media d-flex justify-content-end">
 
                   </p>
                 </div>
-              </div>
+              </div> -->
               <form action="{{ admin_url('auth/login') }}" method="post" class="signin-form">
                 @if($errors->has('username'))
-                @foreach($errors->get('username') as $message)
-                <label class="control-label" for="inputError"><i class="fa fa-times-circle-o"></i>{{$message}}</label><br>
-                @endforeach
+                  @foreach($errors->get('username') as $message)
+                    <div class="alert alert-danger">{{ $message }}</div>
+                  @endforeach
                 @endif
-                <div class="form-group mb-3">
+                @error('g-recaptcha-response')
+                  <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+                @if(session('success'))
+                  <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                <!-- <div class="form-group mb-3">
                   <label class="label" for="jenis">Jenis</label>
-                  <select class="form-control  select2" name='jenis' data-value="{{ old('jenis') }}">
-
-                    <option value=2 @if(old('jenis')==2) SELECTED @endif>USERNAME/NIP</option>
+                  <select class="form-control select2" name='jenis' data-value="{{ old('jenis') }}">
+                    <option value=2 @if(old('jenis')==2) SELECTED @endif>NIP</option>
                     <option value=1 @if(old('jenis')==1) SELECTED @endif>PIN ABSEN</option>
                     <option value=3 @if(old('jenis')==3) SELECTED @endif>EMAIL DINAS</option>
                   </select>
-                </div>
+                </div> -->
                 <div class="form-group mb-3">
-                  <label class="label" for="username">Username</label>
-                  <input type="text" class="form-control" name="username" placeholder="{{ trans('admin.username') }}" value="{{ old('username') }}" required>
+                  <label class="label" for="username">NIP</label>
+                  <input type="text" class="form-control" name="username" placeholder="Masukan NIP" value="{{ old('username') }}" required>
                 </div>
                 @if($errors->has('password'))
-                @foreach($errors->get('password') as $message)
-                <label class="control-label" for="inputError"><i class="fa fa-times-circle-o"></i>{{$message}}</label><br>
-                @endforeach
+                  @foreach($errors->get('password') as $message)
+                    <div class="alert alert-danger">{{ $message }}</div>
+                  @endforeach
                 @endif
                 <div class="form-group mb-3">
                   <label class="label" for="password">Password</label>
-                  <input type="password" class="form-control" name="password" placeholder="{{ trans('admin.password') }}" required>
+                  <input type="password" class="form-control" name="password" placeholder="Masukan password" required>
+                </div>
+                <div class="form-group mb-3">
+                  {!! NoCaptcha::renderJs() !!}
+                  {!! NoCaptcha::display() !!}
                 </div>
                 <div class="form-group">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="jenis" value=2>
                   <button type="submit" class="form-control btn btn-primary rounded submit px-3">{{ trans('admin.login') }}</button>
                 </div>
                 <div class="form-group">
-                  <center><a href="{{route('auth.sso')}}" class='btn btn-primary rounded submit px-3'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
+                  <center><a href="{{ route('auth.sso') }}" class='btn btn-primary rounded submit px-3'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
                   </center>
                 </div>
               </form>

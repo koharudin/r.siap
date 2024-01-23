@@ -1,8 +1,13 @@
 <?php
 
 use Illuminate\Routing\Router;
+use App\Admin\Controllers\AuthController;
 
 Admin::routes();
+
+Route::group(['middleware' => ['web']], function() {
+    Route::post('/admin/auth-period', 'App\Admin\Controllers\AuthController@postPeriod')->name('auth.period');
+});
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
@@ -79,6 +84,7 @@ Route::group([
     $router->resource('manage_diklat', DiklatController::class);
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
     $router->resource('manage_penghargaan', ManagePenghargaan::class);
+    $router->resource('manage_penempatan_pegawai', ManagePenempatanPegawai::class);
     $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
 
     $router->resource('manage_hari_libur', ManageHariLibur::class);
@@ -132,6 +138,11 @@ Route::group([
 
     $router->any('penghargaan', 'PenghargaanController@Index');
     $router->any('dt-penghargaan', 'PenghargaanController@dt')->name('penghargaan.dt');   
+    $router->any('penempatan_pegawai', 'PenempatanPegawaiController@Index');
+    $router->any('dt-penempatan_pegawai', 'PenempatanPegawaiController@dt')->name('penempatan_pegawai.dt');  
+    $router->any('sinkrondata-penempatan_pegawai', 'PenempatanPegawaiController@sinkrondata')->name('penempatan_pegawai.sinkrondata'); 
+    $router->any('existing_pegawai', 'ExistingPegawaiController@Index');
+    $router->any('dt-existing_pegawai', 'ExistingPegawaiController@dt')->name('existing_pegawai.dt'); 
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');    
     $router->any('diagram_jabatan', 'DiagramJabatanController@Index');
     $router->any('statistik', 'StatistikController@Index');

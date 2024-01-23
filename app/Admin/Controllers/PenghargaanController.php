@@ -14,6 +14,7 @@ use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use DataTables;
+use Log;
 
 class PenghargaanController extends Controller
 {
@@ -21,6 +22,9 @@ class PenghargaanController extends Controller
     public function index(Content $content)
     {
         Admin::js('js/v_penghargaan.js');
+        $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+$out->writeln("Hello from Terminal");
+
         return $content
             ->title($this->title)
             ->body(view("v_penghargaan"));
@@ -28,6 +32,7 @@ class PenghargaanController extends Controller
     public function dt()
     {
         $params = request('extra_search');
+        
         foreach($params as $param){
             if(@$param['name'] =='kriteria'){
                 //$param['value']    
