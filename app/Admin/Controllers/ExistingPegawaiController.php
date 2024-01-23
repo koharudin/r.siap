@@ -39,7 +39,7 @@ class ExistingPegawaiController extends Controller
             ->only(['nip','nama_pegawai','nama_unit','nama_jabatan', 'jabatan_id'])
             ->addIndexColumn()
             ->addColumn('nip', function($row){
-                return $row->obj_employee->nip_baru;
+                return [$row->obj_employee->nip_baru, $row->obj_employee->id];
             })
             ->addColumn('nama_pegawai', function($row){
                 return $row->obj_employee->first_name;

@@ -46,9 +46,12 @@
                         d.jabatan = "<?php echo e($_GET['jabatan'], false); ?>";
                     },
                 },
-                columns: [{
-                        data: 'nip',
-                        name: 'nip',
+                columns: [{				
+			 render : function(data,type, full){
+                            var actions = [];
+                            actions.push("<a href='profile/"+full.nip[1]+"/riwayat_jabatan' target='_blank'>"+full.nip[0]+"</a>");
+                            return actions.join('');
+                        }
                     },
                     {
                         data: 'nama_pegawai',
