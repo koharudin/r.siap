@@ -8,11 +8,13 @@ class RiwayatSeminar extends Model
 {
     public $table  = 'riwayat_seminar';
 
-    public function getTTahunAttribute(){
-        return $this->tgl_piagam->format('Y');
+    public function getTTahunAttribute()
+    {
+        if ($this->tgl_piagam) return $this->tgl_piagam->format('Y');
+        else return "";
     }
-    public $dates = ['tgl_mulai', 'tgl_selesai','tgl_piagam'];
-    
+    public $dates = ['tgl_mulai', 'tgl_selesai', 'tgl_piagam'];
+
     public function obj_id()
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');
