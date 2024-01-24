@@ -20,4 +20,5 @@ class UnitKerja extends Model
         parent::__construct($attributes);
         $this->setTitleColumn('name');
     }
+    protected $hidden = ['path'];
 }
