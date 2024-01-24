@@ -34,7 +34,6 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-
         if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;
@@ -45,15 +44,35 @@ class Employee extends Model
             return $obj ? $obj->bup : null;
         }
     }
+    public function getTmtPensiun($tglPensiun)
+    {
+        if ($tglPensiun) {
+            if ($tglPensiun->day == 1) {
+                return $tglPensiun;
+            } else {
+                $tglPensiun->addMonth();
+                $tglPensiun->day = 1;
+                return $tglPensiun;
+            }
+        }
+        return null;
+    }
     public function setTanggalPensiun()
     {
         $bup = $this->getBup();
         $bday = $this->birth_date;
         if ($bup) {
             $pensiun = $bday->addYear($bup);
+            $this->load('obj_riwayat_pensiun');
             $this->tgl_pensiun = $pensiun->setDay($pensiun->daysInMonth);
-            $this->obj_riwayat_pensiun->tgl_pensiun = $this->tgl_pensiun;
-            $this->obj_riwayat_pensiun->save();
+            $obj_riwayat_pensiun = $this->obj_riwayat_pensiun;
+            if (!$obj_riwayat_pensiun) {
+                $obj_riwayat_pensiun = new RiwayatPensiun();
+                $obj_riwayat_pensiun->employee_id = $this->id;
+            }
+            $obj_riwayat_pensiun->tgl_pensiun = $this->tgl_pensiun;
+            $obj_riwayat_pensiun->tmt_pensiun = $this->getTmtPensiun($this->tgl_pensiun);
+            $obj_riwayat_pensiun->save();
         } else {
             $this->tgl_pensiun = null;
         }
