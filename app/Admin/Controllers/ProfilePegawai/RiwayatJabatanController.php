@@ -8,6 +8,7 @@ use App\Admin\Selectable\GridPejabatPenetap;
 use App\Admin\Selectable\GridUnitKerja;
 use App\Models\DokumenPegawai;
 use App\Models\Eselon;
+use App\Models\Jabatan;
 use App\Models\JenisKP;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
@@ -44,7 +45,7 @@ class RiwayatJabatanController extends ProfileController
      */
     protected function grid()
     {
-        
+
         $grid = new Grid(new RiwayatJabatan());
         $grid->model()->orderBy('tmt_jabatan', 'desc');
         $grid->column('nama_jabatan', __('JABATAN'));
@@ -112,12 +113,13 @@ class RiwayatJabatanController extends ProfileController
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_jabatan', __('TMT JABATAN'))->default(date('Y-m-d'));
+        $form->hidden('jabatan_id');
         $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
             $form->date('tmt_eselon', __('TMT ESELON'))->default(date('Y-m-d'));
-            $form->belongsTo('jabatan_id', GridUnitKerja::class, 'JABATAN');
+            $form->belongsTo('jabatan_id_struktural', GridUnitKerja::class, 'JABATAN STRUKTURAL');
         })->when('in', [2, 3, 4, 5], function (Form $form) {
-            $form->belongsTo('jabatan_id', GridJabatan::class, 'JABATAN');
+            $form->belongsTo('jabatan_id_fungsional', GridJabatan::class, 'JABATAN FUNGSIONAL/UMUM');
         });
         $form->text('nama_jabatan', __('NAMA JABATAN'));
         $form->text('no_pelantikan', __('NO PELANTIKAN'));
@@ -139,9 +141,24 @@ class RiwayatJabatanController extends ProfileController
         $form->submitted(function (Form $form) use ($d) {
             $form->ignore('dokumen');
             $form->ignore('jabatan_struktural_id');
+            $form->ignore('jabatan_id_fungsional');
+            $form->ignore('jabatan_id_struktural');
         });
         $_this = $this;
         $form->saving(function (Form $form) use ($d, $_this) {
+            $jabatan_id_fungsional = request()->input('jabatan_id_fungsional');
+            $jabatan_id_struktural = request()->input('jabatan_id_struktural');
+            if (in_array($form->tipe_jabatan_id, [1, 6])) {
+                if ($jabatan_id_struktural) {
+                    $form->jabatan_id = $jabatan_id_struktural;
+                    $form->nama_jabatan = UnitKerja::find($form->jabatan_id)->pejabat_jabatan;
+                } else $form->jabatan_id = null;
+            } else {
+                if ($jabatan_id_fungsional) {
+                    $form->jabatan_id = $jabatan_id_fungsional;
+                    $form->nama_jabatan = Jabatan::find($form->jabatan_id)->name;
+                } else $form->jabatan_id = null;
+            }
             if ($form->pejabat_penetap_id) {
                 $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
                 if ($r) {
