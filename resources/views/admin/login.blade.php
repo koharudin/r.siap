@@ -42,15 +42,17 @@
               </div> -->
               <form action="{{ admin_url('auth/login') }}" method="post" class="signin-form">
                 @if($errors->has('username'))
-                  @foreach($errors->get('username') as $message)
-                    <div class="alert alert-danger">{{ $message }}</div>
-                  @endforeach
+                @foreach($errors->get('username') as $message)
+                <div class="alert alert-danger">{{ $message }}</div>
+                @endforeach
                 @endif
+                @if(env('USE_CAPTCHA'))
                 @error('g-recaptcha-response')
-                  <div class="alert alert-danger">{{ $message }}</div>
+                <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
+                @endif
                 @if(session('success'))
-                  <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 <!-- <div class="form-group mb-3">
                   <label class="label" for="jenis">Jenis</label>
@@ -65,17 +67,19 @@
                   <input type="text" class="form-control" name="username" placeholder="Masukan NIP" value="{{ old('username') }}" required>
                 </div>
                 @if($errors->has('password'))
-                  @foreach($errors->get('password') as $message)
-                    <div class="alert alert-danger">{{ $message }}</div>
-                  @endforeach
+                @foreach($errors->get('password') as $message)
+                <div class="alert alert-danger">{{ $message }}</div>
+                @endforeach
                 @endif
                 <div class="form-group mb-3">
                   <label class="label" for="password">Password</label>
                   <input type="password" class="form-control" name="password" placeholder="Masukan password" required>
                 </div>
                 <div class="form-group mb-3">
+                  @if(env('USE_CAPTCHA'))
                   {!! NoCaptcha::renderJs() !!}
                   {!! NoCaptcha::display() !!}
+                  @endif
                 </div>
                 <div class="form-group">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">

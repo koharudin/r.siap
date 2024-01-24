@@ -10,31 +10,34 @@ use Illuminate\Support\Facades\Storage;
 class Employee extends Model
 {
     use HasFactory;
-    public $table  = 'employee';
+    public $table = 'employee';
     public $primaryKey = 'id';
-    public $timestamps  = true;
+    public $timestamps = true;
 
     public const STATUS_PENSIUN = 3;
-   
-    public function showPhoto(){
-        if($this->foto && !($this->foto =='' || $this->foto ==' ' || $this->foto =='  ')){
-            return route('admin.download.foto',['f'=>base64_encode($this->foto)]);
+
+    public function showPhoto()
+    {
+        if ($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
+            return route('admin.download.foto', ['f' => base64_encode($this->foto)]);
         }
         return null;
     }
-    public function scopeAktif($query){
-        $query->whereIn('status_pegawai_id',[0,1,2]);
+    public function scopeAktif($query)
+    {
+        $query->whereIn('status_pegawai_id', [0, 1, 2]);
     }
-    public function scopePensiun($query){
-        $query->whereIn('status_pegawai_id',[3]);
+    public function scopePensiun($query)
+    {
+        $query->whereIn('status_pegawai_id', [3]);
     }
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-        
+
         if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
-            return  $obj ? $obj->bup : null;
+            return $obj ? $obj->bup : null;
         } else if ($last->tipe_jabatan_id == 2) {
             return $last->obj_tipe_jabatan->bup;
         } else if ($last->tipe_jabatan_id >= 3 && $last->tipe_jabatan_id <= 5) {
@@ -47,9 +50,9 @@ class Employee extends Model
         $bup = $this->getBup();
         $bday = $this->birth_date;
         if ($bup) {
-            $pensiun  = $bday->addYear($bup);
+            $pensiun = $bday->addYear($bup);
             $this->tgl_pensiun = $pensiun->setDay($pensiun->daysInMonth);
-            $this->obj_riwayat_pensiun->tgl_pensiun  = $this->tgl_pensiun;
+            $this->obj_riwayat_pensiun->tgl_pensiun = $this->tgl_pensiun;
             $this->obj_riwayat_pensiun->save();
         } else {
             $this->tgl_pensiun = null;
@@ -91,6 +94,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatMutasi::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
     }
+    public function obj_riwayat_skcpns()
+    {
+        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
+    }
     public function obj_riwayat_jabatan()
     {
         return $this->hasMany(RiwayatJabatan::class, 'employee_id', 'id')->orderBy('tmt_jabatan', 'asc');
@@ -123,45 +130,51 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatKursus::class, 'employee_id', 'id')->orderBy('tgl_mulai', 'asc');
     }
-    public function getUsiaAttribute($from=null)
+    public function getUsiaAttribute($from = null)
     {
-        if($from==null){
+        if ($from == null) {
             $from = Carbon::now();
         }
         return $this->birth_date->diffInMonths($from);
     }
-    public function getNamaGelarAttribute(){
-        $long_name =[];
-        if($this->gelar_depan){
+    public function getNamaGelarAttribute()
+    {
+        $long_name = [];
+        if ($this->gelar_depan) {
             $long_name[] = $this->gelar_depan;
         }
         $long_name[] = $this->first_name;
-        if($this->gelar_belakang){
+        if ($this->gelar_belakang) {
             $long_name[] = $this->gelar_belakang;
         }
-        return trim(implode(" ",$long_name));
+        return trim(implode(" ", $long_name));
     }
-    public function getTTDAttribute(){
-        $txt =[];
-        if($this->birth_place){
+    public function getTTDAttribute()
+    {
+        $txt = [];
+        if ($this->birth_place) {
             $txt[] = $this->birth_place;
         }
-        if($this->birth_date){
+        if ($this->birth_date) {
             $txt[] = $this->birth_date->format('d-m-Y');
         }
-        return trim(implode(", ",$txt));
+        return trim(implode(", ", $txt));
     }
-    public function getTSexAttribute(){
+    public function getTSexAttribute()
+    {
         return JenisKelamin::find($this->sex)->name;
     }
-    public function getTStatusKawinAttribute(){
+    public function getTStatusKawinAttribute()
+    {
         return StatusPernikahan::find($this->status_kawin)->name;
     }
-    public function getTAgamaAttribute(){
+    public function getTAgamaAttribute()
+    {
         return Agama::find($this->agama_id)->name;
     }
-    public function getTTipePegawaiAttribute(){
+    public function getTTipePegawaiAttribute()
+    {
         return StatusPegawai::find($this->status_pegawai_id)->name;
     }
-    public $dates = ['birth_date','tgl_pensiun'];
+    public $dates = ['birth_date', 'tgl_pensiun'];
 }

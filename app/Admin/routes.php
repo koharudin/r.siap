@@ -47,15 +47,14 @@ Route::group([
         $router->resource('riwayat_diklat_teknis', ProfilePegawai\RiwayatDiklatTeknisController::class)->parameter('riwayat_diklat_teknis', 'id');
         $router->resource('riwayat_diklat_fungsional', ProfilePegawai\RiwayatDiklatFungsionalController::class)->parameter('riwayat_diklat_fungsional', 'id');
         $router->resource('riwayat_diklat_struktural', ProfilePegawai\RiwayatDiklatStrukturalController::class)->parameter('riwayat_diklat_struktural', 'id');
-        $router->resource('riwayat_penghargaan', ProfilePegawai\RiwayatPenghargaanController::class)->parameter('riwayat_penghargaan', 'id');
-        $router->resource('riwayat_hukuman', ProfilePegawai\RiwayatHukumanController::class)->parameter('riwayat_hukuman', 'id');
+        $router->resource('riwayat_penghargaan',  ProfilePegawai\RiwayatPenghargaanController::class)->parameter('riwayat_penghargaan', 'id');
+        $router->resource('riwayat_hukuman',  ProfilePegawai\RiwayatHukumanController::class)->parameter('riwayat_hukuman', 'id');
         $router->resource('riwayat_sumpah', ProfilePegawai\RiwayatSumpahController::class)->parameter('riwayat_sumpah', 'id');
         $router->resource('riwayat_mutasi', ProfilePegawai\RiwayatMutasiController::class)->parameter('riwayat_mutasi', 'id');
         $router->resource('riwayat_gaji', ProfilePegawai\RiwayatGajiController::class)->parameter('riwayat_gaji', 'id');
         $router->resource('riwayat_penguasaan_bahasa', ProfilePegawai\RiwayatBahasaController::class)->parameter('riwayat_penguasaan_bahasa', 'id');
         $router->resource('riwayat_saudara', ProfilePegawai\RiwayatSaudaraController::class)->parameter('riwayat_saudara', 'id');
         $router->resource('riwayat_pengalaman_kerja', ProfilePegawai\RiwayatPengalamanKerjaController::class)->parameter('riwayat_pengalaman_kerja', 'id');
-
     });
     $router->get('/', 'HomeController@index')->name('home');
     $router->get('/download/dokumen/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
@@ -84,7 +83,7 @@ Route::group([
     $router->resource('manage_diklat', DiklatController::class);
     $router->resource('manage_dokumen_pegawai', DokumenPegawaiController::class);
     $router->resource('manage_penghargaan', ManagePenghargaan::class);
-    $router->resource('manage_penempatan_pegawai', ManagePenempatanPegawai::class);
+    //$router->resource('manage_penempatan_pegawai', ManagePenempatanPegawai::class);
     $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
 
     $router->resource('manage_hari_libur', ManageHariLibur::class);
@@ -147,7 +146,6 @@ Route::group([
     $router->any('diagram_jabatan', 'DiagramJabatanController@Index');
     $router->any('statistik', 'StatistikController@Index');
     $router->any('riwayat_hukuman', 'RiwayatHukumanController@Index');
-
     $router->resource('nilaimasakerja', NilaiMasaKerjaPegawaiController::class);
 
 });

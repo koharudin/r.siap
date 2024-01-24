@@ -8,6 +8,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Models\Employee;
 
 class NilaiMasaKerjaPegawaiController extends AdminController
 {
@@ -16,8 +17,7 @@ class NilaiMasaKerjaPegawaiController extends AdminController
      *
      * @var string
      */
-    protected $title = 'RiwayatSKCPNS';
-
+    protected $title = 'Nilai Masa Kerja Pegawai';
     /**
      * Make a grid builder.
      *
@@ -25,34 +25,12 @@ class NilaiMasaKerjaPegawaiController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new RiwayatSKCPNS());
+        $grid = new Grid(new Employee());
 
-        //$grid->column('id', __('Id'));
-        $grid->column('employee_id', __('Employee id'));
-        //$grid->column('no_nota', __('No nota'));
-        //$grid->column('tgl_nota', __('Tgl nota'));
-        //$grid->column('no_sk', __('No sk'));
-        $grid->column('tgl_sk', __('Tgl sk')->date('Y-m-d'));
-        $grid->column('tmt_cpns', __('Tmt cpns')->date('Y-m-d'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        //$grid->column('pejabat_penetap_id', __('Pejabat penetap id'));
-        //$grid->column('pejabat_penetap_jabatan', __('Pejabat penetap jabatan'));
-        //$grid->column('pejabat_penetap_nip', __('Pejabat penetap nip'));
-        //$grid->column('pejabat_penetap_nama', __('Pejabat penetap nama'));
-        //$grid->column('pangkat_id', __('Pangkat id'));
-        //$grid->column('tgl_tugas', __('Tgl tugas'));
-        //$grid->column('masa_kerja_tahun', __('Masa kerja tahun'));
-        //$grid->column('masa_kerja_bulan', __('Masa kerja bulan'));
-        //$grid->column('tambahan_tahun', __('Tambahan tahun'));
-        //$grid->column('tambahan_bulan', __('Tambahan bulan'));
-        //$grid->column('total_tahun', __('Total tahun'));
-        //$grid->column('total_bulan', __('Total bulan'));
-        //$grid->column('simpeg_id', __('Simpeg id'));
-        //$grid->column('no_sk_penyesuaian_mk', __('No sk penyesuaian mk'));
-        //$grid->column('tgl_sk_penyesuaian_mk', __('Tgl sk penyesuaian mk'));
-        //$grid->column('tmt_sk_penyesuaian_mk', __('Tmt sk penyesuaian mk'));
-        //$grid->column('pejabat_penetap_sk_penyesuaian_mk', __('Pejabat penetap sk penyesuaian mk'));
+        $grid->model()->with(['riwayatJabatan', 'riwayatMutasi', 'riwayatSKCPNS']);
+        $grid->column('first_name', __('Nama Pegawai'));0
+        $grid->column('riwayatJabatan.jabatan', __('Last Position'));
+        $grid->column('riwayatSKCPNS.tgl_sk', __('SK CPNS'));
 
         return $grid;
     }
@@ -68,14 +46,28 @@ class NilaiMasaKerjaPegawaiController extends AdminController
         $show = new Show(RiwayatSKCPNS::findOrFail($id));
 
         //$show->field('id', __('Id'));
-        $show->field('employee_id', __('Employee id'));
+
+        $show->field('employee_id', __('Employee'))->as(function ($employeeId) {
+            // Fetch the employee name based on the employee_id
+            $employee = \App\Models\Employee::find($employeeId);
+            return $employee ? $employee->first_name : 'N/A';
+        });
         //$show->field('no_nota', __('No nota'));
         //$show->field('tgl_nota', __('Tgl nota'));
         //$show->field('no_sk', __('No sk'));
-        $show->field('tgl_sk', __('Tgl sk')->date('Y-m-d'));
-        $show->field('tmt_cpns', __('Tmt cpns')->date('Y-m-d'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('tgl_sk', __('Tgl sk'));
+        $show->field('tmt_cpns', __('Tmt cpns'));
+        //$show->field('created_at', __('Created at'));
+        //$show->field('updated_at', __('Updated at'));
+        $show->field('masa_kerja', __('Masa Kerja'))->as(function () {
+            // Calculate Masa Kerja from tmt_cpns until current date
+            $tmtCpns = new \DateTime($this->tgl_sk);
+            $currentDate = new \DateTime();
+            $interval = $tmtCpns->diff($currentDate);
+
+            // Return the formatted result
+            return $interval->y . ' Tahun ' . $interval->m . ' Bulan';
+        });
         //$show->field('pejabat_penetap_id', __('Pejabat penetap id'));
         //$show->field('pejabat_penetap_jabatan', __('Pejabat penetap jabatan'));
         //$show->field('pejabat_penetap_nip', __('Pejabat penetap nip'));

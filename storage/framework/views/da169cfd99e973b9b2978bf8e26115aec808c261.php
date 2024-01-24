@@ -42,22 +42,24 @@
               </div> -->
               <form action="<?php echo e(admin_url('auth/login'), false); ?>" method="post" class="signin-form">
                 <?php if($errors->has('username')): ?>
-                  <?php $__currentLoopData = $errors->get('username'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="alert alert-danger"><?php echo e($message, false); ?></div>
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php $__currentLoopData = $errors->get('username'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="alert alert-danger"><?php echo e($message, false); ?></div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endif; ?>
+                <?php if(env('USE_CAPTCHA')): ?>
                 <?php $__errorArgs = ['g-recaptcha-response'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                  <div class="alert alert-danger"><?php echo e($message, false); ?></div>
+                <div class="alert alert-danger"><?php echo e($message, false); ?></div>
                 <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
+                <?php endif; ?>
                 <?php if(session('success')): ?>
-                  <div class="alert alert-success"><?php echo e(session('success'), false); ?></div>
+                <div class="alert alert-success"><?php echo e(session('success'), false); ?></div>
                 <?php endif; ?>
                 <!-- <div class="form-group mb-3">
                   <label class="label" for="jenis">Jenis</label>
@@ -72,19 +74,21 @@ unset($__errorArgs, $__bag); ?>
                   <input type="text" class="form-control" name="username" placeholder="Masukan NIP" value="<?php echo e(old('username'), false); ?>" required>
                 </div>
                 <?php if($errors->has('password')): ?>
-                  <?php $__currentLoopData = $errors->get('password'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="alert alert-danger"><?php echo e($message, false); ?></div>
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php $__currentLoopData = $errors->get('password'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="alert alert-danger"><?php echo e($message, false); ?></div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endif; ?>
                 <div class="form-group mb-3">
                   <label class="label" for="password">Password</label>
                   <input type="password" class="form-control" name="password" placeholder="Masukan password" required>
                 </div>
                 <div class="form-group mb-3">
+                  <?php if(env('USE_CAPTCHA')): ?>
                   <?php echo NoCaptcha::renderJs(); ?>
 
                   <?php echo NoCaptcha::display(); ?>
 
+                  <?php endif; ?>
                 </div>
                 <div class="form-group">
                   <input type="hidden" name="_token" value="<?php echo e(csrf_token(), false); ?>">
