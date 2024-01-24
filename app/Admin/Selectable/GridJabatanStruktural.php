@@ -17,7 +17,9 @@ class GridJabatanStruktural extends Selectable
         $this->model()->orderBy('order', 'ASC');
         $this->model()->whereNotNull('pejabat_jabatan');
         $this->column('id', __('ID'));
-        $this->column('name', __('NAMA'));
+        $this->column('name', __('NAMAx'))->display(function ($o) {
+            return "<b>" . $this->pejabat_jabatan . "</b><br>" . $this->name;
+        });
 
         $this->filter(function (Filter $filter) {
             $filter->disableIdFilter();

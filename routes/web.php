@@ -30,6 +30,7 @@ use MBence\OpenTBSBundle\Services\OpenTBS;
 use App\Mnvx\Unoconv\Converter;
 use App\Mnvx\Unoconv\UnoconvParameters;
 use App\Mnvx\Unoconv\Format;
+use App\Models\Employee;
 use App\Models\RiwayatHukuman;
 use App\Models\UnitKerja;
 use PhpOffice\PhpWord\IOFactory;
@@ -126,9 +127,10 @@ Route::get('/d', function () {
     return Storage::disk('minio_dokumen')->response($doc->file);
 });
 Route::get('/test-db', function () {
-    $uk = UnitKerja::find(52);
-    dd($uk->path);
-    return RiwayatHukuman::all();
+    $e = Employee::find(218);
+    $e->setTanggalPensiun();
+    dd('done');
+    dd($e->getBup());
 });
 Route::get('/test', function () {
     $minio = Storage::disk('minio');
