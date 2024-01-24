@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Admin\Selectable\GridJabatan;
+use App\Admin\Selectable\GridJabatanStruktural;
 use Illuminate\Http\UploadedFile;
 use App\Admin\Selectable\GridPejabatPenetap;
 use App\Admin\Selectable\GridUnitKerja;
@@ -117,7 +118,7 @@ class RiwayatJabatanController extends ProfileController
         $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
             $form->date('tmt_eselon', __('TMT ESELON'))->default(date('Y-m-d'));
-            $form->belongsTo('jabatan_id_struktural', GridUnitKerja::class, 'JABATAN STRUKTURAL');
+            $form->belongsTo('jabatan_id_struktural',  GridJabatanStruktural::class, 'JABATAN STRUKTURAL');
         })->when('in', [2, 3, 4, 5], function (Form $form) {
             $form->belongsTo('jabatan_id_fungsional', GridJabatan::class, 'JABATAN FUNGSIONAL/UMUM');
         });
