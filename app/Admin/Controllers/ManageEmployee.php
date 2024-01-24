@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Employee;
+use App\Models\GolonganDarah;
+use App\Models\JenisKelamin;
 use App\Models\StatusPernikahan;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -31,29 +33,30 @@ class ManageEmployee extends AdminController
 
         $grid->column('id', __('Id'));
         // column not in table
-        $grid->column('foto')->display(function ($foto) {
+        $grid->column('FOTO')->display(function ($foto) {
             $disk = Storage::disk('minio_foto');
-            if(Str::of($foto)->trim()->isNotEmpty()){
-                if($disk->exists($foto)) {
+            if (Str::of($foto)->trim()->isNotEmpty()) {
+                if ($disk->exists($foto)) {
                     $url = $disk->temporaryUrl(
-                        $foto, now()->addMinutes(5)
+                        $foto,
+                        now()->addMinutes(5)
                     );
                     return $url;
-                }   
+                }
             }
-            return config("admin.default_avatar");            
-        })->image('',100,100);
-        $grid->column('first_name', __('First name'));
-        $grid->column('last_name', __('Last name'));
-        $grid->column('nip_baru', __('Nip baru'));
-        $grid->column('email_kantor', __('Email kantor'));
-        $grid->column('email', __('Email'));
-        $grid->expandFilter();  
-        $grid->filter(function($filter){    
+            return config("admin.default_avatar");
+        })->image('', 100, 100);
+        $grid->column('first_name', __('NAMA DEPAN'));
+        $grid->column('last_name', __('NAMA BELAKANG'));
+        $grid->column('nip_baru', __('NIP'));
+        $grid->column('email_kantor', __('EMAIL KANTOR'));
+        $grid->column('email', __('EMAIL'));
+        $grid->expandFilter();
+        $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             $filter->where(function ($query) {
-                $query->where('first_name','ilike',"%".$this->input.'%');
-        },'Nama Pegawai');
+                $query->where('first_name', 'ilike', "%" . $this->input . '%');
+            }, 'Nama Pegawai');
             $filter->like('nip_baru', 'NIP Pegawai');
         });
         return $grid;
@@ -70,30 +73,27 @@ class ManageEmployee extends AdminController
         $show = new Show(Employee::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('first_name', __('First name'));
-        $show->field('last_name', __('Last name'));
-        $show->field('agama_id', __('Agama id'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('simpeg_id', __('Simpeg id'));
-        $show->field('nip_baru', __('Nip baru'));
-        $show->field('gelar_depan', __('Gelar depan'));
-        $show->field('gelar_belakang', __('Gelar belakang'));
-        $show->field('birth_place', __('Birth place'));
-        $show->field('birth_date', __('Birth date'));
-        $show->field('sex', __('Sex'));
-        $show->field('status_kawin', __('Status kawin'));
-        $show->field('golongan_darah', __('Golongan darah'));
-        $show->field('email_kantor', __('Email kantor'));
-        $show->field('email', __('Email'));
-        $show->field('foto', __('Foto'));
-        $show->field('alamat', __('Alamat'));
-        $show->field('karpeg', __('Karpeg'));
-        $show->field('taspen', __('Taspen'));
-        $show->field('npwp', __('Npwp'));
-        $show->field('askes', __('Askes'));
-        $show->field('nik', __('Nik'));
-        $show->field('no_hp', __('No hp'));
+        $show->field('first_name', __('NAMA DEPAN'));
+        $show->field('last_name', __('NAMA BELAKANG'));
+        $show->field('agama_id', __('AGAMA'));
+        $show->field('nip_baru', __('NIP'));
+        $show->field('gelar_depan', __('GELAR DEPAN'));
+        $show->field('gelar_belakang', __('GELAR BELAKANG'));
+        $show->field('birth_place', __('TEMPAT LAHIR'));
+        $show->field('birth_date', __('TANGGAL LAHIR'));
+        $show->field('sex', __('JENIS KELAMIN'));
+        $show->field('status_kawin', __('STATUS KAWIN'));
+        $show->field('golongan_darah', __('GOLONGAN DARAH'));
+        $show->field('email_kantor', __('EMAIL KANTOR'));
+        $show->field('email', __('EMAIL'));
+        $show->field('foto', __('FOTO'));
+        $show->field('alamat', __('ALAMAT'));
+        $show->field('karpeg', __('KARPEG'));
+        $show->field('taspen', __('TASPEN'));
+        $show->field('npwp', __('NPWP'));
+        $show->field('askes', __('ASKES'));
+        $show->field('nik', __('NIK'));
+        $show->field('no_hp', __('NO HP'));
 
         return $show;
     }
@@ -107,28 +107,27 @@ class ManageEmployee extends AdminController
     {
         $form = new Form(new Employee());
         $disk = Storage::disk('minio_foto');
-        $form->image('foto', __('Foto'))->disk('minio_foto');
-        $form->text('first_name', __('First name'));
-        $form->text('last_name', __('Last name'));
-        $form->number('agama_id', __('Agama id'));
-        $form->text('simpeg_id', __('Simpeg id'));
-        $form->text('nip_baru', __('Nip baru'));
-        $form->text('gelar_depan', __('Gelar depan'));
-        $form->text('gelar_belakang', __('Gelar belakang'));
-        $form->text('birth_place', __('Birth place'));
-        $form->date('birth_date', __('Birth date'))->default(date('Y-m-d'));
-        $form->select('sex', __('Sex'))->options(JenisKelamin::all()->pluck("name","id"));
-        $form->select('status_kawin', __('Status kawin'))->options(StatusPernikahan::all()->pluck('name','id'));
-        $form->select('golongan_darah', __('Golongan darah'))->options(GolonganDarah::all()->pluck('id','id'));
-        $form->text('email_kantor', __('Email kantor'));
-        $form->email('email', __('Email'));
-        $form->textarea('alamat', __('Alamat'));
-        $form->text('karpeg', __('Karpeg'));
-        $form->text('taspen', __('Taspen'));
-        $form->text('npwp', __('Npwp'));
-        $form->text('askes', __('Askes'));
-        $form->text('nik', __('Nik'));
-        $form->text('no_hp', __('No hp'));
+        $form->image('foto', __('FOTO'))->disk('minio_foto');
+        $form->text('first_name', __('NAMA DEPAN'));
+        $form->text('last_name', __('NAMA BELAKANG'));
+        $form->number('agama_id', __('AGAMA'));
+        $form->text('nip_baru', __('NIP'));
+        $form->text('gelar_depan', __('GELAR DEPAN'));
+        $form->text('gelar_belakang', __('GELAR BELAKANG'));
+        $form->text('birth_place', __('TEMPAT LAHIR'));
+        $form->date('birth_date', __('TANGGAL LAHIR'))->default(date('Y-m-d'));
+        $form->select('sex', __('JENIS KELAMIN'))->options(JenisKelamin::all()->pluck("name", "id"));
+        $form->select('status_kawin', __('STATUS KAWIN'))->options(StatusPernikahan::all()->pluck('name', 'id'));
+        $form->select('golongan_darah', __('GOLONGAN DARAH'))->options(GolonganDarah::all()->pluck('id', 'id'));
+        $form->text('email_kantor', __('EMAIL KANTOR'));
+        $form->email('email', __('EMAIL'));
+        $form->textarea('alamat', __('ALAMAT'));
+        $form->text('karpeg', __('KARPEG'));
+        $form->text('taspen', __('TASPEN'));
+        $form->text('npwp', __('NPWP'));
+        $form->text('askes', __('ASKES'));
+        $form->text('nik', __('NIK'));
+        $form->text('no_hp', __('NO HP'));
 
         return $form;
     }
