@@ -17,3 +17,4 @@ public/.htaccess
 composer.phar
 composer.lock
 /storage/framework/*
+/bootstrap/*
