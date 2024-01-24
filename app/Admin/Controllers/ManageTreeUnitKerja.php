@@ -51,12 +51,11 @@ class ManageTreeUnitKerja extends AdminController
         $form = new Form(new UnitKerja());
 
         $form->display('parent.name', __('PARENT'));
-        $form->text('name', __('Name'));
+        $form->text('name', __('NAMA UNIT KERJA'));
         $form->text('bup', __('BUP'));
         $form->select('eselon_id', 'ESELON')->options(Eselon::all()->pluck('name', 'id'));
         $form->text('pejabat_jabatan', __('JABATAN'));
 
-        $form->display('path', __('Path'));
         $form->fieldset("Pejabat Saat Ini", function ($form) {
             $form->display('pejabat_nip', __('PEJABAT NIP'));
             $form->display('pejabat_nama', __('PEJABAT NAMA'));

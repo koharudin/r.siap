@@ -31,6 +31,7 @@ use App\Mnvx\Unoconv\Converter;
 use App\Mnvx\Unoconv\UnoconvParameters;
 use App\Mnvx\Unoconv\Format;
 use App\Models\RiwayatHukuman;
+use App\Models\UnitKerja;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
 use Dompdf\Dompdf;
@@ -125,6 +126,8 @@ Route::get('/d', function () {
     return Storage::disk('minio_dokumen')->response($doc->file);
 });
 Route::get('/test-db', function () {
+    $uk = UnitKerja::find(52);
+    dd($uk->path);
     return RiwayatHukuman::all();
 });
 Route::get('/test', function () {
