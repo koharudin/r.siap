@@ -18,6 +18,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Form;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\URL;
 use MBence\OpenTBSBundle\Services\OpenTBS;
 
@@ -51,7 +52,18 @@ class DataPersonalController extends  ProfileController
 
             //$form->display("obj_agama.name", "AGAMA");
             $form->text('nip_baru', 'NIP');
-            $form->date('tgl_pensiun', 'TANGGAL PENSIUN');
+            $form->display('obj_riwayat_pensiun.tgl_pensiun', 'TANGGAL PENSIUN')->customFormat(function ($o) {
+                if ($o) {
+                    $o = SupportCarbon::createFromTimeString($o);
+                    return  $o->format('Y-m-d');
+                } else return "-";
+            });
+            $form->display('obj_riwayat_pensiun.tmt_pensiun', 'TMT PENSIUN')->customFormat(function ($o) {
+                if ($o) {
+                    $o = SupportCarbon::createFromTimeString($o);
+                    return  $o->format('Y-m-d');
+                } else return "-";
+            });
             $form->text('gelar_depan', 'GELAR DEPAN');
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');
