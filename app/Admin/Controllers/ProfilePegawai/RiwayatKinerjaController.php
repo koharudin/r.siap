@@ -29,7 +29,7 @@ class RiwayatKinerjaController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatKinerja());
-        $grid->model()->orderBy('tgl_penilaian','asc');
+        $grid->model()->orderBy('tgl_penilaian', 'asc');
         $grid->column('tahun', __('TAHUN'));
         $grid->column('nilai', __('NILAI'));
         $grid->column('tgl_penilaian', __('TANGGAL PENILAIAN'))->display(function ($o) {
@@ -80,18 +80,22 @@ class RiwayatKinerjaController extends ProfileController
         $form->number('tahun', __('TAHUN'));
         $form->text('nilai', __('NILAI'));
         $form->date('tgl_penilaian', __('TANGGAL PENILAIAN'))->default(date('Y-m-d'));
-        $form->belongsTo('satuan_kerja_id',GridUnitKerja::class,'UNIT KERJA');
+        $form->belongsTo('satuan_kerja_id', GridUnitKerja::class, 'UNIT KERJA');
         $form->text('satuan_kerja', __('SATUAN  KERJA'));
         $form->text('jabatan', __('JABATAN'));
         $form->decimal('nilai_skp', __('NILAI SKP'));
         $form->decimal('nilai_perilaku', __('NILAI PERILAKU'));
         $form->saving(function (Form $form) {
-            if($form->satuan_kerja_id){
-                $unit_kerja =  UnitKerja::where('id',$form->satuan_kerja_id)->get()->first();
-                if($unit_kerja){
+            $satuan_kerja_id = request()->input('satuan_kerja_id');
+            if ($satuan_kerja_id) {
+                $unit_kerja =  UnitKerja::where('id', $satuan_kerja_id)->get()->first();
+                if ($unit_kerja) {
                     $form->satuan_kerja = $unit_kerja->name;
                 }
             }
+        });
+        $form->submitted(function (Form $form) {
+            $form->ignore('satuan_kerja_id');
         });
         return $form;
     }
