@@ -22,8 +22,6 @@ class PenghargaanController extends Controller
     public function index(Content $content)
     {
         Admin::js('js/v_penghargaan.js');
-        $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-$out->writeln("Hello from Terminal");
 
         return $content
             ->title($this->title)
@@ -32,17 +30,24 @@ $out->writeln("Hello from Terminal");
     public function dt()
     {
         $params = request('extra_search');
-        
-        foreach($params as $param){
-            if(@$param['name'] =='kriteria'){
-                //$param['value']    
+        $filter_jenis = null;
+        if ($params) {
+            foreach ($params as $param) {
+                if (@$param['name'] == 'kriteria') {
+                    //$param['value']    
+                }
+                if (@$param['name'] == 'jenis') {
+                    $filter_jenis = $param['value'];
+                }
             }
-            if(@$param['name'] =='jenis'){
-                //$param['value']
+        }
+
+        $query = Employee::whereHas('obj_riwayat_penghargaan', function ($query) use ($filter_jenis) {
+            if ($filter_jenis) {
+                $query->where('jenis_penghargaan_id', $filter_jenis);
             }
-        } 
-        $query = Employee::with(['obj_riwayat_jabatan','obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
-        $query->orderBy('first_name','asc');
+        })->with(['obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat', 'obj_riwayat_penghargaan']);
+        $query->orderBy('first_name', 'asc');
         return  DataTables::eloquent($query)
             ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'jenis_penghargaan'])
             ->addIndexColumn()
@@ -55,8 +60,12 @@ $out->writeln("Hello from Terminal");
                 }
                 return "Belum di tempatkan!";
             })
-            ->addColumn('jenis_penghargaan', function (Employee $user) { 
-                return "SATYALANCANA KARYA SATYA";
+            ->addColumn('jenis_penghargaan', function (Employee $user) {
+                $list = [];
+                $user->obj_riwayat_penghargaan->each(function ($o, $i) use (&$list) {
+                    $list[] = $o->nama_penghargaan;
+                });
+                return implode(",", $list);
             })
             ->addColumn('jabatan', function (Employee $user) {
                 $last = $user->obj_riwayat_jabatan->last();

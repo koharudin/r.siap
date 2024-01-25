@@ -10,20 +10,21 @@
 
     <!-- /.box-header -->
     <div class="box-body">
-        <form id="form-search">
-            <div class="form-group">
+        <form id="form-search-penghargaan">
+            <div class="form-group" style="display:none">
                 <label for="exampleFormControlSelect1">KRITERIA</label>
                 <select class="form-control" name="kriteria">
-                    <option>USULAN</option>
-                    <option>SUDAH MENDAPAT</option>
+                    <option value=-1>USULAN</option>
+                    <option value=1 selected>SUDAH MENDAPAT</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Jenis Penghargaan</label>
                 <select class="form-control" name="jenis">
-                    <option>SATYALANCANA KARYA SATYA PERAK</option>
-                    <option>SATYALANCANA KARYA SATYA PERUNGGU</option>
-                    <option>SATYALANCANA KARYA SATYA EMAS</option>
+                    <option value=32>SATYALANCANA KARYA SATYA PERAK</option>
+                    <option value=39>SATYALANCANA KARYA SATYA PERUNGGU</option>
+                    <option value=38>SATYALANCANA KARYA SATYA EMAS</option>
+                    <option value=56>SATYALANCANA WIRA KARYA</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">CARI</button>
@@ -48,6 +49,10 @@
     </div>
     <script type="text/javascript">
         $(function() {
+            $("#form-search-penghargaan").submit((function(e) {
+                table.ajax.reload();
+                e.preventDefault();
+            }));
             var table = $('.yajra-datatable').DataTable({
                 dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
                 processing: true,
@@ -62,7 +67,7 @@
                     'type': 'POST',
                     'url': "{{route('admin.penghargaan.dt')}}",
                     "data": function(d) {
-                        d.extra_search = $('#form-search').serializeArray();
+                        d.extra_search = $('#form-search-penghargaan').serializeArray();
                         d._token = "{{ csrf_token() }}";
                     },
                 },
