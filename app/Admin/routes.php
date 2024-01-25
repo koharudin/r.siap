@@ -2,6 +2,8 @@
 
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AuthController;
+use App\Admin\Controllers\PenghargaanController;
+use App\Models\Penghargaan;
 
 Admin::routes();
 
@@ -135,6 +137,7 @@ Route::group([
     $router->any('dt-tusk', 'PensiunController@dt_tusk')->name('pensiun.tusk.dt');
     $router->any('dt-album', 'PensiunController@dt_album')->name('pensiun.album.dt');
 
+    $router->get('penghargaan/cetak', [PenghargaanController::class, 'cetak']);
     $router->any('penghargaan', 'PenghargaanController@Index');
     $router->any('dt-penghargaan', 'PenghargaanController@dt')->name('penghargaan.dt');
     $router->any('penempatan_pegawai', 'PenempatanPegawaiController@Index');

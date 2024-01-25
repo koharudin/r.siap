@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\DetailPegawaiAction;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Grid;
@@ -14,7 +15,9 @@ use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use DataTables;
+use Illuminate\Support\Facades\URL;
 use Log;
+use MBence\OpenTBSBundle\Services\OpenTBS;
 
 class PenghargaanController extends Controller
 {
@@ -25,7 +28,62 @@ class PenghargaanController extends Controller
 
         return $content
             ->title($this->title)
-            ->body(view("v_penghargaan"));
+            ->body(view("v_penghargaan", ['url_cetak' => URL::to('/admin/penghargaan/cetak')]));
+    }
+    public function cetak()
+    {
+        $TBS = new OpenTBS();
+        \Carbon\Carbon::setLocale('id');
+        $file = storage_path('../templates/cetak_penghargaan.xlsx');
+
+        $TBS->LoadTemplate($file);
+
+        $filter_jenis = request()->input('jenis');
+        $query = Employee::whereHas('obj_riwayat_penghargaan', function ($query) use ($filter_jenis) {
+            if ($filter_jenis) {
+                $query->where('jenis_penghargaan_id', $filter_jenis);
+            }
+        })->with(['obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat', 'obj_riwayat_penghargaan']);
+
+        $employees = $query->get();
+        $data = [];
+        $employees->each(function ($user, $i) use (&$data) {
+            $unit_kerja = '';
+            if ($user->obj_satker) {
+                $unit_kerja =  $user->obj_satker->name;
+            } else $unit_kerja = "Belum di tempatkan!";
+
+            $golongan = '';
+            $last = $user->obj_riwayat_pangkat->last();
+            $golongan =  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
+
+            $jabatan = '';
+            $last = $user->obj_riwayat_jabatan->last();
+            $jabatan =  $last->nama_jabatan;
+
+            $nama = $user->first_name;
+
+            $list = [];
+            $user->obj_riwayat_penghargaan->each(function ($o, $i) use (&$list) {
+                $list[] = $o->nama_penghargaan;
+            });
+            $penghargaan = implode(",", $list);
+
+            $data[] = [
+                'nip' => $user->nip_baru,
+                'unit_kerja' => $unit_kerja,
+                'gol' => $golongan,
+                'jabatan' => $jabatan,
+                'nama' => $nama,
+                'penghargaan' => $penghargaan
+            ];
+        });
+        $TBS->MergeBlock('r', $data);
+        $now = Carbon::now();
+        $today = $now->isoFormat('dddd, D MMMM Y');
+        $today_ymd = $now->isoFormat('YMMDD');
+        $TBS->Show(OPENTBS_DOWNLOAD, "cetak_penghargaan_{$today_ymd}.xlsx");
+        return response()->json($data, 200);
     }
     public function dt()
     {
