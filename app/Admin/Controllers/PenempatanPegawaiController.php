@@ -64,31 +64,30 @@ class PenempatanPegawaiController extends Controller
         $query->orderBy('nama_unitkerja','asc');
         $query->orderBy('nama_jabatan','asc');
         return  DataTables::eloquent($query)
-            ->only(['nama_unitkerja','bulan','tahun','nama_jabatan', 'jabatan_id', 'kebutuhan', 'existing_pegawai', 'kelebihan_kekurangan', 'aksi'])
+            ->only(['nama_unitkerja','bulan','tahun','nama_jabatan', 'jabatan_id', 'kebutuhan', 'existing_pegawai','url_existing', 'kelebihan_kekurangan','kelebihan','kekurangan','aksi'])
             ->addIndexColumn()
             ->addColumn('nama_jabatan', function ($row) {
                 $nama = $row->jabatan_id.' - '.$row->nama_jabatan;
                 return $nama;
             })
-            ->addColumn('existing_pegawai', function($row){
-                return [$row->existing_pegawai, $row->unit_id, $row->nama_jabatan];
+            ->addColumn('url_existing', function($row){
+               return [$row->existing_pegawai, $row->unit_id, $row->nama_jabatan];
             })
-            ->addColumn('kelebihan_kekurangan', function ($row) {                
-                $ket = '';
-                $penanda ='';
-                if($row->existing_pegawai > $row->kebutuhan){
-                    $ket ="Kelebihan :  ".($row->kelebihan_kekurangan * -1);
-                    $penanda = "lebih";
-                }
-                else if($row->existing_pegawai < $row->kebutuhan){
-                    $ket ='Kekurangan : '.($row->kelebihan_kekurangan);
-                    $penanda = "kurang";
+            ->addColumn('kelebihan', function($row){
+                if($row->kelebihan_kekurangan < 0){
+                    return ($row->kelebihan_kekurangan * -1);
                 }
                 else{
-                    $ket ="Sesuai ABK";
-                    $penanda ="sesuai";
+                    return 0;
                 }
-                return [$penanda, $ket];
+            })
+            ->addColumn('kekurangan', function($row){
+                if($row->kelebihan_kekurangan > 0){
+                    return ($row->kelebihan_kekurangan);
+                }
+                else{
+                    return 0;
+                }
             })
             ->addColumn('aksi', function ($row) {
                 $ket = '';
@@ -100,36 +99,18 @@ class PenempatanPegawaiController extends Controller
     public function sinkrondata()
     {
         $query = PenempatanPegawai::with([]);
-        $params = request()->get('extra_search');
-
-        if (is_array($params)) {
-            foreach ($params as $param) {
-                if ($param['name'] == 'unitkerja') {
-                    $query->where(function ($query) use ($param) {
-                        if($param['value'] != null){
-                            $unit_id = $param['value'];
-                            $query->where("unit_id", $unit_id);
-                        }
-                    });
-                }
-                if ($param['name'] == 'bulan') {
-                    $query->where(function ($query) use ($param) {
-                        if($param['value'] != null){
-                            $bulan = $param['value'];
-                            $query->where("bulan", $bulan);
-                        }
-                    });
-                }
-
-                if ($param['name'] == 'tahun') {
-                    $query->where(function ($query) use ($param) {
-                        if($param['value'] != null){
-                            $tahun = $param['value'];
-                            $query->where("tahun", $tahun);
-                        }
-                    });
-                }
-            }
+        
+        $unit_id = request()->input('unitkerja'); 
+        if($unit_id != ""){
+            $query->where("unit_id", $unit_id);
+        }
+        $bulan = request()->input('bulan');
+        if($bulan != ""){
+            $query->where("bulan", $bulan);
+        }
+        $tahun = request()->input('tahun');
+        if($tahun != ""){
+            $query->where("tahun", $tahun);
         }
         
         return  DataTables::eloquent($query)
@@ -158,6 +139,30 @@ class PenempatanPegawaiController extends Controller
         $query->where('status_riwayat', '1');
 
         return $query->count();
+    }
+
+    public function getTotal(){
+        $query = PenempatanPegawai::with([]);
+        $query2 = PenempatanPegawai::with([]);
+
+        $unit_id = request()->input('unitkerja'); 
+        if($unit_id != ""){
+            $query->where("unit_id", $unit_id);
+            $query2->where("unit_id", $unit_id);
+        }
+        $bulan = request()->input('bulan');
+        if($bulan != ""){
+            $query->where("bulan", $bulan);
+            $query2->where("bulan", $bulan);
+        }
+        $tahun = request()->input('tahun');
+        if($tahun != ""){
+            $query->where("tahun", $tahun);
+            $query2->where("tahun", $tahun);
+        }
+
+        $result = array('totalkebutuhan'=>$query->sum('kebutuhan'), 'totalexisting'=>$query->sum('existing_pegawai'), 'totalkelebihan'=> (($query->where("kelebihan_kekurangan","<", 0)->sum('kelebihan_kekurangan')) * -1), 'totalkekurangan' =>$query2->where("kelebihan_kekurangan",">", 0)->sum('kelebihan_kekurangan'));
+        echo json_encode($result);
     }
 
 }

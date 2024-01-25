@@ -47,8 +47,8 @@ Route::group([
         $router->resource('riwayat_diklat_teknis', ProfilePegawai\RiwayatDiklatTeknisController::class)->parameter('riwayat_diklat_teknis', 'id');
         $router->resource('riwayat_diklat_fungsional', ProfilePegawai\RiwayatDiklatFungsionalController::class)->parameter('riwayat_diklat_fungsional', 'id');
         $router->resource('riwayat_diklat_struktural', ProfilePegawai\RiwayatDiklatStrukturalController::class)->parameter('riwayat_diklat_struktural', 'id');
-        $router->resource('riwayat_penghargaan',  ProfilePegawai\RiwayatPenghargaanController::class)->parameter('riwayat_penghargaan', 'id');
-        $router->resource('riwayat_hukuman',  ProfilePegawai\RiwayatHukumanController::class)->parameter('riwayat_hukuman', 'id');
+        $router->resource('riwayat_penghargaan', ProfilePegawai\RiwayatPenghargaanController::class)->parameter('riwayat_penghargaan', 'id');
+        $router->resource('riwayat_hukuman', ProfilePegawai\RiwayatHukumanController::class)->parameter('riwayat_hukuman', 'id');
         $router->resource('riwayat_sumpah', ProfilePegawai\RiwayatSumpahController::class)->parameter('riwayat_sumpah', 'id');
         $router->resource('riwayat_mutasi', ProfilePegawai\RiwayatMutasiController::class)->parameter('riwayat_mutasi', 'id');
         $router->resource('riwayat_gaji', ProfilePegawai\RiwayatGajiController::class)->parameter('riwayat_gaji', 'id');
@@ -140,6 +140,7 @@ Route::group([
     $router->any('penempatan_pegawai', 'PenempatanPegawaiController@Index');
     $router->any('dt-penempatan_pegawai', 'PenempatanPegawaiController@dt')->name('penempatan_pegawai.dt');
     $router->any('sinkrondata-penempatan_pegawai', 'PenempatanPegawaiController@sinkrondata')->name('penempatan_pegawai.sinkrondata');
+    $router->any('total-penempatan_pegawai', 'PenempatanPegawaiController@getTotal')->name('penempatan_pegawai.getTotal');
     $router->any('existing_pegawai', 'ExistingPegawaiController@Index');
     $router->any('dt-existing_pegawai', 'ExistingPegawaiController@dt')->name('existing_pegawai.dt');
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');
@@ -147,5 +148,5 @@ Route::group([
     $router->any('statistik', 'StatistikController@Index');
     $router->any('riwayat_hukuman', 'RiwayatHukumanController@Index');
     $router->resource('nilaimasakerja', NilaiMasaKerjaPegawaiController::class);
-
+    $router->resource('nilaijabatan', NilaiJabatanPegawaiController::class);
 });

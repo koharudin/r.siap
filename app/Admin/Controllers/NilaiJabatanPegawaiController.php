@@ -8,14 +8,14 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Employee;
 
-class NilaiMasaKerjaPegawaiController extends AdminController
+class NilaiJabatanPegawaiController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Nilai Masa Kerja Pegawai';
+    protected $title = 'Nilai Jabatan Pegawai';
     /**
      * Make a grid builder.
      *
@@ -30,8 +30,8 @@ class NilaiMasaKerjaPegawaiController extends AdminController
             <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h4>Nilai Masa Kerja</h4>
-                    <p>Perhitungan Nilai Masa Kerja Tunjangan Arsip Statis Merujuk Peraturan Kepala Arsip Nasional Republik Indonesia No 2 Tahun 2005</p>
+                    <h4>Nilai Jabatan</h4>
+                    <p>Perhitungan Nilai Jabatan Tunjangan Arsip Statis Merujuk Peraturan Kepala Arsip Nasional Republik Indonesia No 2 Tahun 2005</p>
                 </div>
             </div>
         
@@ -175,8 +175,6 @@ class NilaiMasaKerjaPegawaiController extends AdminController
 
             return '-';
         });
-
-
         $grid->disableActions();
         $grid->disableCreateButton();
         return $grid;
