@@ -27,7 +27,8 @@
                     <option value=56>SATYALANCANA WIRA KARYA</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">CARI</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class='fa fa-search'></i> Cari</button>
+            <button type="button" class="btn btn-primary btn-sm" name="btn-cetak-penghargaan"><i class='fa fa-print'></i> Cetak</button>
         </form>
         <div class="table-responsive">
             <table class="table table-bordered yajra-datatable" style="width:100%">
@@ -49,6 +50,10 @@
     </div>
     <script type="text/javascript">
         $(function() {
+            $("[name=btn-cetak-penghargaan]").click(function() {
+                var base_url = "<?php echo $url_cetak; ?>";
+                window.open(base_url + "?" + $("#form-search-penghargaan").serialize(), '_blank');
+            });
             $("#form-search-penghargaan").submit((function(e) {
                 table.ajax.reload();
                 e.preventDefault();
