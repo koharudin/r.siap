@@ -122,7 +122,7 @@ class RiwayatJabatanController extends ProfileController
         })->when('in', [2, 3, 4, 5], function (Form $form) {
             $form->belongsTo('jabatan_id_fungsional', GridJabatan::class, 'JABATAN FUNGSIONAL/UMUM');
         });
-        $form->text('nama_jabatan', __('NAMA JABATAN'));
+        $form->display('nama_jabatan', __('NAMA JABATAN'));
         $form->text('no_pelantikan', __('NO PELANTIKAN'));
         $form->date('tgl_pelantikan', __('TGL PELANTIKAN'))->default(date('Y-m-d'));
         $form->text('tunjangan', __('TUNJANGAN'));
@@ -189,6 +189,7 @@ class RiwayatJabatanController extends ProfileController
                 $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
             }
         });
+
         return $form;
     }
 }

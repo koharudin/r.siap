@@ -65,11 +65,26 @@ class RiwayatJabatan extends Model
         });
     }
 
-    public function getTTipeJabatanAttribute(){
+    public function getTTipeJabatanAttribute()
+    {
         return TipeJabatan::find($this->tipe_jabatan_id)->name;
     }
-    public function getTTMTJabatanAttribute(){
+    public function getTTMTJabatanAttribute()
+    {
         return $this->tmt_jabatan->format('d-m-Y');
     }
-    
+    protected $appends = [
+        'jabatan_id_fungsional',
+        'jabatan_id_struktural'
+    ];
+
+    public function getJabatanIdFungsionalAttribute()
+    {
+        if ($this->tipe_jabatan_id == 1 || $this->tipe_jabatan_id == 6) return null;
+        else     return $this->jabatan_id;
+    }
+    public function getJabatanIdStrukturalAttribute()
+    {
+        if ($this->tipe_jabatan_id == 1 || $this->tipe_jabatan_id == 6) return $this->jabatan_id;
+    }
 }
