@@ -117,6 +117,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
     }
+    public function obj_riwayat_skcpnspppk()
+    {
+        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tmt_cpns', 'desc');
+    }
     public function obj_riwayat_jabatan()
     {
         return $this->hasMany(RiwayatJabatan::class, 'employee_id', 'id')->orderBy('tmt_jabatan', 'asc');

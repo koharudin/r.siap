@@ -197,8 +197,23 @@
                         }
                     },
                     {
-                        data: 'aksi',
-                        name: 'aksi'
+
+			name: 'aksi',
+                        render : function(data,type, full){
+                            var actions = [];
+                            if(full.aksi[0] > full.aksi[1]){
+                                actions.push("<span class='badge badge-pill' style='background-color:#ffc107;padding:5px;'>Kurang dari ABK</span>");              
+                            }
+                            else if(full.aksi[0] < full.aksi[1])
+                            {
+                                actions.push("<span class='badge badge-pill' style='background-color:#dc3545;padding:5px;'>Lebih dari ABK</span>");              
+                            }
+                            else{
+                                actions.push("<span class='badge badge-pill' style='background-color:#28a745;padding:5px;'>Sesuai ABK</span>");              
+                            }
+                            return actions.join('');
+                        }
+
                     }
                 ],
                 footerCallback : function(row, data, start, end, display){

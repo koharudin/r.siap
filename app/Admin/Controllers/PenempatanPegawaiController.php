@@ -90,8 +90,7 @@ class PenempatanPegawaiController extends Controller
                 }
             })
             ->addColumn('aksi', function ($row) {
-                $ket = '';
-                return $ket;
+               return [$row->kebutuhan, $row->existing_pegawai];
             })
             ->make(true);
     }

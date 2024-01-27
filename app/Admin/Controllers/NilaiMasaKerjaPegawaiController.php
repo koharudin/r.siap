@@ -25,6 +25,17 @@ class NilaiMasaKerjaPegawaiController extends AdminController
     {
 
         $grid = new Grid(new Employee());
+        $grid->model()->where(function ($query) {
+            $query->whereIn('status_pegawai_id', [2, 23]);
+        })->with(['obj_riwayat_skcpns']);
+        $grid->filter(function ($filter) {
+
+            $filter->disableIdFilter();
+            $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
+            $filter->ilike('first_name', 'Nama Pegawai');
+        });
+
+        $grid->model()->with(['obj_riwayat_skcpns']);
         $grid->header(function ($query) {
             return '
             <div class="container">
@@ -106,23 +117,14 @@ class NilaiMasaKerjaPegawaiController extends AdminController
         </div>
         ';
         });
-        $grid->model()->where(function ($query) {
-            $query->whereIn('status_pegawai_id', [2, 23]);
-        })->with(['obj_riwayat_jabatan', 'obj_riwayat_skcpns']);
-        $grid->filter(function ($filter) {
-
-            $filter->disableIdFilter();
-            $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
-            $filter->ilike('first_name', 'Nama Pegawai');
-        });
-
-        $grid->model()->with(['obj_riwayat_jabatan', 'obj_riwayat_skcpns']);
-        $grid->column('first_name', __('Nama Pegawai'))->sortable();
+        $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
+            return $this->first_name . " <br> " . $this->nip_baru;
+        })->sortable();
         $grid->column('latest_skcpns', __('Awal Masuk ANRI'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
+            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
 
             // Menggunakan optional() untuk memastikan $latestSKCPNS or $latestSKCPNS->tgl_sk = null
-            return optional($latestSKCPNS)->tgl_sk ? $latestSKCPNS->tgl_sk->format('Y-m-d') : '-';
+            return optional($latestSKCPNS)->tmt_cpns ? $latestSKCPNS->tmt_cpns->format('Y-m-d') : '-';
         });
         $grid->column('status_pegawai_id', __('Status Pegawai'))->display(function () {
 
@@ -133,9 +135,9 @@ class NilaiMasaKerjaPegawaiController extends AdminController
             }
         })->sortable();
         $grid->column('lama_kerja', __('Lama Bekerja'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
+            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
             if ($latestSKCPNS) {
-                $cpnsDate = $latestSKCPNS->tgl_sk;
+                $cpnsDate = $latestSKCPNS->tmt_cpns;
                 $now = now();
 
                 $lengthOfService = $cpnsDate->diff($now);
@@ -145,9 +147,9 @@ class NilaiMasaKerjaPegawaiController extends AdminController
             return '-';
         });
         $grid->column('nilai_masa_kerja', __('Nilai Masa Kerja'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
+            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
             if ($latestSKCPNS) {
-                $cpnsDate = $latestSKCPNS->tgl_sk;
+                $cpnsDate = $latestSKCPNS->tmt_cpns;
                 $now = now();
                 $lengthOfService = $cpnsDate->diff($now);
                 $totalMonths = ($lengthOfService->y);
@@ -175,8 +177,6 @@ class NilaiMasaKerjaPegawaiController extends AdminController
 
             return '-';
         });
-
-
         $grid->disableActions();
         $grid->disableCreateButton();
         return $grid;

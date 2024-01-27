@@ -152,4 +152,5 @@ Route::group([
     $router->any('riwayat_hukuman', 'RiwayatHukumanController@Index');
     $router->resource('nilaimasakerja', NilaiMasaKerjaPegawaiController::class);
     $router->resource('nilaijabatan', NilaiJabatanPegawaiController::class);
+    $router->resource('nilaiunitkerja', NilaiUnitKerjaPegawaiController::class);
 });
