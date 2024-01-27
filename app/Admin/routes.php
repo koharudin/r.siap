@@ -3,6 +3,8 @@
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AuthController;
 use App\Admin\Controllers\PenghargaanController;
+use App\Admin\Controllers\ProfilePegawai\RiwayatHukumanController;
+use App\Admin\Controllers\RiwayatHukumanController as ControllersRiwayatHukumanController;
 use App\Models\Penghargaan;
 
 Admin::routes();
@@ -149,6 +151,8 @@ Route::group([
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');
     $router->any('diagram_jabatan', 'DiagramJabatanController@Index');
     $router->any('statistik', 'StatistikController@Index');
+    $router->any('dt-riwayat-hukuman', 'RiwayatHukumanController@dt')->name('riwayat-hukuman.dt');
+    $router->get('riwayat_hukuman/cetak', [ControllersRiwayatHukumanController::class, 'cetak']);
     $router->any('riwayat_hukuman', 'RiwayatHukumanController@Index');
     $router->resource('nilaimasakerja', NilaiMasaKerjaPegawaiController::class);
     $router->resource('nilaijabatan', NilaiJabatanPegawaiController::class);

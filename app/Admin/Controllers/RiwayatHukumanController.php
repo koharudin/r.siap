@@ -6,73 +6,119 @@ use App\Admin\Actions\DetailPegawaiAction;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\RiwayatHukuman;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\Dashboard;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use DataTables;
+use Illuminate\Support\Facades\URL;
+use Log;
+use MBence\OpenTBSBundle\Services\OpenTBS;
 
 class RiwayatHukumanController extends Controller
 {
-    public $title  = 'Riwayat Hukuman';
+    public $title  = 'Penghargaan';
     public function index(Content $content)
     {
-
         return $content
             ->title($this->title)
-            ->body($this->grid());
+            ->body(view("v_riwayat_hukuman", ['url_cetak' => URL::to('/admin/riwayat_hukuman/cetak')]));
     }
-    public function grid()
+    public function cetak()
     {
-        $grid = new Grid(new RiwayatHukuman());
-        $grid->model()->load('obj_employee');
-        $grid->actions(function ($actions) {
-            $actions->disableDelete();
-            $actions->disableEdit();
-            $actions->disableView();
-            $actions->add(new DetailPegawaiAction());
+        $TBS = new OpenTBS();
+        \Carbon\Carbon::setLocale('id');
+        $file = storage_path('../templates/cetak_riwayat_hukuman.xlsx');
+
+        $TBS->LoadTemplate($file);
+
+        $filter_nama = request()->input('nama');
+        $filter_nip = request()->input('nip');
+        $query = RiwayatHukuman::whereHas('obj_employee', function ($q) use ($filter_nama, $filter_nip) {
+            if ($filter_nip) {
+                $q->where('nip_baru', 'ilike', "%{$filter_nip}%");
+            }
+            if ($filter_nama) {
+                $q->where('first_name', 'ilike', "%{$filter_nama}%");
+            }
         });
-        $grid->disableCreateButton();
-        // column not in table
-        $grid->column('obj_employee.foto', 'FOTO')->display(function ($foto) {
-            $disk = Storage::disk('minio_foto');
-            if (Str::of($foto)->trim()->isNotEmpty()) {
-                if ($disk->exists($foto)) {
-                    $url = $disk->temporaryUrl(
-                        $foto,
-                        now()->addMinutes(5)
-                    );
-                    return $url;
+        $query->orderBy('tmt_sk', 'DESC');
+
+        $records = $query->get();
+        $data = [];
+        $records->each(function ($record, $i) use (&$data) {
+            $tmt_sk  = '-';
+            if ($record->tmt_sk) {
+                $tmt_sk = $record->tmt_sk->format('Y-m-d');
+            }
+            $data[] = [
+                'first_name' => $record->obj_employee->first_name,
+                'nip' => $record->obj_employee->nip_baru,
+                'pelanggaran' => $record->pelanggaran,
+                'pejabat_penetap' => $record->pejabat_penetap_jabatan,
+                'tmt_sk' => $tmt_sk
+            ];
+        });
+        $TBS->MergeBlock('r', $data);
+        $now = Carbon::now();
+        $today = $now->isoFormat('dddd, D MMMM Y');
+        $today_ymd = $now->isoFormat('YMMDD');
+        $TBS->Show(OPENTBS_DOWNLOAD, "cetak_riwayat_hukuman_{$today_ymd}.xlsx");
+        return response()->json($data, 200);
+    }
+    public function dt()
+    {
+        $params = request('extra_search');
+        $filter_nip = null;
+        $filter_nama = null;
+        if ($params) {
+            foreach ($params as $param) {
+                if (@$param['name'] == 'nip') {
+                    $filter_nip = $param['value'];
+                }
+                if (@$param['name'] == 'nama') {
+                    $filter_nama = $param['value'];
                 }
             }
-            return config("admin.default_avatar");
-        })->image('', 100, 100);
-        $grid->column('obj_employee.nip_baru', __('NIP'));
-        $grid->column('obj_employee.first_name', __('NAMA'));
-        $grid->column('tmt_sk', __('TMT SK'))->display(function ($o) {
-            return $this->tmt_sk->format('d-m-Y');
+        }
+
+        $query = RiwayatHukuman::whereHas('obj_employee', function ($q) use ($filter_nama, $filter_nip) {
+            if ($filter_nip) {
+                $q->where('nip_baru', 'ilike', "%{$filter_nip}%");
+            }
+            if ($filter_nama) {
+                $q->where('first_name', 'ilike', "%{$filter_nama}%");
+            }
         });
-        $grid->column('obj_hukuman.name', __('NAMA HUKUMAN'));
-        $grid->column('pelanggaran', __('PELANGGARAN'));
-        $grid->column('pejabat_penetap_jabatan', 'PEJABAT PENETAP');
-        $grid->expandFilter();
-        $grid->filter(function ($filter) {
-            $filter->disableIdFilter();
-            $filter->where(function ($query) {
-                $v = $this->input;
-                $query->whereHas('obj_employee', function ($q) use ($v) {
-                    $q->where('first_name', 'ilike', "%" . $v . '%');
-                });
-            }, 'Nama Pegawai');
-            $filter->where(function ($query) {
-                $v = $this->input;
-                $query->whereHas('obj_employee', function ($q) use ($v) {
-                    $q->where('nip_baru', 'ilike', "%" . $v . '%');
-                });
-            }, 'NIP Pegawai');
-        });
-        return $grid;
+        $query->orderBy('tmt_sk', 'DESC');
+        return  DataTables::eloquent($query)
+            ->addIndexColumn()
+            ->addColumn('first_name', function (RiwayatHukuman $rw) {
+                return $rw->obj_employee->first_name;
+            })
+            ->addColumn('nip_baru', function (RiwayatHukuman $rw) {
+                return $rw->obj_employee->nip_baru;
+            })
+            ->addColumn('nama_hukuman', function (RiwayatHukuman $rw) {
+                return  '';
+            })
+            ->addColumn('pelanggaran', function (RiwayatHukuman $rw) {
+                return  $rw->pelanggaran;
+            })
+            ->addColumn('pejabat_penetap', function (RiwayatHukuman $rw) {
+                return  $rw->pejabat_penetap_jabatan;
+            })
+            ->addColumn('tmt_sk', function (RiwayatHukuman $rw) {
+                if ($rw->tmt_sk) {
+                    return $rw->tmt_sk->format('Y-m-d');
+                }
+                return  '';
+            })
+            ->make(true);
     }
 }
