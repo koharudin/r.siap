@@ -9,6 +9,12 @@ class RiwayatPangkat extends Model
     public $table = 'riwayat_pangkat';
     const SK_CPNS = 1;
     const SK_PNS = 2;
+
+    public function updateLastRiwayatPangkat()
+    {
+        $this->load('obj_pegawai');
+        $this->obj_pegawai->updateLastRiwayatPangkat();
+    }
     public static function boot()
     {
         parent::boot();
@@ -18,6 +24,7 @@ class RiwayatPangkat extends Model
         });
 
         self::created(function ($model) {
+            $model->updateLastRiwayatPangkat();
             // ... code here
             // insert into riwayat gaji
             $record = RiwayatGaji::where('riwayat_pangkat_id', $model->id)->get()->first();
@@ -45,6 +52,7 @@ class RiwayatPangkat extends Model
         });
 
         self::updated(function ($model) {
+            $model->updateLastRiwayatPangkat();
             // ... code here
 
             $record = RiwayatGaji::where('riwayat_pangkat_id', $model->id)->get()->first();
@@ -77,6 +85,7 @@ class RiwayatPangkat extends Model
         });
 
         self::deleted(function ($model) {
+            $model->updateLastRiwayatPangkat();
             // ... code here
         });
     }

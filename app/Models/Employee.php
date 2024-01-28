@@ -207,5 +207,24 @@ class Employee extends Model
     {
         return StatusPegawai::find($this->status_pegawai_id)->name;
     }
+
+    public function updateLastRiwayatPangkat()
+    {
+        $this->load('obj_riwayat_pangkat');
+        $last = $this->obj_riwayat_pangkat->last();
+        if ($last) {
+            $this->last_riwayat_pangkat_id = $last->id;
+        } else $this->last_riwayat_pangkat_id = null;
+        $this->save();
+    }
+    public function updateLastRiwayatPendidikan()
+    {
+        $this->load('obj_riwayat_pendidikan');
+        $last = $this->obj_riwayat_pendidikan->last();
+        if ($last) {
+            $this->obj_riwayat_pendidikan_id = $last->id;
+        } else $this->obj_riwayat_pendidikan_id = null;
+        $this->save();
+    }
     public $dates = ['birth_date', 'tgl_pensiun'];
 }
