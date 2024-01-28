@@ -16,10 +16,10 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
 use Encore\Admin\Form;
 
-class SKCPNS_Controller extends  ProfileController
+class SKCPNS_Controller extends ProfileController
 {
 
-    public $title = 'SK CPNS';
+    public $title = 'SK CPNS/PPPK';
     public $activeTab = 'riwayat_sk_cpns';
     public $klasifikasi_id = 3;
 
@@ -32,20 +32,20 @@ class SKCPNS_Controller extends  ProfileController
     public function form()
     {
 
-        $r = RiwayatSKCPNS::whereHas('obj_employee',function($q) {
-            $q->where('id',$this->getProfileId());
+        $r = RiwayatSKCPNS::whereHas('obj_employee', function ($q) {
+            $q->where('id', $this->getProfileId());
         })->get()->first();
-        $dokumen  = null;
-        if($r){
-            $dokumen  = DokumenPegawai::where('klasifikasi_id',$this->klasifikasi_id)->where('ref_id',$r->id)->get()->first();
+        $dokumen = null;
+        if ($r) {
+            $dokumen = DokumenPegawai::where('klasifikasi_id', $this->klasifikasi_id)->where('ref_id', $r->id)->get()->first();
         }
         $form = new Form(new RiwayatSKCPNS());
-        if($dokumen){
+        if ($dokumen) {
             $url = route('admin.download.dokumen', [
                 'f' => base64_encode($dokumen->file)
             ]);
-            $form->tools(function($tools) use($url){
-                $tools->add('<a href="'.$url.'" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
+            $form->tools(function ($tools) use ($url) {
+                $tools->add('<a href="' . $url . '" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
             });
         }
         $form->hidden('employee_id', 'ID');
@@ -86,7 +86,7 @@ class SKCPNS_Controller extends  ProfileController
         }
         $form->saving(function (Form $form) {
             if ($form->pejabat_penetap_id) {
-                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
                 if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
@@ -102,7 +102,7 @@ class SKCPNS_Controller extends  ProfileController
 
         $r = RiwayatSKCPNS::where('employee_id', $this->getProfileId())->get()->first();
         if ($r) {
-            $form  =  $form->edit($r->id);
+            $form = $form->edit($r->id);
             $form->setAction($this->activeTab . "/" . $r->id);
             $form->setTitle(' ');
         } else {

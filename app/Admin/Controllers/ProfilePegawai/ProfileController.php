@@ -36,41 +36,41 @@ class ProfileController
         $links = [
             'Data Personal' => "data_personal",
             'Angka Kredit' => "riwayat_angkakredit",
-            'SK CPNS' =>  "riwayat_sk_cpns",
-            'SK PNS' =>  "riwayat_sk_pns",
-            'Riwayat Pangkat' =>  "riwayat_pangkat",
-            'Riwayat Jabatan' =>  "riwayat_jabatan",
-            'Riwayat Mutasi' =>  "riwayat_mutasi",
-            'Riwayat Sumpah' =>  "riwayat_sumpah",
-            'Riwayat Gaji' =>  "riwayat_gaji",
+            'SK CPNS/PPPK' => "riwayat_sk_cpns",
+            'SK PNS' => "riwayat_sk_pns",
+            'Riwayat Pangkat' => "riwayat_pangkat",
+            'Riwayat Jabatan' => "riwayat_jabatan",
+            'Riwayat Mutasi' => "riwayat_mutasi",
+            'Riwayat Sumpah' => "riwayat_sumpah",
+            'Riwayat Gaji' => "riwayat_gaji",
             //'Riwayat SK Mutasi PAS' =>  "riwayat_sk_mutasi_pas",
-            'SK Pensiun' =>  "riwayat_sk_pensiun",
-            'Riwayat Pendidikan' =>  "riwayat_pendidikan",
-            'Diklat Struktural' =>  "riwayat_diklat_struktural",
-            'Diklat Fungsional' =>  "riwayat_diklat_fungsional",
-            'Diklat Teknis' =>  "riwayat_diklat_teknis",
+            'SK Pensiun' => "riwayat_sk_pensiun",
+            'Riwayat Pendidikan' => "riwayat_pendidikan",
+            'Diklat Struktural' => "riwayat_diklat_struktural",
+            'Diklat Fungsional' => "riwayat_diklat_fungsional",
+            'Diklat Teknis' => "riwayat_diklat_teknis",
 
-            'Kursus' =>  "riwayat_kursus",
-            'Seminar' =>  "riwayat_seminar",
-            'Nilai DP3' =>  "riwayat_dp3",
-            'Uji Kompetensi' =>  "riwayat_uji_kompetensi",
-            'Penghargaan' =>  "riwayat_penghargaan",
-            'Potensi Diri' =>  "riwayat_potensi_diri",
-            'Prestasi Kerja' =>  "riwayat_prestasi_kerja",
-            'Pengalaman Kerja' =>  "riwayat_pengalaman_kerja",
+            'Kursus' => "riwayat_kursus",
+            'Seminar' => "riwayat_seminar",
+            'Nilai DP3' => "riwayat_dp3",
+            'Uji Kompetensi' => "riwayat_uji_kompetensi",
+            'Penghargaan' => "riwayat_penghargaan",
+            'Potensi Diri' => "riwayat_potensi_diri",
+            'Prestasi Kerja' => "riwayat_prestasi_kerja",
+            'Pengalaman Kerja' => "riwayat_pengalaman_kerja",
 
-            'Rekam Medis' =>  "riwayat_rekam_medis",
-            'Orang Tua' =>  "riwayat_orangtua",
-            'Mertua' =>  "riwayat_mertua",
-            'Riwayat Nikah' =>  "riwayat_nikah",
-            'Anak' =>  "riwayat_anak",
-            'Saudara' =>  "riwayat_saudara",
+            'Rekam Medis' => "riwayat_rekam_medis",
+            'Orang Tua' => "riwayat_orangtua",
+            'Mertua' => "riwayat_mertua",
+            'Riwayat Nikah' => "riwayat_nikah",
+            'Anak' => "riwayat_anak",
+            'Saudara' => "riwayat_saudara",
 
-            'Organisasi' =>  "riwayat_organisasi",
-            'Penguasaan Bahasa' =>  "riwayat_penguasaan_bahasa",
+            'Organisasi' => "riwayat_organisasi",
+            'Penguasaan Bahasa' => "riwayat_penguasaan_bahasa",
 
-            'Hukuman' =>  "riwayat_hukuman",
-            'Diklat Teknis' =>  "riwayat_diklat_teknis",
+            'Hukuman' => "riwayat_hukuman",
+            'Diklat Teknis' => "riwayat_diklat_teknis",
         ];
         return $links;
     }
@@ -125,11 +125,11 @@ class ProfileController
     public function getDokumenUrl($arr)
     {
         $href = '';
-        if(@$arr['id']) {
+        if (@$arr['id']) {
             $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
         }
-        if($dokumen) {
-            if(str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') {
+        if ($dokumen) {
+            if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') {
                 $href = 'File SIAP tidak ada.';
             } else {
                 $url = route('admin.download.dokumen', [
@@ -140,32 +140,32 @@ class ProfileController
         } else {
             $href = 'File SIAP tidak ada.';
         }
-        if(!empty(@$arr['dok_uri'])) {
+        if (!empty(@$arr['dok_uri'])) {
             $url = route('admin.download.dokumensiasn', [
                 'f' => base64_encode(@$arr['id_siasn']),
                 'g' => base64_encode(@$arr['klasifikasi_id']),
                 'h' => base64_encode(@$arr['nip'])
             ]);
-            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIASN</b></a>";
+            $href = $href . "<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIASN</b></a>";
         } else {
-            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'>File SIASN tidak ada.";
+            $href = $href . "<hr style='margin-bottom: 5px; margin-top: 5px;'>File SIASN tidak ada.";
         }
         return $href;
     }
-    
+
     public function index(Content $content)
     {
         $content
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($this->header()->render());
-        if(method_exists($this, 'grid')) {
+        if (method_exists($this, 'grid')) {
             $grid = $this->grid();
             $grid->paginate(10);
             $employee = $this->getEmployee();
-            if($this->use_document) {
+            if ($this->use_document) {
                 $_this = $this;
-                $grid->column('dokumen', 'DOKUMEN')->display(function($cb) use($employee, $_this) {
+                $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
                     return $_this->getDokumenUrl([
                         'klasifikasi_id' => $_this->klasifikasi_id,
                         'id' => $this->id,
@@ -175,21 +175,21 @@ class ProfileController
                     ]);
                 });
             }
-            if(!Admin::user()->can("create-{$this->activeTab}")) {
+            if (!Admin::user()->can("create-{$this->activeTab}")) {
                 $grid->disableCreateButton();
             }
             $_this = $this;
-            $grid->actions(function($actions) use($_this) {
-                if(!Admin::user()->can("delete-{$_this->activeTab}")) {
+            $grid->actions(function ($actions) use ($_this) {
+                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
                     $actions->disableDelete();
                 }
-                if(!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
                     $actions->disableEdit();
                 }
             });
-            $grid->tools(function($tools) use($_this) {
-                $tools->batch(function($batch) use($_this) {
-                    if(!Admin::user()->can("delete-{$this->activeTab}")) {
+            $grid->tools(function ($tools) use ($_this) {
+                $tools->batch(function ($batch) use ($_this) {
+                    if (!Admin::user()->can("delete-{$this->activeTab}")) {
                         $batch->disableDelete();
                     }
                 });
@@ -197,7 +197,7 @@ class ProfileController
             $grid->disableRowSelector();
             $grid->model()->where('employee_id', $this->getProfileId());
             $c = $grid->render();
-        } else if(method_exists($this, 'form')) {
+        } else if (method_exists($this, 'form')) {
             $form = $this->form();
             $form->disableCreatingCheck();
             $form->disableEditingCheck();
@@ -239,21 +239,21 @@ class ProfileController
         $c = $this->detail($id);
         $_this = $this;
         $c->panel()
-            ->tools(function($tools) use($_this, $id) {
-                if(!Admin::user()->can("delete-{$_this->activeTab}")) {
+            ->tools(function ($tools) use ($_this, $id) {
+                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
                     $tools->disableDelete();
                 }
-                if(!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
                     $tools->disableEdit();
                 }
-                if((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
+                if ((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
                     $tools->append('<a id="customButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
                     $url = route('admin.download.datasiasn', [
                         'f' => $id,
                         'g' => $_this->klasifikasi_id,
 
                     ]);
-                    
+
                     $script = <<<SCRIPT
                         <script>
                             $(document).ready(function() {
@@ -280,7 +280,8 @@ class ProfileController
                     $tools->append($script);
                     // $tools->append('<a class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
                     // $tools->append('<a style="margin-right: 10px;" class="btn btn-sm btn-warning"><i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Kirim ke SIASN</a>');
-                    if(isset($_this->apiData) and $_this->apiData != '') var_dump($_this->apiData);
+                    if (isset($_this->apiData) and $_this->apiData != '')
+                        var_dump($_this->apiData);
                 }
             });
         $content
@@ -293,7 +294,7 @@ class ProfileController
     public function edit($profile_id, $id, Content $content)
     {
         Permission::check("edit-{$this->activeTab}");
-        $form  = $this->form();
+        $form = $this->form();
         $form->disableCreatingCheck();
         $form->disableEditingCheck();
         $form->disableViewCheck();
@@ -336,7 +337,7 @@ class ProfileController
 
     public function setDokumenPendukung(Form &$form)
     {
-        if($this->use_document) {
+        if ($this->use_document) {
             $_this = $this;
             $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->rules([
                 'mimes:pdf',
@@ -344,17 +345,17 @@ class ProfileController
             ], [
                 'mimes' => 'DOKUMEN HANYA DIPERBOLEHKAN FORMAT PDF',
                 'max' => 'UKURAN DOKUMEN MELEBIHI 2MB'
-            ])->disk('minio_dokumen')->name(function($file) use($_this) {
-                return $_this->getEmployee()->nip_baru."_".md5(uniqid()).".".$file->guessExtension();
+            ])->disk('minio_dokumen')->name(function ($file) use ($_this) {
+                return $_this->getEmployee()->nip_baru . "_" . md5(uniqid()) . "." . $file->guessExtension();
             });
-            $form->saving(function(Form $form) {
+            $form->saving(function (Form $form) {
             });
-            $form->submitted(function(Form $form) {
+            $form->submitted(function (Form $form) {
                 $form->ignore('dokumen');
             });
-            $form->saved(function(Form $form) use($d, $_this) {
+            $form->saved(function (Form $form) use ($d, $_this) {
                 $file = request()->file('dokumen');
-                if($file) {
+                if ($file) {
                     $newFileName = $d->prepare($file);
                     $keys = explode("#", $form->model()->simpeg_id);
                     $arr = [

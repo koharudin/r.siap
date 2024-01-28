@@ -123,7 +123,11 @@ class Employee extends Model
     }
     public function obj_riwayat_skcpns()
     {
-        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
+        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
+    }
+    public function obj_riwayat_skcpnspppk()
+    {
+        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tmt_cpns', 'desc');
     }
     public function obj_riwayat_jabatan()
     {

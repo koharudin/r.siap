@@ -8,7 +8,6 @@
     <!-- /.box-header -->
     <div class="box-body">
         <form id="form-search" action="" class="row">
-            {{ csrf_field() }}
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="unitkerja">Unit Kerja</label>
@@ -79,10 +78,10 @@
             </div>
         </form>
         <div class="table-responsive">
-            <table class="table table-bordered yajra-datatable" style="width:100%">
+            <table class="table table-bordered datatable" style="width:100%">
                 <thead>
                     <tr>
-                        <th colspan="7">Petunjuk:<br/>
+                        <th colspan="9">Petunjuk:<br/>
                             1. Gunakan tombol Cari terlebih dahulu untuk menemukan data.</br>
                             2. Gunakan tombol Sinkron Data untuk menghitung/meng-update Existing Pegawai dan Kelebihan/Kekurangan.</br>
                             3. Bulan Tahun adalah Periode ABK yang diinput ke dalam sistem.
@@ -94,15 +93,27 @@
                         <th>Bulan</th>
                         <th>Tahun</th>
                         <th>Kode - Nama Jabatan</th>
-                        <th>Kebutuhan Sesuai ABK</th>
-                        <th>Existing Pegawai</th>
-                        <th>Kelebihan/Kekurangan</th>
-                        <th>Aksi</th>
+                        <th class="text-left">Kebutuhan ABK</th>
+                        <th class="text-left" style="border-right:hidden;">Existing Pegawai</th>
+                        <th style="border-left:hidden;"></th>
+                        <th class="text-left">Kelebihan</th>
+                        <th class="text-left">Kekurangan</th>
+                        <th>Keterangan</th>
                     </tr>
-
                 </thead>
                 <tbody>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">Total</th>
+                        <th class="text-right totalkebutuhan"></th>
+                        <th class="text-right totalexisting" style="border-right:hidden;"></th>
+                        <th class="text-right" style="border-left:hidden;"></th>
+                        <th class="text-right totalkelebihan"></th>
+                        <th class="text-right totalkekurangan"></th>
+                        <th class="text-right"></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <!-- /.table-responsive -->
@@ -111,7 +122,7 @@
 
     <script type="text/javascript">
         $(function() {
-            var table = $('.yajra-datatable').DataTable({
+            var table = $('.datatable').DataTable({
                 dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
                 processing: true,
                 serverSide: true,
@@ -126,7 +137,6 @@
                     'url': "{{route('admin.penempatan_pegawai.dt')}}",
                     "data": function(d) {
                         d.extra_search = $('#form-search').serializeArray();
-                        d._token = "{{ csrf_token() }}";
                     },
                 },
                 columns: [{
@@ -146,38 +156,70 @@
                         name: 'nama_jabatan'
                     },
                     {
-                        class: "text-center",
+                        class: "text-right",
                         data: 'kebutuhan',
                         name: 'kebutuhan'
+                    },
+                    {
+                        class: "text-right",
+                        data: 'existing_pegawai',
+                        name: 'existing_pegawai'
                     },
                     {
                         class : "text-center",
                         render : function(data,type, full){
                             var actions = [];
-                            actions.push(full.existing_pegawai[0] + "&nbsp;&nbsp;&nbsp;(<a href='existing_pegawai?unit_id="+full.existing_pegawai[1]+"&jabatan="+full.existing_pegawai[2]+"' target='_blank' >Lihat Pegawai</a>)");
-                            return actions.join('');
-                        }
-                    },
-                    {
-                        render : function(data,type, full){
-                            var actions = [];
-                            if(full.kelebihan_kekurangan[0] === 'lebih'){
-                                actions.push("<b style='color:red;'>"+full.kelebihan_kekurangan[1]+"</b>");
-                            }
-                            else if(full.kelebihan_kekurangan[0] === 'kurang'){
-                                actions.push("<b style='color:green;'>"+full.kelebihan_kekurangan[1]+"</b>");
+                            if(full.url_existing[0] == 0){
+                                actions.push("Lihat Pegawai");
                             }
                             else{
-                                actions.push("<b>"+full.kelebihan_kekurangan[1]+"</b>");
+                                actions.push("<a href='existing_pegawai?unit_id="+full.url_existing[1]+"&jabatan="+full.url_existing[2]+"' target='_blank' >Lihat Pegawai</a>");
                             }
                             return actions.join('');
                         }
                     },
+                    { 
+                        name: 'kelebihan',
+                        class : "text-right",
+                        render : function(data,type, full){
+                            var actions = [];
+                            actions.push(full.kelebihan);
+                            return actions.join('');
+                        }
+                    },
+                    { 
+                        name: 'kekurangan',
+                        class : "text-right",
+                        render : function(data,type, full){
+                            var actions = [];
+                            actions.push(full.kekurangan);
+                            return actions.join('');
+                        }
+                    },
                     {
-                        data: 'aksi',
-                        name: 'aksi'
+
+			name: 'aksi',
+                        render : function(data,type, full){
+                            var actions = [];
+                            if(full.aksi[0] > full.aksi[1]){
+                                actions.push("<span class='badge badge-pill' style='background-color:#ffc107;padding:5px;'>Kurang dari ABK</span>");              
+                            }
+                            else if(full.aksi[0] < full.aksi[1])
+                            {
+                                actions.push("<span class='badge badge-pill' style='background-color:#dc3545;padding:5px;'>Lebih dari ABK</span>");              
+                            }
+                            else{
+                                actions.push("<span class='badge badge-pill' style='background-color:#28a745;padding:5px;'>Sesuai ABK</span>");              
+                            }
+                            return actions.join('');
+                        }
+
                     }
-                ]
+                ],
+                footerCallback : function(row, data, start, end, display){
+                    //Menghitung Baris Total
+                    getTotal();
+                }
             });
 
         });
@@ -202,15 +244,46 @@
         }
 
         function SinkronData(){
+            var x = 0;
+            if(document.getElementById('bulan').selectedIndex == 0){
+                x += 1;
+            }
 
+            if(document.getElementById('tahun').selectedIndex == 0){
+                x += 1;
+            }
+
+            if(x == 0){ 
+                $.ajax({
+                    type : 'GET',
+                    url : "{{route('admin.penempatan_pegawai.sinkrondata')}}",
+                    cache : false,
+                    data : $('#form-search').serializeArray(),
+                    success : function (data){  
+                        location.reload();
+                    }
+                });
+            }
+            else{
+                //Bulan Tahun harus diisi agar sinkronisasi hanya untuk ABK periode tertentu saja. Tidak berlaku surut untuk semua data.
+                alert("Bulan dan Tahun harus dipilih.");
+            }
+        }
+
+        function getTotal(){
             $.ajax({
                 type : 'GET',
-                url : "{{route('admin.penempatan_pegawai.sinkrondata')}}",
+                url : "{{route('admin.penempatan_pegawai.getTotal')}}",
                 cache : false,
-                data : $('#form-search').serializeArray(),
-                success : function (data){  
-                    location.reload();
-                }
+                dataType: "json",
+                data :  $('#form-search').serializeArray(),
+                success : function (result){  
+                    const obj =  JSON.parse(JSON.stringify(result));
+                    $(".totalkebutuhan").html(obj['totalkebutuhan']);
+                    $(".totalexisting").html(obj['totalexisting']);
+                    $(".totalkelebihan").html(obj['totalkelebihan']);
+                    $(".totalkekurangan").html(obj['totalkekurangan']);
+                }   
             });
         }
 
