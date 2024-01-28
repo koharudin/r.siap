@@ -123,7 +123,10 @@ Route::group([
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
-    $router->any('kp', 'KGBController@Index');
+    $router->get('kp/cetak', [KPController::class, 'cetak']);
+    $router->any('kp', 'KPController@Index');
+    $router->any('dt-kp', 'KPController@dt')->name('kp.dt');
+    $router->any('kp', 'KPController@Index');
     $router->any('pensiun', 'PensiunController@akan_pensiun');
     $router->any('pensiun-akan', 'PensiunController@akan_pensiun')->name('pensiun.akan-pensiun');
     $router->any('pensiun-mpp', 'PensiunController@mpp')->name('pensiun.mpp');

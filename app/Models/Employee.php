@@ -105,9 +105,17 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatPangkat::class, 'employee_id', 'id')->orderBy('tmt_pangkat', 'asc');
     }
+    public function obj_last_riwayat_pangkat()
+    {
+        return $this->hasOne(RiwayatPangkat::class, 'id', 'last_riwayat_pangkat_id');
+    }
     public function obj_riwayat_pendidikan()
     {
         return $this->hasMany(RiwayatPendidikan::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
+    public function obj_last_riwayat_pendidikan()
+    {
+        return $this->hasOne(RiwayatPendidikan::class, 'id', 'last_riwayat_pendidikan_id');
     }
     public function obj_riwayat_mutasi()
     {
