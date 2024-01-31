@@ -119,6 +119,11 @@ class KPController extends Controller
         if ($filter_nip) {
             $query->where('nip_baru', 'ilike', "%{$filter_nip}%");
         }
+
+        // diluar fungsional
+        $query->whereHas('obj_last_riwayat_jabatan', function ($query) use ($dt_periode) {
+            $query->whereNotIn('tipe_jabatan_id', [3, 4, 5]);
+        });
         return  DataTables::eloquent($query)
             ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat_terakhir', 'rentang_waktu'])
             ->addIndexColumn()

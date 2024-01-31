@@ -31,6 +31,11 @@ class RiwayatJabatan extends Model
         return $this->hasOne(TipeJabatan::class, 'id', 'tipe_jabatan_id');
     }
     protected $dates = ['tmt_jabatan', 'tgl_sk'];
+    public function updateLastRiwayatJabatan()
+    {
+        $this->load('obj_pegawai');
+        $this->obj_pegawai->updateLastRiwayatJabatan();
+    }
     public static function boot()
     {
         parent::boot();
@@ -41,6 +46,7 @@ class RiwayatJabatan extends Model
 
         self::created(function ($model) {
             // ... code here
+            $model->updateLastRiwayatJabatan();
             // inserted ke pensiun2
             $model->obj_employee->setTanggalPensiun();
         });
@@ -51,7 +57,7 @@ class RiwayatJabatan extends Model
 
         self::updated(function ($model) {
             // ... code here
-
+            $model->updateLastRiwayatJabatan();
             // update ke pensiun2
             $model->obj_employee->setTanggalPensiun();
         });
@@ -62,6 +68,7 @@ class RiwayatJabatan extends Model
 
         self::deleted(function ($model) {
             // ... code here
+            $model->updateLastRiwayatJabatan();
         });
     }
 

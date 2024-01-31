@@ -105,6 +105,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatPangkat::class, 'employee_id', 'id')->orderBy('tmt_pangkat', 'asc');
     }
+    public function obj_last_riwayat_jabatan()
+    {
+        return $this->hasOne(RiwayatJabatan::class, 'id', 'last_riwayat_jabatan_id');
+    }
     public function obj_last_riwayat_pangkat()
     {
         return $this->hasOne(RiwayatPangkat::class, 'id', 'last_riwayat_pangkat_id');
@@ -215,6 +219,15 @@ class Employee extends Model
         if ($last) {
             $this->last_riwayat_pangkat_id = $last->id;
         } else $this->last_riwayat_pangkat_id = null;
+        $this->save();
+    }
+    public function updateLastRiwayatJabatan()
+    {
+        $this->load('obj_riwayat_jabatan');
+        $last = $this->obj_riwayat_jabatan->last();
+        if ($last) {
+            $this->last_riwayat_jabatan_id = $last->id;
+        } else $this->last_riwayat_jabatan_id = null;
         $this->save();
     }
     public function updateLastRiwayatPendidikan()
