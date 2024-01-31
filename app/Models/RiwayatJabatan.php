@@ -10,6 +10,10 @@ class RiwayatJabatan extends Model
     use DefaultDatetimeFormat;
     public $table  = 'riwayat_jabatan';
 
+    public function obj_pegawai()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
     public function obj_employee()
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');
