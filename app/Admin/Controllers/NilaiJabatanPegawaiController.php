@@ -7,6 +7,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Employee;
+use App\Models\RiwayatJabatan;
 
 class NilaiJabatanPegawaiController extends AdminController
 {
@@ -59,41 +60,6 @@ class NilaiJabatanPegawaiController extends AdminController
                                                     <td>00 tahun 0 bulan 1 hari</td>
                                                     <td>40</td>
                                                 </tr>
-                                                <tr>
-                                                    <td>>4 s.d 8 tahun</td>
-                                                    <td>04 tahun 0 bulan 1 hari</td>
-                                                    <td>140</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>8 s.d 12 tahun</td>
-                                                    <td>08 tahun 0 bulan 1 hari</td>
-                                                    <td>225</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>12 s.d 16 tahun</td>
-                                                    <td>12 tahun 0 bulan 1 hari</td>
-                                                    <td>295</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>16 s.d 20 tahun</td>
-                                                    <td>16 tahun 0 bulan 1 hari</td>
-                                                    <td>355</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>20 s.d 28 tahun</td>
-                                                    <td>20 tahun 0 bulan 1 hari</td>
-                                                    <td>400</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>24 s.d 28 tahun</td>
-                                                    <td>24 tahun 0 bulan 1 hari</td>
-                                                    <td>430</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>>28 tahun</td>
-                                                    <td>28 tahun 0 bulan 1 hari</td>
-                                                    <td>450</td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -108,7 +74,7 @@ class NilaiJabatanPegawaiController extends AdminController
         });
         $grid->model()->where(function ($query) {
             $query->whereIn('status_pegawai_id', [2, 23]);
-        })->with(['obj_riwayat_jabatan', 'obj_riwayat_skcpns']);
+        })->with(['obj_riwayat_jabatan']);
         $grid->filter(function ($filter) {
 
             $filter->disableIdFilter();
@@ -116,22 +82,25 @@ class NilaiJabatanPegawaiController extends AdminController
             $filter->ilike('first_name', 'Nama Pegawai');
         });
 
-        $grid->model()->with(['obj_riwayat_jabatan', 'obj_riwayat_skcpns']);
-        $grid->column('first_name', __('Nama Pegawai'))->sortable();
-        $grid->column('latest_skcpns', __('Awal Masuk ANRI'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
+        $grid->model()->with(['obj_riwayat_jabatan']);
+        $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
+            $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
 
-            // Menggunakan optional() untuk memastikan $latestSKCPNS or $latestSKCPNS->tgl_sk = null
-            return optional($latestSKCPNS)->tgl_sk ? $latestSKCPNS->tgl_sk->format('Y-m-d') : '-';
-        });
-        $grid->column('status_pegawai_id', __('Status Pegawai'))->display(function () {
-
-            if ($this->status_pegawai_id == 2) {
-                return 'PNS';
-            } elseif ($this->status_pegawai_id == 23) {
-                return 'PPPK';
-            }
+            return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
         })->sortable();
+        $grid->column('latest_jabatan', __('Jabatan Saat Ini'))->display(function () {
+            $latestJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+
+            return optional($latestJabatan)->nama_jabatan ? $latestJabatan->nama_jabatan : '-';
+        });
+        $grid->column('nama_jabatan', __('Jabatan'))->display(function () {
+            $namaJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+
+            $jabatanName = optional($namaJabatan->obj_jabatan_fungsional)->name ?? optional($namaJabatan->obj_jabatan_struktural)->name;
+
+            return $jabatanName ?? '-';
+        });
+
         $grid->column('lama_kerja', __('Lama Bekerja'))->display(function () {
             $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
             if ($latestSKCPNS) {

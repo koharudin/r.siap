@@ -13,12 +13,19 @@
                     <label for="unitkerja">Unit Kerja</label>
                     <select class="form-control" name="unitkerja" id="unitkerja">
                         <option value="">Pilih Unit Kerja</option>
+			<option value="41">41 - Sekretaris Utama</option>
+			<option value="44">44 - Deputi Bidang Pembinaan Kearsipan</option>
+			<option value="39">39 - Deputi Bidang Konservasi Arsip</option>
+			<option value="11">11 - Deputi Bidang Informasi dan Pengembangan Sistem Kearsipan</option>
                         <option value="1">1 - Biro Perencanaan dan Hubungan Masyarakat</option>
                         <option value="40">40 - Biro Umum</option>
                         <option value="46">46 - Biro Organisansi, Kepegawaian dan Hukum</option>
                         <option value="14">14 - Pusat Jasa Kearsipan</option>
+                        <option value="114">114 - Kepala Sub Bagian Tata Usaha Pusat Jasa Kearsipan</option>
                         <option value="15">15 - Pusat Pendidikan dan Pelatihan Kearsipan</option>
+                        <option value="16">16 - Kepala Sub Bagian Tata Usaha Pusat Pendidikan dan Pelatihan Kearsipan</option>
                         <option value="42">42 - Pusat Akreditasi Kearsipan</option>
+                        <option value="87">87 - Kepala Sub Bagian Tata Usaha Pusat Akreditasi Kearsipan</option>
                         <option value="6">6 - Direktorat Kearsipan Pusat</option>
                         <option value="69">69 - Direktorat Kearsipan Daerah I</option>
                         <option value="80">80 - Direktorat Kearsipan Daerah II</option>
@@ -28,11 +35,20 @@
                         <option value="47">47 - Direktorat Preservasi</option>
                         <option value="49">49 - Direktorat Layanan dan Pemanfaatan</option>
                         <option value="118">118 - Balai Arsip Statis dan Tsunami Aceh</option>
+                        <option value="101">101 - Kepala Sub Bagian Tata Usaha Balai Arsip Statis dan Tsunami Aceh</option>
                         <option value="12">12 - Pusat Sistem dan Jaringan Informasi Kearsipan Nasional</option>
                         <option value="45">45 - Pusat Data Dan Infromasi</option>
                         <option value="48">48 - Pusat Pengkajian dan Pengembangan Sistem Kearsipan</option>
                         <option value="43">43 - Inspektorat</option>
+                        <option value="97">97 - Kepala Sub Bagian Tata Usaha Inspektorat</option>
                         <option value="135">135 - Pusat Studi Arsip Statis Kepresidenan</option>
+                        <option value="136">136 - Kepala Sub Bagian Umum Pusat Studi Arsip Statis Kepresidenan</option>
+			<option value="81">81 - Kepala Bagian Perlengkapan, Tata Usaha, Kearsipan, dan Protokol</option>
+			<option value="102">102 - Kepala Sub Bagian Perlengkapan dan Rumah Tangga</option>
+			<option value="88">88 - Kepala Sub Bagian Protokol dan Pengamanan</option>
+			<option value="112">112 - Kepala Sub Bagian Tata Usaha Deputi Bidang Pembinaan Kearsipan</option>
+			<option value="127">127 - Kepala Sub Bagian Tata Usaha Deputi Bidang Konservasi Arsip</option>
+			<option value="134">134 - Kepala Sub Bagian Tata Usaha Deputi Bidang Informasi dan Pengembangan Sistem Kearsipan</option>
                     </select>
                 </div>
             </div>
@@ -62,8 +78,8 @@
                     <select class="form-control" name="tahun" id="tahun">
                     <option value="">Pilih Tahun</option>
                     <?php 
-                        $year_start  = 2020;
-                        $year_end = date('Y') + 5; 
+                        $year_start  = 2023;
+                        $year_end = date('Y') + 2; 
 
                         for ($i_year = $year_start; $i_year <= $year_end; $i_year++) {
 

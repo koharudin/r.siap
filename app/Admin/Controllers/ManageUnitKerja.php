@@ -65,7 +65,7 @@ class ManageUnitKerja extends AdminController
     {
         $form = new Form(new UnitKerja());
 
-        $form->number('parent_id', __('Parent id'));
+        $form->select('id', __('Parent id'))->options(UnitKerja::pluck('name', 'id'));
         $form->text('name', __('Name'));
         $form->textarea('path', __('Path'));
         $form->text('pejabat_jabatan', __('Jabatan'));
