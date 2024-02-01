@@ -86,7 +86,7 @@ class FormRiwayatJabatan extends FF
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
         $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'));
         $form->text("unit_text", __("UNIT KERJA"));
-        $form->select('status_jabatan_id', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
+        $form->select('status_jabatan_id', __('STATUS JABATAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
 
         $form->divider("Pejabat Penetap");
         $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
@@ -115,7 +115,7 @@ class FormRiwayatJabatan extends FF
                 }
             }
         });
-        
+
         return $this;
     }
     public function onCreateForm()

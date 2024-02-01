@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Employee;
+use App\Models\StatusJabatan;
 use Illuminate\Console\Command;
 
 class syncRiwayatJabatan extends Command
@@ -38,7 +39,9 @@ class syncRiwayatJabatan extends Command
      */
     public function handle()
     {
-        $employees = Employee::with(['obj_riwayat_jabatan'])->get();
+        $employees = Employee::whereHas('obj_riwayat_jabatan', function ($query) {
+            $query->where('status_jabatan_id', StatusJabatan::DEFINITIF);
+        })->with(['obj_riwayat_jabatan'])->get();
         $this->info("mulai " . $employees->count());
         $employees->each(function ($employee, $i) {
             $this->info("processing index#" . $i);
