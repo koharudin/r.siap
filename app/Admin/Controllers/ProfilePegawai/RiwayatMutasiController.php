@@ -35,7 +35,7 @@ class RiwayatMutasiController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatMutasi());
-        $grid->model()->orderBy('tgl_sk','asc');
+        $grid->model()->orderBy('tgl_sk', 'desc');
         $grid->column('satker_lama', __('SATKER LAMA'));
         $grid->column('satker_baru', __('SATKER BARU'));
         $grid->column('no_sk', __('NO SK'));
@@ -106,36 +106,36 @@ class RiwayatMutasiController extends ProfileController
         $form = new Form(new RiwayatMutasi());
 
         $form->hidden('employee_id', __('Employee id'));
-        $form->belongsTo('satker_id_lama',GridUnitKerja::class,'SATKER LAMA');
+        $form->belongsTo('satker_id_lama', GridUnitKerja::class, 'SATKER LAMA');
         $form->text('satker_lama', __('SATKER LAMA'));
-        $form->belongsTo('satker_id_baru',GridUnitKerja::class,'SATKER BARU');
+        $form->belongsTo('satker_id_baru', GridUnitKerja::class, 'SATKER BARU');
         $form->text('satker_baru', __('SATKER BARU'));
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_sk', __('TMT SK'))->default(date('Y-m-d'));
-        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
         $form->text('pejabat_penetap_jabatan', __('JABATAN'));
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
-    
+
         $form->saving(function (Form $form) {
-            if($form->pejabat_penetap_id){
-                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
-                if($r){
+            if ($form->pejabat_penetap_id) {
+                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
                     $form->pejabat_penetap_nama = $r->nama;
                 }
             }
-            if($form->satker_id_lama){
-                $r =  UnitKerja::where('id',$form->satker_id_lama)->get()->first();
-                if($r){
+            if ($form->satker_id_lama) {
+                $r = UnitKerja::where('id', $form->satker_id_lama)->get()->first();
+                if ($r) {
                     $form->satker_lama = $r->name;
                 }
             }
-            if($form->satker_id_baru){
-                $r =  UnitKerja::where('id',$form->satker_id_baru)->get()->first();
-                if($r){
+            if ($form->satker_id_baru) {
+                $r = UnitKerja::where('id', $form->satker_id_baru)->get()->first();
+                if ($r) {
                     $form->satker_baru = $r->name;
                 }
             }
@@ -143,9 +143,10 @@ class RiwayatMutasiController extends ProfileController
 
         return $form;
     }
-    
-    public function edit($profile_id, $id, Content $content){
+
+    public function edit($profile_id, $id, Content $content)
+    {
         Permission::check('edit-riwayat_mutasi');
-        return parent::edit($profile_id,$id,$content);
+        return parent::edit($profile_id, $id, $content);
     }
 }

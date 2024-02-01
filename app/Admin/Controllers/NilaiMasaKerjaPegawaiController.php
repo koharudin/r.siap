@@ -8,6 +8,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Employee;
 
+
 class NilaiMasaKerjaPegawaiController extends AdminController
 {
     /**
@@ -29,7 +30,6 @@ class NilaiMasaKerjaPegawaiController extends AdminController
             $query->whereIn('status_pegawai_id', [2, 23]);
         })->with(['obj_riwayat_skcpns']);
         $grid->filter(function ($filter) {
-
             $filter->disableIdFilter();
             $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
             $filter->ilike('first_name', 'Nama Pegawai');
@@ -118,22 +118,16 @@ class NilaiMasaKerjaPegawaiController extends AdminController
         ';
         });
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
-            return $this->first_name . " <br> " . $this->nip_baru;
+            $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
+
+            return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
         })->sortable();
         $grid->column('latest_skcpns', __('Awal Masuk ANRI'))->display(function () {
             $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
 
-            // Menggunakan optional() untuk memastikan $latestSKCPNS or $latestSKCPNS->tgl_sk = null
+            // Menggunakan optional() untuk memastikan $latestSKCPNS or $latestSKCPNS->tmt_cpns tidak null, jika null, akan mengembalikan '-' karena $latestSKCPNS->tmt_cpns tidak ada
             return optional($latestSKCPNS)->tmt_cpns ? $latestSKCPNS->tmt_cpns->format('Y-m-d') : '-';
         });
-        $grid->column('status_pegawai_id', __('Status Pegawai'))->display(function () {
-
-            if ($this->status_pegawai_id == 2) {
-                return 'PNS';
-            } elseif ($this->status_pegawai_id == 23) {
-                return 'PPPK';
-            }
-        })->sortable();
         $grid->column('lama_kerja', __('Lama Bekerja'))->display(function () {
             $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
             if ($latestSKCPNS) {
