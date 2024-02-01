@@ -21,9 +21,9 @@
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Jenis Penghargaan</label>
                 <select class="form-control" name="jenis">
-                    <option value=32>SATYALANCANA KARYA SATYA PERAK</option>
+                    <option value=38>SATYALANCANA KARYA SATYA PERAK</option>
                     <option value=39>SATYALANCANA KARYA SATYA PERUNGGU</option>
-                    <option value=38>SATYALANCANA KARYA SATYA EMAS</option>
+                    <option value=40>SATYALANCANA KARYA SATYA EMAS</option>
                     <option value=56>SATYALANCANA WIRA KARYA</option>
                 </select>
             </div>
@@ -34,12 +34,12 @@
             <table class="table table-bordered yajra-datatable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>PENGHARGAAN</th>
                         <th>NIP</th>
                         <th>NAMA</th>
                         <th>JABATAN</th>
                         <th>GOL. RUANG</th>
                         <th>UNIT KERJA</th>
-                        <th>JENIS PENGHARGAAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,6 +77,10 @@
                     },
                 },
                 columns: [{
+                        data: 'penghargaan',
+                        name: 'penghargaan'
+                    },
+                    {
                         data: 'nip_baru',
                         name: 'nip_baru'
                     },
@@ -96,10 +100,7 @@
                         data: 'unit_kerja',
                         name: 'unit_kerja'
                     },
-                    {
-                        data: 'jenis_penghargaan',
-                        name: 'jenis_penghargaan'
-                    }
+
                 ]
             });
 
