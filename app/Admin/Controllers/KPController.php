@@ -91,6 +91,7 @@ class KPController extends Controller
         $filter_nama = null;
         $filter_nip = null;
         $filter_periode = null;
+        $filter_pengecekan = null;
         if ($params) {
             foreach ($params as $param) {
                 if (@$param['name'] == 'nama') {
@@ -104,13 +105,16 @@ class KPController extends Controller
                 }
             }
         }
+        $filter_pengecekan = true;
         $query = Employee::whereIn('status_pegawai_id', [1, 2]) //only cpns & pns
             ->with(['obj_riwayat_jabatan', 'obj_last_riwayat_pangkat']);
         $query->orderBy('first_name', 'asc');
-        if ($filter_periode) {
-            $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
+        $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
+
+        if ($filter_periode && !$filter_pengecekan) {
+
             $query->whereHas('obj_last_riwayat_pangkat', function ($query) use ($dt_periode) {
-                $query->whereRaw("DATE_PART('year', AGE('{$dt_periode->format('Y-m-d')}'::date,tmt_pangkat::date))>4");
+                $query->whereRaw("DATE_PART('year', AGE('{$dt_periode->format('Y-m-d')}'::date,tmt_pangkat::date))>=4");
             });
         }
         if ($filter_nama) {
@@ -158,7 +162,7 @@ class KPController extends Controller
                 if ($last) {
                     if ($filter_periode) {
                         $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
-                        return $last->tmt_pangkat->diff($dt_periode)->format('%y tahun, %m bulan and %d hari');
+                        return  $last->tmt_pangkat->diff($dt_periode)->format('%y tahun, %m bulan and %d hari');
                     }
                     return "Periode belum ditentukan";
                 }
