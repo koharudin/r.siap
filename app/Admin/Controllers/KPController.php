@@ -105,7 +105,7 @@ class KPController extends Controller
                 }
             }
         }
-        $filter_pengecekan = true;
+        $filter_pengecekan = false;
         $query = Employee::whereIn('status_pegawai_id', [1, 2]) //only cpns & pns
             ->with(['obj_riwayat_jabatan', 'obj_last_riwayat_pangkat']);
         $query->orderBy('first_name', 'asc');
