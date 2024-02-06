@@ -149,8 +149,8 @@
                         name: 'jabatan'
                     },
                     {
-                        data: 'pangkat_terakhir',
-                        name: 'pangkat_terakhir'
+                        data: 'kgb_terakhir',
+                        name: 'kgb_terakhir'
                     },
                     {
                         data: 'rentang_waktu',
