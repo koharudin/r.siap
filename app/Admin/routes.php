@@ -123,6 +123,7 @@ Route::group([
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
+    $router->any('dt-kgb', 'KGBController@dt')->name('kgb.dt');
     $router->get('kp/cetak', [KPController::class, 'cetak']);
     $router->any('kp', 'KPController@Index');
     $router->any('dt-kp', 'KPController@dt')->name('kp.dt');
