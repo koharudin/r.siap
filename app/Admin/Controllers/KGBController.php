@@ -114,7 +114,7 @@ class KGBController extends Controller
         if ($filter_periode && !$filter_pengecekan) {
 
             $query->whereHas('obj_last_riwayat_kgb', function ($query) use ($dt_periode) {
-                $query->whereRaw("DATE_PART('year', AGE('{$dt_periode->format('Y-m-d')}'::date,tmt_sk::date))>=2");
+                // $query->whereRaw("DATE_PART('year', AGE('{$dt_periode->format('Y-m-d')}'::date,tmt_sk::date))>=2");
             });
         }
         if ($filter_nama) {
@@ -124,12 +124,8 @@ class KGBController extends Controller
             $query->where('nip_baru', 'ilike', "%{$filter_nip}%");
         }
 
-        // diluar fungsional
-        $query->whereHas('obj_last_riwayat_jabatan', function ($query) use ($dt_periode) {
-            $query->whereNotIn('tipe_jabatan_id', [3, 4, 5]);
-        });
         return  DataTables::eloquent($query)
-            ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat_terakhir', 'rentang_waktu'])
+            ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'kgb_terakhir', 'rentang_waktu'])
             ->addIndexColumn()
 
             ->addColumn('unit_kerja', function (Employee $user) {
@@ -150,19 +146,29 @@ class KGBController extends Controller
                 if ($last) return $last->nama_jabatan;
                 else return "Jabatan tidaka ada";
             })
-            ->addColumn('pangkat_terakhir', function (Employee $user) {
-                $last = $user->obj_last_riwayat_pangkat;
+            ->addColumn('kgb_terakhir', function (Employee $user) {
+                $last = $user->obj_last_riwayat_kgb;
                 if ($last) {
-                    return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode . "<br><b>{$last->tmt_pangkat->format('Y-m-d')}</b>";
+                    $tmt_sk = '-';
+                    if ($last->tmt_sk) {
+                        $tmt_sk = $last->tmt_sk->format('Y-m-d');
+                    }
+                    $tgl_sk = '-';
+                    if ($last->tgl_sk) {
+                        $tgl_sk = $last->tgl_sk->format('Y-m-d');
+                    }
+                    return  $last->no_sk . " <br>TGL SK : " . $tgl_sk . "<br>TMT SK : <b>{$tmt_sk}</b>";
                 }
             })
             ->addColumn('rentang_waktu', function (Employee $user) use ($filter_periode) {
 
-                $last = $user->obj_last_riwayat_pangkat;
+                $last = $user->obj_last_riwayat_kgb;
                 if ($last) {
                     if ($filter_periode) {
                         $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
-                        return  $last->tmt_pangkat->diff($dt_periode)->format('%y tahun, %m bulan and %d hari');
+                        if ($last->tmt_sk) {
+                            return  $last->tmt_sk->diff($dt_periode)->format('%y tahun, %m bulan and %d hari');
+                        } else return "Tidak diketahui TMT SK";
                     }
                     return "Periode belum ditentukan";
                 }
