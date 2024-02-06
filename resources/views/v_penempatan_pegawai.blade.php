@@ -90,7 +90,7 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <button type="submit" class="btn btn-primary">Cari</button>            
+                <button type="submit" class="btn btn-primary">Cari</button>&nbsp;<a href="jabatan_tidaksesuaiabk" class="btn btn-primary" target="_blank">Data Tidak Sesuai ABK</a>            
             </div>
         </form>
         <div class="table-responsive">
@@ -139,7 +139,7 @@
     <script type="text/javascript">
         $(function() {
             var table = $('.datatable').DataTable({
-                dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
+                dom: '<"top">rt<"bottom"<"pull-left"li><"pull-right"p>><"clear">',
                 processing: true,
                 serverSide: true,
                 ordering: false,

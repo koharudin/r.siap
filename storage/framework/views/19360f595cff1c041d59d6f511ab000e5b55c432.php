@@ -29,7 +29,7 @@
     <script type="text/javascript">
         $(function() {
             var table = $('.yajra-datatable').DataTable({
-                dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
+                dom: '<"top">rt<"bottom"<"pull-left"li><"pull-right"p>><"clear">',
                 processing: true,
                 serverSide: true,
                 ordering: false,
