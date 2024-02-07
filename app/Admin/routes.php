@@ -2,6 +2,7 @@
 
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AuthController;
+use App\Admin\Controllers\KGBController;
 use App\Admin\Controllers\PenghargaanController;
 use App\Admin\Controllers\ProfilePegawai\RiwayatHukumanController;
 use App\Admin\Controllers\RiwayatHukumanController as ControllersRiwayatHukumanController;
@@ -124,6 +125,7 @@ Route::group([
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
     $router->any('dt-kgb', 'KGBController@dt')->name('kgb.dt');
+    $router->get('kgb/cetak', [KGBController::class, 'cetak']);
     $router->get('kp/cetak', [KPController::class, 'cetak']);
     $router->any('kp', 'KPController@Index');
     $router->any('dt-kp', 'KPController@dt')->name('kp.dt');
