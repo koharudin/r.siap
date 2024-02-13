@@ -167,7 +167,7 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                 118 => 350, // Balai Arsip Tsunami Aceh
                 15 => 200, // Pusat Pendidikan dan Pelatihan Kearsipan
                 22 => 0, // Tidak Ada
-                null => 'Unit Tidak Diketahui',
+                null => 0,
                 // ... Tambahkan aturan lainnya
             ];
             $unitValue = $unitRules[$unitId] ?? 300;

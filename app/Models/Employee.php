@@ -272,9 +272,9 @@ class Employee extends Model
         $this->load('obj_riwayat_pendidikan');
         $last = $this->obj_riwayat_pendidikan->last();
         if ($last) {
-            $this->obj_riwayat_pendidikan_id = $last->id;
+            $this->last_riwayat_pendidikan_id = $last->id;
         } else
-            $this->obj_riwayat_pendidikan_id = null;
+            $this->last_riwayat_pendidikan_id = null;
         $this->save();
     }
     public $dates = ['birth_date', 'tgl_pensiun'];

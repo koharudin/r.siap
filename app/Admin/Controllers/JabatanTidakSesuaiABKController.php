@@ -138,6 +138,7 @@ class JabatanTidakSesuaiABKController extends Controller
         $query = RiwayatJabatan::with([]);
         $query->where('unit_id', $unit_id);
         $query->where('nama_jabatan', $jabatan_id);
+	$query->whereNotIn('tipe_jabatan_id', [1,6]);
         $query->where('status_riwayat', '1');
 
         return $query->count();

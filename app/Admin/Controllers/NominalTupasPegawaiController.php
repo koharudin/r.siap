@@ -40,10 +40,9 @@ class NominalTupasPegawaiController extends AdminController
         })->sortable();
         $grid->column('latest_skcpns', __('Awal Masuk ANRI'))->display(function () {
             $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
-
             // Menggunakan optional() untuk memastikan $latestSKCPNS or $latestSKCPNS->tmt_cpns tidak null, jika null, akan mengembalikan '-' karena $latestSKCPNS->tmt_cpns tidak ada
             return optional($latestSKCPNS)->tmt_cpns ? $latestSKCPNS->tmt_cpns->format('Y-m-d') : '-';
-        });
+        })->sortable('obj_riwayat_skcpns.tmt_cpns');
         $grid->column('lama_kerja', __('Lama Bekerja'))->display(function () {
             $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
             if ($latestSKCPNS) {
@@ -220,7 +219,7 @@ class NominalTupasPegawaiController extends AdminController
                 118 => 350, // Balai Arsip Tsunami Aceh
                 15 => 200, // Pusat Pendidikan dan Pelatihan Kearsipan
                 22 => 0, // Tidak Ada
-                null => 'Unit Tidak Diketahui',
+                null => 0,
                 // ... Tambahkan aturan lainnya
             ];
             $unitValue = $unitRules[$unitId] ?? 300;
@@ -273,25 +272,25 @@ class NominalTupasPegawaiController extends AdminController
             if (is_numeric($unitValue) && is_numeric($totalNilai) && is_numeric($nilaiMasaKerja)) {
                 $totalNilaiTupas = 0;
                 $totalNilaiTupas = is_numeric($unitValue + $totalNilai + $nilaiMasaKerja) ? $unitValue + $totalNilai + $nilaiMasaKerja : 0;
-                if ($totalNilaiTupas >= 184 && $totalNilaiTupas < 344) {
+                if ($totalNilaiTupas >= 184 && $totalNilaiTupas <= 344) {
                     $result = 100000;
-                } elseif ($totalNilaiTupas >= 345 && $totalNilaiTupas < 454) {
+                } elseif ($totalNilaiTupas >= 345 && $totalNilaiTupas <= 454) {
                     $result = 200000;
-                } elseif ($totalNilaiTupas >= 455 && $totalNilaiTupas < 565) {
+                } elseif ($totalNilaiTupas >= 455 && $totalNilaiTupas <= 565) {
                     $result = 300000;
-                } elseif ($totalNilaiTupas >= 566 && $totalNilaiTupas < 676) {
+                } elseif ($totalNilaiTupas >= 566 && $totalNilaiTupas <= 676) {
                     $result = 400000;
-                } elseif ($totalNilaiTupas >= 677 && $totalNilaiTupas < 787) {
+                } elseif ($totalNilaiTupas >= 677 && $totalNilaiTupas <= 787) {
                     $result = 500000;
-                } elseif ($totalNilaiTupas >= 788 && $totalNilaiTupas < 898) {
+                } elseif ($totalNilaiTupas >= 788 && $totalNilaiTupas <= 898) {
                     $result = 600000;
-                } elseif ($totalNilaiTupas >= 899 && $totalNilaiTupas < 1000) {
+                } elseif ($totalNilaiTupas >= 899 && $totalNilaiTupas <= 1000) {
                     $result = 700000;
                 } else {
                     $result = 0;
                 }
             }
-            return 'Total Nilai: ' . $totalNilaiTupas. '<br/> Nominal: Rp. ' . number_format($result);
+            return 'Total Nilai: ' . $totalNilaiTupas . '<br/> Nominal: Rp. ' . number_format($result);
         });
         $grid->disableActions();
         $grid->disableCreateButton();
