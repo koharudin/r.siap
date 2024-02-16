@@ -3,149 +3,216 @@
 namespace App\Admin\Controllers;
 
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use Encore\Admin\Widgets\Box;
 use App\Models\Employee;
 use App\Models\RiwayatJabatan;
+use App\Models\UnitKerja;
 
 class NilaiJabatanPegawaiController extends AdminController
 {
-    /**
-     * Title for current resource.
-     *
-     * @var string
-     */
     protected $title = 'Nilai Jabatan Pegawai';
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
+
     protected function grid()
     {
-
         $grid = new Grid(new Employee());
-        $grid->header(function ($query) {
-            return '
-            <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>Nilai Jabatan</h4>
-                    <p>Perhitungan Nilai Jabatan Tunjangan Arsip Statis Merujuk Peraturan Kepala Arsip Nasional Republik Indonesia No 2 Tahun 2005</p>
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="col-md-12">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                            <button class="btn" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                            Lihat Nilai
-                            </button>
-                                <div class="collapse" id="collapseExample">
-                                    <div class="mt-3">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Unit Kerja</th>
-                                                    <th>Range Masa Kerja</th>
-                                                    <th>Nilai</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>>0 s.d 4 tahun</td>
-                                                    <td>00 tahun 0 bulan 1 hari</td>
-                                                    <td>40</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        ';
-        });
-        $grid->model()->where(function ($query) {
-            $query->whereIn('status_pegawai_id', [2, 23]);
-        })->with(['obj_riwayat_jabatan']);
-        $grid->filter(function ($filter) {
+        $grid->model()
+            ->whereIn('status_pegawai_id', [2, 23])
+            ->with(['obj_riwayat_jabatan']);
 
+        $grid->filter(function ($filter) {
             $filter->disableIdFilter();
+            $filter->equal('unit_id', 'Unit Kerja')->select(function () {
+                $unitIds = Employee::whereIn('status_pegawai_id', [2, 23])->pluck('unit_id');
+                $unitInfo = UnitKerja::whereIn('id', $unitIds)->get()->mapWithKeys(function ($unit) {
+                    $unitName = $unit->name;
+                    $parentName = optional($unit->parent)->name;
+                    return [$unit->id => $unit->id . ' - ' . $unitName . ' - ' . $parentName];
+                })->toArray();
+                return $unitInfo;
+            });
             $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
             $filter->ilike('first_name', 'Nama Pegawai');
+        });
+
+        $grid->header(function ($query) {
+            $employees = $query->get();
+
+            $nilaiCounts = [
+                '100' => 0,
+                '150' => 0,
+                '200' => 0,
+                '0' => 0,
+            ];
+
+            foreach ($employees as $employee) {
+                $latestJabatan = $employee->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+                $unitId = $employee->unit_id;
+
+                $nilaiJabatanKerja = 0;
+
+                if ($latestJabatan) {
+                    $namaJabatan = $latestJabatan->nama_jabatan;
+
+                    if (
+                        strpos(strtolower($namaJabatan), 'arsiparis') !== false
+                        || strpos(strtolower($namaJabatan), 'kepala') !== false
+                        || strpos(strtolower($namaJabatan), 'deputi') !== false
+                        || $unitId == 118
+                    ) {
+                        $nilaiJabatanKerja = 150;
+                    } else {
+                        $nilaiJabatanKerja = 100;
+                    }
+                }
+
+                $additionalUnitIds = [39, 9, 10, 47, 49, 118];
+                $totalNilai = in_array($unitId, $additionalUnitIds) ? $nilaiJabatanKerja + 50 : $nilaiJabatanKerja;
+
+                $nilaiCounts[(string) $totalNilai]++;
+            }
+
+            $chartHtml = view('admin.chart.statjabatan', compact('nilaiCounts'));
+            $boxHtml = view('admin.box.statjabatan', compact('nilaiCounts'));
+
+            return '<div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Nilai Jabatan</h4>
+                                <p>Perhitungan Nilai Jabatan Tunjangan Arsip Statis Merujuk Peraturan Kepala Arsip Nasional Republik Indonesia No 2 Tahun 2005</p>
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Info:</strong> Penentuan Nilai Jabatan berdasarkan Jabatan Struktural, Arsiparis, Non-Arsiparis berdasarkan $nama_jabatan atau $jabatan_id di <a href="https://kepegawaian.anri.go.id/siap/admin/daftar_pegawai" target="_blank">Daftar bagian Riwayat Jabatan Pegawai</a>, serta Unit Kerja merujuk di <a href="https://kepegawaian.anri.go.id/siap/admin/daftar_pegawai" target="_blank">Daftar bagian Profile Unit Kerja Pegawai.</a>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <button class="btn" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                                Lihat Nilai
+                                            </button>
+                                            <div class="collapse" id="collapseExample">
+                                                <div class="mt-3">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Unit Kerja</th>
+                                                                <th>Struktural/ Arsiparis/ Non Arsiparis</th>
+                                                                <th>Jabatan</th>
+                                                                <th>Tanggung Jawab</th>
+                                                                <th>Nilai</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Kepala ANRI</td>
+                                                                <td>Struktural</td>
+                                                                <td>Eselon I</td>
+                                                                <td>Pengawas</td>
+                                                                <td>150</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>' . new Box('Jumlah Pegawai berdasarkan Nilai Jabatan', $chartHtml) . $boxHtml;
         });
 
         $grid->model()->with(['obj_riwayat_jabatan']);
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
             $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
-
             return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
         })->sortable();
-        $grid->column('latest_jabatan', __('Jabatan Saat Ini'))->display(function () {
-            $latestJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
 
-            return optional($latestJabatan)->nama_jabatan ? $latestJabatan->nama_jabatan : '-';
-        });
-        $grid->column('nama_jabatan', __('Jabatan'))->display(function () {
-            $namaJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+        $grid->column('latest_unit_info', __('Unit Kerja saat ini'))->display(function () {
+            $unitId = $this->unit_id;
+            $unit = UnitKerja::find($unitId);
+            $unitName = $unit ? $unit->name : 'Unit Tidak Diketahui';
+            $parentName = $unit && $unit->parent ? $unit->parent->name : '';
+            $eselonId = $this->eselon_id;
+            $parentId = $this->parent_id;
 
-            $jabatanName = optional($namaJabatan->obj_jabatan_fungsional)->name ?? optional($namaJabatan->obj_jabatan_struktural)->name;
-
-            return $jabatanName ?? '-';
-        });
-
-        $grid->column('lama_kerja', __('Lama Bekerja'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
-            if ($latestSKCPNS) {
-                $cpnsDate = $latestSKCPNS->tgl_sk;
-                $now = now();
-
-                $lengthOfService = $cpnsDate->diff($now);
-
-                return $lengthOfService->format('%y tahun, %m bulan, %d hari');
-            }
-            return '-';
-        });
-        $grid->column('nilai_masa_kerja', __('Nilai Masa Kerja'))->display(function () {
-            $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tgl_sk')->first();
-            if ($latestSKCPNS) {
-                $cpnsDate = $latestSKCPNS->tgl_sk;
-                $now = now();
-                $lengthOfService = $cpnsDate->diff($now);
-                $totalMonths = ($lengthOfService->y);
-
-                $ranges = [
-                    ['min' => 0, 'max' => 4, 'value' => 40],
-                    ['min' => 4, 'max' => 8, 'value' => 140],
-                    ['min' => 8, 'max' => 12, 'value' => 225],
-                    ['min' => 12, 'max' => 16, 'value' => 295],
-                    ['min' => 16, 'max' => 20, 'value' => 355],
-                    ['min' => 20, 'max' => 28, 'value' => 400],
-                    ['min' => 28, 'max' => 32, 'value' => 430],
-                    ['min' => 32, 'max' => null, 'value' => 450],
-                ];
-
-                foreach ($ranges as $range) {
-                    if (
-                        ($range['max'] === null && $totalMonths >= $range['min']) ||
-                        ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
-                    ) {
-                        return $range['value'];
-                    }
+            if ($eselonId == 31 || $eselonId == 41) {
+                $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
+                if ($parentUnit) {
+                    $unitName = $parentUnit->id;
                 }
             }
 
-            return '-';
+            return $unitId . ' - ' . $unitName . ' - ' . $parentName;
         });
+
+        $grid->column('latest_jabatan', __('Jabatan Saat Ini'))->display(function () {
+            $latestJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+            return optional($latestJabatan)->nama_jabatan ? $latestJabatan->nama_jabatan : '-';
+        });
+
+        $grid->column('tipe_jabatan', __('Tipe Jabatan'))->display(function () {
+            $employeeId = $this->id;
+            $riwayatJabatan = RiwayatJabatan::where('employee_id', $employeeId)
+                ->orderByDesc('tmt_jabatan')
+                ->first();
+
+            $tipeJabatanId = $riwayatJabatan ? $riwayatJabatan->tipe_jabatan_id : null;
+
+            switch ($tipeJabatanId) {
+                case 1:
+                    return 'Struktural (Pejabat Pimpinan Tinggi)';
+                case 2:
+                    return 'Fungsional Umum';
+                case 3:
+                    return 'Fungsional Tertentu';
+                case 4:
+                    return 'Fungsional Tertentu (Madya)';
+                case 5:
+                    return 'Fungsional Tertentu (Utama)';
+                case 6:
+                    return 'Struktural (Pejabat Administrasi)';
+                default:
+                    return '-Tipe Jabatan Belum didefinisikan-';
+            }
+        });
+
+        $grid->column('nilai_jabatan_kerja', __('Nilai Pegawai di Unit Kerja'))->display(function () {
+            $latestJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+            $unitId = $this->unit_id;
+            $defaultUnitValue = 0;
+
+            $nilaiJabatanKerja = 0;
+
+            if ($latestJabatan) {
+                $namaJabatan = $latestJabatan->nama_jabatan;
+
+                if (
+                    strpos(strtolower($namaJabatan), 'arsiparis') !== false
+                    || strpos(strtolower($namaJabatan), 'kepala') !== false
+                    || strpos(strtolower($namaJabatan), 'deputi') !== false
+                    || $unitId == 118
+                ) {
+                    $nilaiJabatanKerja = 150;
+                } else {
+                    $nilaiJabatanKerja = 100;
+                }
+            }
+
+            $additionalUnitIds = [39, 9, 10, 47, 49, 118];
+            $totalNilai = in_array($unitId, $additionalUnitIds) ? $defaultUnitValue + $nilaiJabatanKerja + 50 : $defaultUnitValue + $nilaiJabatanKerja;
+
+            return number_format($totalNilai);
+        });
+
         $grid->disableActions();
         $grid->disableCreateButton();
+
         return $grid;
     }
 }

@@ -154,6 +154,8 @@ Route::group([
     $router->any('total-penempatan_pegawai', 'PenempatanPegawaiController@getTotal')->name('penempatan_pegawai.getTotal');
     $router->any('existing_pegawai', 'ExistingPegawaiController@Index');
     $router->any('dt-existing_pegawai', 'ExistingPegawaiController@dt')->name('existing_pegawai.dt');
+    $router->any('jabatan_tidaksesuaiabk', 'JabatanTidakSesuaiABKController@Index');
+    $router->any('dt-jabatan_tidaksesuaiabk', 'JabatanTidakSesuaiABKController@dt')->name('jabatan_tidaksesuaiabk.dt');
     $router->any('dokumen_digital', 'DokumenDigitalController@Index');
     $router->any('diagram_jabatan', 'DiagramJabatanController@Index');
     $router->any('statistik', 'StatistikController@Index');
@@ -163,4 +165,6 @@ Route::group([
     $router->resource('nilaimasakerja', NilaiMasaKerjaPegawaiController::class);
     $router->resource('nilaijabatan', NilaiJabatanPegawaiController::class);
     $router->resource('nilaiunitkerja', NilaiUnitKerjaPegawaiController::class);
+    $router->resource('tupas', DashboardTupasController::class);
+    $router->resource('nominaltupas', NominalTupasPegawaiController::class);
 });

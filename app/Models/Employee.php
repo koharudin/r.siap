@@ -137,9 +137,36 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
     }
-    public function obj_riwayat_skcpnspppk()
+    public function calculateNilaiMasaKerja()
     {
-        return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tmt_cpns', 'desc');
+        $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
+        if ($latestSKCPNS) {
+            $cpnsDate = $latestSKCPNS->tmt_cpns;
+            $now = now();
+            $lengthOfService = $cpnsDate->diff($now);
+            $totalMonths = ($lengthOfService->y);
+
+            $ranges = [
+                ['min' => 0, 'max' => 4, 'value' => 40],
+                ['min' => 4, 'max' => 8, 'value' => 140],
+                ['min' => 8, 'max' => 12, 'value' => 225],
+                ['min' => 12, 'max' => 16, 'value' => 295],
+                ['min' => 16, 'max' => 20, 'value' => 355],
+                ['min' => 20, 'max' => 28, 'value' => 400],
+                ['min' => 28, 'max' => 32, 'value' => 430],
+                ['min' => 32, 'max' => null, 'value' => 450],
+            ];
+
+            foreach ($ranges as $range) {
+                if (
+                    ($range['max'] === null && $totalMonths >= $range['min']) ||
+                    ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
+                ) {
+                    return $range['value'];
+                }
+            }
+        }
+        return 0;
     }
     public function obj_riwayat_jabatan()
     {
@@ -226,7 +253,8 @@ class Employee extends Model
         $last = $this->obj_riwayat_pangkat->last();
         if ($last) {
             $this->last_riwayat_pangkat_id = $last->id;
-        } else $this->last_riwayat_pangkat_id = null;
+        } else
+            $this->last_riwayat_pangkat_id = null;
         $this->save();
     }
     public function updateLastRiwayatJabatan()
@@ -235,7 +263,8 @@ class Employee extends Model
         $last = $this->obj_riwayat_jabatan->last();
         if ($last) {
             $this->last_riwayat_jabatan_id = $last->id;
-        } else $this->last_riwayat_jabatan_id = null;
+        } else
+            $this->last_riwayat_jabatan_id = null;
         $this->save();
     }
     public function updateLastRiwayatPendidikan()
@@ -243,8 +272,9 @@ class Employee extends Model
         $this->load('obj_riwayat_pendidikan');
         $last = $this->obj_riwayat_pendidikan->last();
         if ($last) {
-            $this->obj_riwayat_pendidikan_id = $last->id;
-        } else $this->obj_riwayat_pendidikan_id = null;
+            $this->last_riwayat_pendidikan_id = $last->id;
+        } else
+            $this->last_riwayat_pendidikan_id = null;
         $this->save();
     }
     public $dates = ['birth_date', 'tgl_pensiun'];

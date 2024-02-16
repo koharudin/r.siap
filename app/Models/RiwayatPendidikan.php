@@ -8,6 +8,10 @@ class RiwayatPendidikan extends Model
 {
     public $table  = 'riwayat_pendidikan';
 
+	public function obj_pegawai()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
     public function updateLastRiwayatPendidikan()
     {
         $this->load('obj_pegawai');

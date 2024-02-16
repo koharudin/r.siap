@@ -79,7 +79,10 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                         <div class="col-md-12">
                             <h4>Nilai Pegawai di Unit Kerja</h4>
                             <p>Perhitungan Nilai Unit Kerja Tunjangan Arsip Statis Merujuk Peraturan Kepala Arsip Nasional Republik Indonesia No 2 Tahun 2005</p>
-                        </div>
+                            <div class="alert alert-danger" role="alert">
+                                    <strong>Info:</strong> Apabila Data Unit Kerja Pegawai dibawah ini tidak sesuai mohon untuk mengubah Menu Profile Pegawai diunit kerja di <a target="_blank" href="https://kepegawaian.anri.go.id/siap/admin/daftar_pegawai">Daftar Pegawai</a>
+                                </div>
+                            </div>
                     </div>
                 
                     <div class="row">
@@ -125,18 +128,17 @@ class NilaiUnitKerjaPegawaiController extends AdminController
             ';
             return $html;
         });
-
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
             $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
 
             return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
         })->sortable();
 
-        $grid->column('latest_unit_info', __('Latest Unit Info'))->display(function () {
+        $grid->column('latest_unit_info', __('Unit Kerja saat ini'))->display(function () {
             $unitId = $this->unit_id;
             $unit = UnitKerja::find($unitId);
-            $unitName = $unit->name;
-            $parentName = optional($unit->parent)->name;
+            $unitName = $unit ? $unit->name : 'Unit Tidak Diketahui';
+            $parentName = $unit && $unit->parent ? $unit->parent->name : '';
             $eselonId = $this->eselon_id;
             $parentId = $this->parent_id;
 
@@ -144,7 +146,7 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                 $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
 
                 if ($parentUnit) {
-                    $unitValue = $parentUnit->id;
+                    $unitName = $parentUnit->id;
                 }
             }
 
@@ -165,11 +167,9 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                 118 => 350, // Balai Arsip Tsunami Aceh
                 15 => 200, // Pusat Pendidikan dan Pelatihan Kearsipan
                 22 => 0, // Tidak Ada
-                null => 'Unit Tidak Diketahui',
+                null => 0,
                 // ... Tambahkan aturan lainnya
             ];
-
-            // Check if the unit has a specific rule, otherwise default to 300
             $unitValue = $unitRules[$unitId] ?? 300;
 
             // Cek Hirarki Eselon
@@ -177,21 +177,19 @@ class NilaiUnitKerjaPegawaiController extends AdminController
             $parentId = $this->parent_id;
 
             if ($eselonId == 11) { // Eselon 1
-                // Value already set based on unit
+                // Otomatis sesuai UnitRules
             } elseif ($eselonId == 21) { // Eselon 2
-                // Value already set based on unit
+                // Otomatis sesuai UnitRules
             } elseif ($eselonId == 31) { // Eselon 3
-                // Find parent with eselon_id 21 or 11
+                // Cari Parent dengan eselon_id 21 atau 11
                 $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
                 if ($parentUnit) {
-                    // Use the parent unit's value
                     $unitValue = $unitRules[$parentUnit->id] ?? 300;
                 }
             } elseif ($eselonId == 41) { // Eselon 4
-                // Find parent with eselon_id 21 or 11
+                // Cari Parent dengan eselon_id 21 or 11
                 $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
                 if ($parentUnit) {
-                    // Use the parent unit's value
                     $unitValue = $unitRules[$parentUnit->id] ?? 300;
                 }
             }
