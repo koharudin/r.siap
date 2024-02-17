@@ -13,19 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_sumpah', function (Blueprint $table) {
+        Schema::create('riwayat_pendidikan', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('employee_id')->nullable();
+            $table->string('pendidikan_id')->nullable();
+            $table->string('jurusan')->nullable();
+            $table->string('nama_sekolah')->nullable();
+            $table->string('tempat_sekolah')->nullable();
+            $table->string('no_sttb')->nullable();
+            $table->date('tgl_sttb')->nullable();
+            $table->string('tahun')->nullable();
             $table->string('simpeg_id')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->integer('tahun')->nullable();
-            $table->string('no_sumpah')->nullable();
-            $table->date('tgl_sumpah')->nullable();
-            $table->bigInteger('pengambil_sumpah')->nullable();
-            $table->bigInteger('saksi_1')->nullable();
-            $table->bigInteger('saksi_2')->nullable();
-            $table->string('keterangan')->nullable();
+            $table->string('kepala_sekolah')->nullable();
+            $table->string('akreditasi', 10)->nullable();
+            $table->float('ipk', 0, 0)->nullable();
         });
     }
 
@@ -36,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_sumpah');
+        Schema::dropIfExists('riwayat_pendidikan');
     }
 };

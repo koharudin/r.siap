@@ -25,7 +25,6 @@ return new class extends Migration
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->string('jabatan')->nullable();
-            $table->bigInteger('unit_id')->nullable();
         });
     }
 

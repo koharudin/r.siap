@@ -13,22 +13,27 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_kursus', function (Blueprint $table) {
+        Schema::create('riwayat_diklat_teknis', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('simpeg_id')->nullable();
             $table->bigInteger('employee_id')->nullable();
-            $table->timestamp('created_at', 6)->nullable();
-            $table->timestamp('updated_at')->nullable();
-            $table->string('nama')->nullable();
+            $table->string('simpeg_id')->nullable();
+            $table->string('jenis_diklat', 1)->nullable();
+            $table->string('nama_diklat')->nullable();
             $table->string('tempat')->nullable();
             $table->string('penyelenggara')->nullable();
-            $table->smallInteger('angkatan')->nullable();
+            $table->string('angkatan')->nullable();
             $table->integer('tahun')->nullable();
             $table->date('tgl_mulai')->nullable();
             $table->date('tgl_selesai')->nullable();
             $table->string('no_sttpp')->nullable();
             $table->date('tgl_sttpp')->nullable();
-            $table->integer('lama_jam')->nullable();
+            $table->string('diklat_id', 100)->nullable();
+            $table->timestamp('created_at', 6)->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->integer('jumlah_jam')->nullable();
+            $table->string('id_diklat_siasn', 40)->nullable();
+            $table->smallInteger('jenis_diklat_siasn')->nullable();
+            $table->smallInteger('flag_integrasi')->nullable();
         });
     }
 
@@ -39,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_kursus');
+        Schema::dropIfExists('riwayat_diklat_teknis');
     }
 };

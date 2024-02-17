@@ -13,15 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('penghargaan', function (Blueprint $table) {
+        Schema::create('riwayat_kinerja', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('parent_id')->nullable();
+            $table->integer('employee_id')->nullable();
             $table->string('simpeg_id', 100)->nullable();
-            $table->string('name')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->string('keterangan')->nullable();
-            $table->smallInteger('order')->nullable()->default(1);
+            $table->integer('tahun')->nullable();
+            $table->string('nilai')->nullable();
+            $table->date('tgl_penilaian')->nullable();
+            $table->string('satuan_kerja')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->float('nilai_skp', 0, 0)->nullable();
+            $table->float('nilai_perilaku', 0, 0)->nullable();
         });
     }
 
@@ -32,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('penghargaan');
+        Schema::dropIfExists('riwayat_kinerja');
     }
 };

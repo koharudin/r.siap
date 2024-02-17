@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('country', function (Blueprint $table) {
-            $table->string('id', 3)->primary();
+        Schema::create('status_pegawai', function (Blueprint $table) {
+            $table->smallIncrements('id');
             $table->string('name')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->softDeletes('deleted_at', 6);
-            $table->smallInteger('order')->nullable()->default(1);
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('country');
+        Schema::dropIfExists('status_pegawai');
     }
 };

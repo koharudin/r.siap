@@ -26,10 +26,6 @@ return new class extends Migration
             $table->string('pejabat_nama')->nullable();
             $table->smallInteger('order')->nullable()->default(1);
             $table->string('old_id')->nullable();
-            $table->smallInteger('eselon')->nullable();
-            $table->smallInteger('job_grade')->nullable();
-            $table->smallInteger('bup')->nullable();
-            $table->date('tmt_jabatan')->nullable();
         });
     }
 

@@ -30,6 +30,9 @@ return new class extends Migration
             $table->smallInteger('jenis_pensiun_id')->nullable();
             $table->smallInteger('pangkat_id')->nullable();
             $table->bigInteger('unit_kerja_id')->nullable();
+            $table->string('mpp', 1)->nullable();
+            $table->string('tusk', 1)->nullable();
+            $table->string('album', 1)->nullable();
         });
     }
 

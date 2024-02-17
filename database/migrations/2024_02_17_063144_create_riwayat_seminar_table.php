@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('nama')->nullable();
             $table->string('tempat')->nullable();
             $table->string('penyelenggara')->nullable();
+            $table->smallInteger('angkatan')->nullable();
             $table->date('tgl_mulai')->nullable();
             $table->date('tgl_selesai')->nullable();
             $table->string('no_piagam')->nullable();
@@ -28,6 +29,11 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('peran')->nullable();
             $table->smallInteger('jenis_piagam')->nullable()->default(2);
+            $table->integer('tahun')->nullable();
+            $table->integer('jumlah_jam')->nullable();
+            $table->string('id_diklat_siasn', 40)->nullable();
+            $table->smallInteger('jenis_diklat_siasn')->nullable();
+            $table->smallInteger('flag_integrasi')->nullable();
         });
     }
 

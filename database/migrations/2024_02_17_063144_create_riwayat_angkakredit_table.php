@@ -31,7 +31,6 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable();
             $table->date('tmt_pak')->nullable();
             $table->bigInteger('unit_kerja_id')->nullable();
-            $table->smallInteger('jabatan_id')->nullable();
         });
     }
 

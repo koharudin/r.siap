@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('parent_id')->nullable();
             $table->string('simpeg_id')->nullable();
-            $table->string('name')->nullable();
+            $table->string('hukuman')->nullable();
             $table->decimal('jenis', 255, 0)->nullable();
             $table->decimal('jumlah_min', 255, 0)->nullable();
             $table->decimal('jumlah_max', 255, 0)->nullable();
@@ -31,6 +31,8 @@ return new class extends Migration
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->smallInteger('order')->nullable()->default(1);
+            $table->string('siasn_id', 2)->nullable();
+            $table->string('id_tingkat', 1)->nullable();
         });
     }
 

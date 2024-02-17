@@ -16,13 +16,14 @@ return new class extends Migration
         Schema::create('admin_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('username', 190)->unique();
-            $table->string('password', 60);
-            $table->string('name');
+            $table->string('password', 60)->nullable();
+            $table->string('name')->nullable();
             $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->string('simpeg_id', 100)->nullable();
             $table->string('password_x')->nullable();
+            $table->timestamp('change_password')->nullable();
         });
     }
 

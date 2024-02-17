@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('admin_role_users', function (Blueprint $table) {
-            $table->integer('role_id');
-            $table->integer('user_id');
-            $table->timestamps();
-
-            $table->index(['role_id', 'user_id']);
+        Schema::create('request_log', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('request_id')->nullable();
+            $table->text('log')->nullable();
+            $table->timestamps(6);
+            $table->bigInteger('user_id')->nullable();
+            $table->text('dirty_data')->nullable();
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('admin_role_users');
+        Schema::dropIfExists('request_log');
     }
 };

@@ -13,18 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_uji_kompetensi', function (Blueprint $table) {
+        Schema::create('riwayat_sumpah', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('employee_id')->nullable();
             $table->string('simpeg_id')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->string('jabatan')->nullable();
-            $table->string('satker')->nullable();
+            $table->integer('tahun')->nullable();
+            $table->string('no_sumpah')->nullable();
+            $table->date('tgl_sumpah')->nullable();
+            $table->string('pengambil_sumpah')->nullable();
+            $table->string('saksi_1')->nullable();
+            $table->string('saksi_2')->nullable();
             $table->string('keterangan')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->bigInteger('satker_id')->nullable();
-            $table->bigInteger('jabatan_id')->nullable();
         });
     }
 
@@ -35,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_uji_kompetensi');
+        Schema::dropIfExists('riwayat_sumpah');
     }
 };

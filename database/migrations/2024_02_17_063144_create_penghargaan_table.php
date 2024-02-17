@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('diklat', function (Blueprint $table) {
+        Schema::create('penghargaan', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('parent_id')->nullable();
+            $table->integer('parent_id')->nullable();
+            $table->string('simpeg_id', 100)->nullable();
             $table->string('name')->nullable();
+            $table->timestamps(6);
             $table->string('keterangan')->nullable();
-            $table->timestamp('created_at', 6)->nullable();
-            $table->timestamp('updated_at')->nullable();
-            $table->string('simpeg_id')->nullable();
             $table->smallInteger('order')->nullable()->default(1);
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('diklat');
+        Schema::dropIfExists('penghargaan');
     }
 };

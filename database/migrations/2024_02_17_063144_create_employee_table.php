@@ -40,6 +40,10 @@ return new class extends Migration
             $table->string('nik')->nullable();
             $table->string('no_hp')->nullable();
             $table->bigInteger('unit_id')->nullable();
+            $table->bigInteger('status_pegawai_id')->nullable();
+            $table->string('pin_absen', 32)->nullable();
+            $table->string('id_pns_bkn', 40)->nullable();
+            $table->date('tgl_pensiun')->nullable();
         });
     }
 

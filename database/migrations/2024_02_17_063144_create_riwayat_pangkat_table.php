@@ -26,7 +26,6 @@ return new class extends Migration
             $table->date('tmt_pangkat')->nullable();
             $table->decimal('kredit', 255, 0)->nullable();
             $table->string('pangkat_id', 2)->nullable();
-            $table->string('jenis_kp')->nullable();
             $table->string('keterangan')->nullable();
             $table->string('pejabat_penetap_nip')->nullable();
             $table->string('pejabat_penetap_nama')->nullable();
@@ -40,6 +39,12 @@ return new class extends Migration
             $table->bigInteger('employee_id')->nullable();
             $table->string('pejabat_penetap_id', 100)->nullable();
             $table->string('dokumen')->nullable();
+            $table->smallInteger('is_cpns_pns')->nullable();
+            $table->smallInteger('jenis_kp2')->nullable();
+            $table->smallInteger('jenis_kp')->nullable();
+            $table->decimal('kredit_tambahan', 255, 0)->nullable();
+            $table->string('id_siasn', 40)->nullable();
+            $table->string('dok_siasn', 16)->nullable();
         });
     }
 

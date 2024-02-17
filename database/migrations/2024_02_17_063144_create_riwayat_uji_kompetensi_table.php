@@ -13,22 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_pendidikan', function (Blueprint $table) {
+        Schema::create('riwayat_uji_kompetensi', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('employee_id')->nullable();
-            $table->bigInteger('pendidikan_id')->nullable();
-            $table->string('jurusan')->nullable();
-            $table->string('nama_sekolah')->nullable();
-            $table->string('tempat_sekolah')->nullable();
-            $table->string('no_sttb')->nullable();
-            $table->date('tgl_sttb')->nullable();
-            $table->string('tahun')->nullable();
             $table->string('simpeg_id')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->string('kepala_sekolah')->nullable();
-            $table->string('akreditasi', 10)->nullable();
-            $table->float('ipk', 0, 0)->nullable();
+            $table->string('jabatan')->nullable();
+            $table->string('satker')->nullable();
+            $table->string('keterangan')->nullable();
+            $table->date('tanggal')->nullable();
         });
     }
 
@@ -39,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_pendidikan');
+        Schema::dropIfExists('riwayat_uji_kompetensi');
     }
 };

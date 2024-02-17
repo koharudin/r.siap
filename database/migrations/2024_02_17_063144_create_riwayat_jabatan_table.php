@@ -38,6 +38,10 @@ return new class extends Migration
             $table->bigInteger('tipe_jabatan_id')->nullable();
             $table->bigInteger('unit_id')->nullable();
             $table->string('unit_text')->nullable();
+            $table->smallInteger('status_jabatan_id')->nullable();
+            $table->string('jabatan_id_old')->nullable();
+            $table->bigInteger('jabatan_id')->nullable();
+            $table->integer('status_riwayat')->default(1);
         });
     }
 

@@ -13,22 +13,25 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_penghargaan', function (Blueprint $table) {
+        Schema::create('riwayat_gaji', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('employee_id')->nullable();
             $table->string('simpeg_id')->nullable();
             $table->timestamp('created_at', 6)->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->string('nama_penghargaan')->nullable();
             $table->string('no_sk')->nullable();
             $table->date('tgl_sk')->nullable();
-            $table->string('pejabat_penetap_jabatan')->nullable();
-            $table->integer('tahun')->nullable();
-            $table->string('jenis_penghargaan')->nullable();
-            $table->bigInteger('pejabat_penetap_id')->nullable();
+            $table->date('tmt_sk')->nullable();
+            $table->string('pejabat_penetap_id')->nullable();
             $table->string('pejabat_penetap_nama')->nullable();
+            $table->string('pejabat_penetap_jabatan')->nullable();
             $table->string('pejabat_penetap_nip')->nullable();
-            $table->bigInteger('jenis_penghargaan_id')->nullable();
+            $table->integer('masakerja_tahun')->nullable();
+            $table->integer('masakerja_bulan')->nullable();
+            $table->string('jenis_kenaikan')->nullable();
+            $table->string('pangkat_id', 2)->nullable();
+            $table->bigInteger('riwayat_pangkat_id')->nullable();
+            $table->decimal('gaji_pokok', 255, 0)->nullable();
         });
     }
 
@@ -39,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_penghargaan');
+        Schema::dropIfExists('riwayat_gaji');
     }
 };
