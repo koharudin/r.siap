@@ -1,0 +1,1225 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class CustomizedDiklatTableSeeder extends Seeder
+{
+
+    /**
+     * Auto generated seed file
+     *
+     * @return void
+     */
+    public function run()
+    {
+        
+
+        \DB::table('diklat')->delete();
+        
+        \DB::table('diklat')->insert(array (
+            0 => 
+            array (
+                'id' => 1,
+                'parent_id' => NULL,
+                'name' => 'Struktural',
+                'keterangan' => 'Struktural',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:19:00',
+                'simpeg_id' => '1.',
+                'order' => 1,
+            ),
+            1 => 
+            array (
+                'id' => 3,
+                'parent_id' => 2,
+                'name' => 'DIKLAT PRAJABATAN GOLONGAN II',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.1.',
+                'order' => 1,
+            ),
+            2 => 
+            array (
+                'id' => 5,
+                'parent_id' => 2,
+                'name' => 'Pelatihan Kepemimpinan Nasional Tingkat II Angkatan XIX',
+                'keterangan' => 'Pelatihan Kepemimpinan Nasional Tingkat II Angkatan XIX',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.3.',
+                'order' => 1,
+            ),
+            3 => 
+            array (
+                'id' => 6,
+                'parent_id' => 2,
+                'name' => 'DIKLAT KEPEMIMPINAN TK. II',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.4.',
+                'order' => 1,
+            ),
+            4 => 
+            array (
+                'id' => 7,
+                'parent_id' => 2,
+                'name' => 'DIKLAT KEPEMIMPINAN TK. I',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.5.',
+                'order' => 1,
+            ),
+            5 => 
+            array (
+                'id' => 8,
+                'parent_id' => 1,
+                'name' => 'PELATIHAN DASAR CALON PEGAWAI NEGERI SIPIL',
+                'keterangan' => 'Struktural',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.2.',
+                'order' => 1,
+            ),
+            6 => 
+            array (
+                'id' => 9,
+                'parent_id' => 1,
+                'name' => 'Diklat Kepemimpinan Tingkat IV',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.3.',
+                'order' => 1,
+            ),
+            7 => 
+            array (
+                'id' => 10,
+                'parent_id' => 1,
+                'name' => 'SEPADYA/SPAMA/DIKLATPIM TK III',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.4.',
+                'order' => 1,
+            ),
+            8 => 
+            array (
+                'id' => 11,
+                'parent_id' => 1,
+                'name' => 'PELATIHAN KEPEMIMPINAN TINGKAT I',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.5.',
+                'order' => 1,
+            ),
+            9 => 
+            array (
+                'id' => 13,
+                'parent_id' => 12,
+                'name' => 'Diklat Fungsional',
+                'keterangan' => 'Diklat Fungsional',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.',
+                'order' => 1,
+            ),
+            10 => 
+            array (
+                'id' => 14,
+                'parent_id' => 13,
+                'name' => 'DIKLAT DASAR-DASAR KEARSIPAN',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.1.',
+                'order' => 1,
+            ),
+            11 => 
+            array (
+                'id' => 12,
+                'parent_id' => NULL,
+                'name' => 'Fungsional',
+                'keterangan' => 'Fungsional',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:22:24',
+                'simpeg_id' => '2.',
+                'order' => 1,
+            ),
+            12 => 
+            array (
+                'id' => 15,
+                'parent_id' => 13,
+                'name' => 'Diklat Jenjang JF Arsiparis Mahir',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.10.',
+                'order' => 1,
+            ),
+            13 => 
+            array (
+                'id' => 16,
+                'parent_id' => 13,
+                'name' => 'Sertifikat Kompetensi Pada Jengang Jabatan Fungsional Arsiparis Pertama',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.11.',
+                'order' => 1,
+            ),
+            14 => 
+            array (
+                'id' => 17,
+                'parent_id' => 13,
+                'name' => 'Uji Kompetensi Fungsional Widyaiswara',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.12.',
+                'order' => 1,
+            ),
+            15 => 
+            array (
+                'id' => 19,
+                'parent_id' => 13,
+                'name' => 'DIKLAT PENGELOLAAN ARSIP STATIS',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.2.',
+                'order' => 1,
+            ),
+            16 => 
+            array (
+                'id' => 20,
+                'parent_id' => 13,
+                'name' => 'Diklat Jenjang JF Arsiparis Ahli Madya',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.3.',
+                'order' => 1,
+            ),
+            17 => 
+            array (
+                'id' => 21,
+                'parent_id' => 13,
+                'name' => 'Diklat Jenjang JF Arsiparis Ahli Muda',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.4.',
+                'order' => 1,
+            ),
+            18 => 
+            array (
+                'id' => 22,
+                'parent_id' => 13,
+                'name' => 'Diklat Jenjang JF Arsiparis Ahli Utama',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.5.',
+                'order' => 1,
+            ),
+            19 => 
+            array (
+                'id' => 23,
+                'parent_id' => 13,
+                'name' => 'Diklat Jenjang JF Arsiparis Ahli Pertama',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.6.',
+                'order' => 1,
+            ),
+            20 => 
+            array (
+                'id' => 24,
+                'parent_id' => 13,
+                'name' => 'PELATIHAN AUDITOR AHLI PERTAMA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.7.',
+                'order' => 1,
+            ),
+            21 => 
+            array (
+                'id' => 25,
+                'parent_id' => 13,
+                'name' => 'Diklat Uji Kompetensi Bidang Kompetensi Pengelolaan Arsip Dinamis',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.8.',
+                'order' => 1,
+            ),
+            22 => 
+            array (
+                'id' => 26,
+                'parent_id' => 13,
+                'name' => 'Diklat Uji Kompetensi Bidang Kompetensi Pengelolaan Arsip Statis',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.9.',
+                'order' => 1,
+            ),
+            23 => 
+            array (
+                'id' => 27,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL PENGANGKATAN ARSIPARIS TINGKAT AHLI',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.10.',
+                'order' => 1,
+            ),
+            24 => 
+            array (
+                'id' => 28,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL ASSESSOR SDM APARATUR',
+                'keterangan' => 'LULUS',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.11.',
+                'order' => 1,
+            ),
+            25 => 
+            array (
+                'id' => 29,
+                'parent_id' => 12,
+                'name' => 'Pengembangan kompetensi jabatan fungsional Perancang Perundang Undangan',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.12.',
+                'order' => 1,
+            ),
+            26 => 
+            array (
+                'id' => 30,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL ANALIS KEPEGAWAIAN KEAHLIAN',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.13.',
+                'order' => 1,
+            ),
+            27 => 
+            array (
+                'id' => 31,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.14.',
+                'order' => 1,
+            ),
+            28 => 
+            array (
+                'id' => 32,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL ANALIS KEPEGAWAIAN KETERAMPILAN',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.15.',
+                'order' => 1,
+            ),
+            29 => 
+            array (
+                'id' => 33,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN FUNGSIONAL ASSESOR SDM APARATUR',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.16.',
+                'order' => 1,
+            ),
+            30 => 
+            array (
+                'id' => 34,
+                'parent_id' => 12,
+                'name' => 'DIKLAT PEMBENTUKAN JABATAN FUNGSIONAL PRANATA HUBUNGAN MASYARAKAT TINGKAT KETERAMPILAN',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.17.',
+                'order' => 1,
+            ),
+            31 => 
+            array (
+                'id' => 35,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL PENERJEMAH',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.18.',
+                'order' => 1,
+            ),
+            32 => 
+            array (
+                'id' => 36,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN FUNGSIONAL PENGUATAN JABATAN FUNGSIONAL WIDYAISWARA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.19.',
+                'order' => 1,
+            ),
+            33 => 
+            array (
+                'id' => 38,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN FUNGSIONAL PERENCANA AHLI PERTAMA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.20.',
+                'order' => 1,
+            ),
+            34 => 
+            array (
+                'id' => 39,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN PEMBENTUKAN JABATAN FUNGSIONAL PRANATA HUBUNGAN MASYARAKAT TINGKAT AHLI',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.21.',
+                'order' => 1,
+            ),
+            35 => 
+            array (
+                'id' => 40,
+                'parent_id' => 12,
+                'name' => 'PELTIHAN PENJENJANGAN JABATAN FUNGSIONAL PENGELOLA BARANG/JASA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.22.',
+                'order' => 1,
+            ),
+            36 => 
+            array (
+                'id' => 43,
+                'parent_id' => 12,
+                'name' => 'DIKLAT PENJENJANGAN AUDITOR AHLI MADYA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.25.',
+                'order' => 1,
+            ),
+            37 => 
+            array (
+                'id' => 45,
+                'parent_id' => 12,
+            'name' => 'DIKLAT FUNGSIONAL PERAWAT ( PENGANGKATAN PERTAMA) ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.27.',
+                'order' => 1,
+            ),
+            38 => 
+            array (
+                'id' => 46,
+                'parent_id' => 12,
+                'name' => 'SHARING SESSION',
+                'keterangan' => 'SERTIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.28.',
+                'order' => 1,
+            ),
+            39 => 
+            array (
+                'id' => 49,
+                'parent_id' => 12,
+                'name' => 'SERTIFIKASI AUDITPR AHLI MUDA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.30.',
+                'order' => 1,
+            ),
+            40 => 
+            array (
+                'id' => 51,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN CALON ANALIS KEBIJAKAN',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.32.',
+                'order' => 1,
+            ),
+            41 => 
+            array (
+                'id' => 55,
+                'parent_id' => 12,
+                'name' => 'WORKSHOP PENILAIAN ANGKA KREDIT PERENCANA DAN ADMINISTRASI PENILAIAN ANGKA KREDIT PERENCANA ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.36.',
+                'order' => 1,
+            ),
+            42 => 
+            array (
+                'id' => 57,
+                'parent_id' => 12,
+                'name' => 'OPEN CLASS LINK AND MATCH PERENCANAAN DENGAN RKA K/L',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.38.',
+                'order' => 1,
+            ),
+            43 => 
+            array (
+                'id' => 60,
+                'parent_id' => 12,
+                'name' => 'SOSIALISASI PERATURAN KEPALA BAPPENAS TENTANG PETUNJUK TEKNIS PENILAIAN KINERJA JF PERENCANA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.40.',
+                'order' => 1,
+            ),
+            44 => 
+            array (
+                'id' => 63,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN PENERAPAN DAN PERCEPATAN PENINGKATAN TKDN PADA PBJP',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.43.',
+                'order' => 1,
+            ),
+            45 => 
+            array (
+                'id' => 65,
+                'parent_id' => 12,
+                'name' => 'Fungsional',
+                'keterangan' => 'Fungsional',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.5.',
+                'order' => 1,
+            ),
+            46 => 
+            array (
+                'id' => 68,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL AUDITOR TERAMPIL',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.8.',
+                'order' => 1,
+            ),
+            47 => 
+            array (
+                'id' => 69,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN E LEARNING TERAMPIL KL 0001',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.9.',
+                'order' => 1,
+            ),
+            48 => 
+            array (
+                'id' => 71,
+                'parent_id' => 70,
+                'name' => 'Diklat Teknis',
+                'keterangan' => 'Diklat Teknis',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.',
+                'order' => 1,
+            ),
+            49 => 
+            array (
+                'id' => 73,
+                'parent_id' => 71,
+                'name' => 'Bimtek Sertifikasi JF Arsiparis',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.10.',
+                'order' => 1,
+            ),
+            50 => 
+            array (
+                'id' => 75,
+                'parent_id' => 71,
+                'name' => 'PELATIHAN MANAJEMEN KINERJA',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.12.',
+                'order' => 1,
+            ),
+            51 => 
+            array (
+                'id' => 76,
+                'parent_id' => 71,
+                'name' => 'TRAINING ISO 9001:2008',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.13.',
+                'order' => 1,
+            ),
+            52 => 
+            array (
+                'id' => 79,
+                'parent_id' => 71,
+                'name' => 'PELATIHAN REVOLUSI MENTAL ',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.16.',
+                'order' => 1,
+            ),
+            53 => 
+            array (
+                'id' => 81,
+                'parent_id' => 71,
+                'name' => 'PEMBINAAN TEKNIS PENILAIAN ANGKA KREDIT JABATAN FUNGSIONAL PRANATA KOMPUTER',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.2.',
+                'order' => 1,
+            ),
+            54 => 
+            array (
+                'id' => 82,
+                'parent_id' => 71,
+                'name' => 'DIKLAT TEKNIS PENATAAN ARSIP',
+                'keterangan' => 'LULUS',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.3.',
+                'order' => 1,
+            ),
+            55 => 
+            array (
+                'id' => 84,
+                'parent_id' => 71,
+                'name' => 'Bimtek Pengajuan Angkre JF Perencana',
+                'keterangan' => 'Bimtek Pengajuan Angkre JF Perencana',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.5.',
+                'order' => 1,
+            ),
+            56 => 
+            array (
+                'id' => 86,
+                'parent_id' => 71,
+                'name' => 'Bussines Process Engineer',
+            'keterangan' => 'Program Government Transformation Academy (Kominfo)',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.7.',
+                'order' => 1,
+            ),
+            57 => 
+            array (
+                'id' => 87,
+                'parent_id' => 71,
+                'name' => 'TRAINING ANALIS MANAJEMEN RISIKO ORGANISASI TERINTEGRASI ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.8.',
+                'order' => 1,
+            ),
+            58 => 
+            array (
+                'id' => 89,
+                'parent_id' => 70,
+                'name' => 'Revolusi mental penguatan budaya birokrasi ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.10.',
+                'order' => 1,
+            ),
+            59 => 
+            array (
+                'id' => 91,
+                'parent_id' => 70,
+                'name' => 'PENGELOLAAN ARSIP STATIS',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.12.',
+                'order' => 1,
+            ),
+            60 => 
+            array (
+                'id' => 93,
+                'parent_id' => 70,
+                'name' => 'TRAINING OF TRAINER KEARSIPAN',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.14.',
+                'order' => 1,
+            ),
+            61 => 
+            array (
+                'id' => 95,
+                'parent_id' => 70,
+                'name' => 'WORKSHOP PENULISAN AKSARA JAWA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.16.',
+                'order' => 1,
+            ),
+            62 => 
+            array (
+                'id' => 100,
+                'parent_id' => 70,
+                'name' => 'SOSIALISAI PENYAMPAIAN DAN PENELAAHAN RENCANA PNBP SECARA ONLINE MELALUI APLIKASI satuDJA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.20.',
+                'order' => 1,
+            ),
+            63 => 
+            array (
+                'id' => 103,
+                'parent_id' => 70,
+                'name' => 'DIKLAT PENGAWASAN PENINGKATAN PENGGUNAAN PRODUK DALAM NEGERI',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.3.',
+                'order' => 1,
+            ),
+            64 => 
+            array (
+                'id' => 105,
+                'parent_id' => 70,
+                'name' => 'BIMBINGAN PENILAIAN PRESTASI KERJA JF ARSIPARIS',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.5.',
+                'order' => 1,
+            ),
+            65 => 
+            array (
+                'id' => 107,
+                'parent_id' => 70,
+                'name' => 'DIKLAT PENILAIAN KAPABILITAS APIP',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.7.',
+                'order' => 1,
+            ),
+            66 => 
+            array (
+                'id' => 2,
+                'parent_id' => 1,
+                'name' => 'Diklat Struktural',
+                'keterangan' => 'Diklat Struktural',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.',
+                'order' => 1,
+            ),
+            67 => 
+            array (
+                'id' => 70,
+                'parent_id' => NULL,
+                'name' => 'Teknis',
+                'keterangan' => 'Teknis',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:22:24',
+                'simpeg_id' => '3.',
+                'order' => 1,
+            ),
+            68 => 
+            array (
+                'id' => 4,
+                'parent_id' => 2,
+            'name' => 'DIKLAT PRAJABATAN GOLONGAN III (DIKLAT PRAJAB III)',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '1.1.2.',
+                'order' => 1,
+            ),
+            69 => 
+            array (
+                'id' => 18,
+                'parent_id' => 13,
+                'name' => 'PELATIHAN TEKNIS PENILAIAN DAN PENETAPAN ANGKA KREDIT ANALIS KEPEGAWAIAN AHLI MUDA',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.1.13.',
+                'order' => 1,
+            ),
+            70 => 
+            array (
+                'id' => 37,
+                'parent_id' => 12,
+                'name' => 'Diklat Penjenjangan Arsiparis Tingkat Terampil ke Arsiparis Tingkat Ahli',
+                'keterangan' => 'Diklat Penjenjangan Arsiparis Tingkat Terampil ke Arsiparis Tingkat Ahli',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.2.',
+                'order' => 1,
+            ),
+            71 => 
+            array (
+                'id' => 98,
+                'parent_id' => 70,
+                'name' => 'BIMTEK REFORMULASI IKPA TAHUN 2022',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.19.',
+                'order' => 1,
+            ),
+            72 => 
+            array (
+                'id' => 41,
+                'parent_id' => 12,
+                'name' => 'DIKLAT PEMBENTUKAN JABATAN FUNGSIONAL PRANATA HUBUNGAN MASYARAKAT TINGKAT KETERAMPILAN',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.23.',
+                'order' => 1,
+            ),
+            73 => 
+            array (
+                'id' => 42,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN FUNGSIONAL PERANCANG PERUNDANG UNDANGAN AHLI PERTAMA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.24.',
+                'order' => 1,
+            ),
+            74 => 
+            array (
+                'id' => 44,
+                'parent_id' => 12,
+                'name' => 'SERTIFIKASI KOMPETENSI BIDANG AKUNTANSI PEMERINTAH',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.26.',
+                'order' => 1,
+            ),
+            75 => 
+            array (
+                'id' => 47,
+                'parent_id' => 12,
+                'name' => 'DIKLAT PENJENJANGAN AUDITOR AHLI MUDA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.29.',
+                'order' => 1,
+            ),
+            76 => 
+            array (
+                'id' => 48,
+                'parent_id' => 12,
+                'name' => 'DIKLAT TEKNIS PENATAAN ARSIP',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.3.',
+                'order' => 1,
+            ),
+            77 => 
+            array (
+                'id' => 50,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL PENGUATAN  JF WIDYAISWARA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.31.',
+                'order' => 1,
+            ),
+            78 => 
+            array (
+                'id' => 52,
+                'parent_id' => 12,
+                'name' => 'UJIAN SERTIFIKASI AUDITOR AHLI MADYA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.33.',
+                'order' => 1,
+            ),
+            79 => 
+            array (
+                'id' => 53,
+                'parent_id' => 12,
+                'name' => 'WORKSHOP[ PENILAIAN ANGKA KREDIT PERENCANA DAN ADMINISTRASI PENILAIAN ANGKA KREDIT PERENCANA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.34.',
+                'order' => 1,
+            ),
+            80 => 
+            array (
+                'id' => 54,
+                'parent_id' => 12,
+                'name' => 'WORKSPENILAIAN ANGKA KREDIT PERENCANA DAN ADMINISTRASI PENILAIAN ANGKA KREDIT PERENCANA DAN ADMINISTRASI PENILAIAN ANGKA KREDIT ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.35.',
+                'order' => 1,
+            ),
+            81 => 
+            array (
+                'id' => 56,
+                'parent_id' => 12,
+                'name' => 'DIKLAT REDESAIN SISTEM PERENCANAAN DAN PENGANGGARAN ',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.37.',
+                'order' => 1,
+            ),
+            82 => 
+            array (
+                'id' => 58,
+                'parent_id' => 12,
+                'name' => 'SOSIALISASI PERATURAN KEPALA BAPPENAS TENTANG PETUNJUK TEKNIS PENILAIAN KINERJA JF PERENCANA',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.39.',
+                'order' => 1,
+            ),
+            83 => 
+            array (
+                'id' => 59,
+                'parent_id' => 12,
+                'name' => 'DIKLAT PENGANGKATAN ARSIPARIS TINGKAT AHLI',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.4.',
+                'order' => 1,
+            ),
+            84 => 
+            array (
+                'id' => 61,
+                'parent_id' => 12,
+                'name' => 'WEBINAR STRATEGI TRANSFORMASI TUGAS AKHIR MENJADI NASKAH PUBLIKASI UNTUK JURNAL INTERNASIONAL BERPUTASI',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.41.',
+                'order' => 1,
+            ),
+            85 => 
+            array (
+                'id' => 62,
+                'parent_id' => 12,
+                'name' => 'BIMTEK REFORMULASI IKPA TAHUN 2022',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.42.',
+                'order' => 1,
+            ),
+            86 => 
+            array (
+                'id' => 64,
+                'parent_id' => 12,
+                'name' => 'DIKLAT FUNGSIONAL PENGANGKATAN ARSIPARIS TINGKAT KEAHLIAN TAHUN 2019',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.44.',
+                'order' => 1,
+            ),
+            87 => 
+            array (
+                'id' => 66,
+                'parent_id' => 12,
+                'name' => 'Fungsional',
+                'keterangan' => 'Fungsional',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.6.',
+                'order' => 1,
+            ),
+            88 => 
+            array (
+                'id' => 67,
+                'parent_id' => 12,
+                'name' => 'PELATIHAN FUNGSIONAL CALON PEJABAT FUNGSIONAL PERANCANG PERUNDANG UNDANGAN',
+                'keterangan' => 'FUNGSIONAL',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '2.7.',
+                'order' => 1,
+            ),
+            89 => 
+            array (
+                'id' => 72,
+                'parent_id' => 71,
+                'name' => 'DIKLAT TEKNIS SUBSTANTIF AUDIT KINERJA',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.1.',
+                'order' => 1,
+            ),
+            90 => 
+            array (
+                'id' => 74,
+                'parent_id' => 71,
+                'name' => 'Bimtek Penilaian AK Pustakawan',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.11.',
+                'order' => 1,
+            ),
+            91 => 
+            array (
+                'id' => 77,
+                'parent_id' => 71,
+                'name' => 'Pendidikan dan Pelatihan Penilaian Maturitas Penyelenggaraan SPIP Terintegrasi',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.14.',
+                'order' => 1,
+            ),
+            92 => 
+            array (
+                'id' => 78,
+                'parent_id' => 71,
+                'name' => 'PELATIHAN TEKNIS PENILAIAN DAN PENETAPAN ANGKA KREDIT ANALIS KEPEGAWAIAN AHLI MUDA',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.15.',
+                'order' => 1,
+            ),
+            93 => 
+            array (
+                'id' => 80,
+                'parent_id' => 71,
+                'name' => 'Bimbingan Teknis Tim Penilai Angka Kredit Jabatan Fungsional Analis SDM Aparatur',
+                'keterangan' => 'Diklat Teknis',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.17.',
+                'order' => 1,
+            ),
+            94 => 
+            array (
+                'id' => 83,
+                'parent_id' => 71,
+                'name' => 'Bimtek Pengajuan Angkre JF Analis Kepegawaian',
+                'keterangan' => 'Bimtek Pengajuan Angkre JF Analis Kepegawaian',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.4.',
+                'order' => 1,
+            ),
+            95 => 
+            array (
+                'id' => 85,
+                'parent_id' => 71,
+                'name' => 'Bimtek Pengajuan Angkre JF Perawat',
+                'keterangan' => 'Bimtek Pengajuan Angkre JF Perawat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.6.',
+                'order' => 1,
+            ),
+            96 => 
+            array (
+                'id' => 88,
+                'parent_id' => 71,
+            'name' => 'CERTIFIED RISK MANAGEMENT OFFICER (CRMO)',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.1.9.',
+                'order' => 1,
+            ),
+            97 => 
+            array (
+                'id' => 90,
+                'parent_id' => 70,
+                'name' => 'PENGELOLAAN ARSIP ELEKTRONIK',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.11.',
+                'order' => 1,
+            ),
+            98 => 
+            array (
+                'id' => 92,
+                'parent_id' => 70,
+                'name' => 'UJIAN SERTIFIKASI KOMPETENSI BIGANG AKUNTANSI',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.13.',
+                'order' => 1,
+            ),
+            99 => 
+            array (
+                'id' => 94,
+                'parent_id' => 70,
+                'name' => 'Diklat Uji Kompetensi Jabatan Arsiparis Pelaksana Lanjutan /Arsiparis Mahir',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.15.',
+                'order' => 1,
+            ),
+            100 => 
+            array (
+                'id' => 96,
+                'parent_id' => 70,
+                'name' => 'PELATIHAN APLIKASI  SISTEM INFORMASI  NAMAJEMEN KINERJA DAN CATATAN HARIAN KERJA PEGAWAI ROLE PENGGUNA',
+                'keterangan' => 'SERTIFIKAT',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.17.',
+                'order' => 1,
+            ),
+            101 => 
+            array (
+                'id' => 97,
+                'parent_id' => 70,
+            'name' => 'E LEARNING IMPLEMENTASI REDESAIN PERENCANAAN DAN PENGANGGARAN (RSPP)     N N  (RSPP)',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.18.',
+                'order' => 1,
+            ),
+            102 => 
+            array (
+                'id' => 99,
+                'parent_id' => 70,
+                'name' => 'Pelatihan Sistem Manajemen Layanan Teklologi Informasi',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.2.',
+                'order' => 1,
+            ),
+            103 => 
+            array (
+                'id' => 101,
+                'parent_id' => 70,
+            'name' => 'SEMINAR BACKGROUND STUDY RPJPN (2025-2045) DAN RPJMN (2025-2029)',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.21.',
+                'order' => 1,
+            ),
+            104 => 
+            array (
+                'id' => 102,
+                'parent_id' => 70,
+                'name' => 'Pelatihan Aplikasi Sistem Informasi Manajemen Kinerja dan Catatan Harian Kerja Pegawai Role Pengguna',
+                'keterangan' => 'Sertifikat',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.22.',
+                'order' => 1,
+            ),
+            105 => 
+            array (
+                'id' => 104,
+                'parent_id' => 70,
+                'name' => 'IN HOUSE TRAINING PENGELOLAAN ARSIP DINAMIS',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.4.',
+                'order' => 1,
+            ),
+            106 => 
+            array (
+                'id' => 106,
+                'parent_id' => 70,
+                'name' => 'DIKLAT PENGADAAN BARANG DAN JASA',
+                'keterangan' => 'LULUS',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.6.',
+                'order' => 1,
+            ),
+            107 => 
+            array (
+                'id' => 108,
+                'parent_id' => 70,
+                'name' => 'DIKLAT PENILAIAN KAPABILITAS APIP',
+                'keterangan' => '',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.8.',
+                'order' => 1,
+            ),
+            108 => 
+            array (
+                'id' => 109,
+                'parent_id' => 70,
+                'name' => 'DIKLAT SISTEM PENGELOLAAN ARSIP BERBASIS TEKNOLOGI INFORMASI',
+                'keterangan' => 'LULUS',
+                'created_at' => NULL,
+                'updated_at' => '2023-07-17 04:37:44',
+                'simpeg_id' => '3.9.',
+                'order' => 1,
+            ),
+        ));
+        
+        
+    }
+}

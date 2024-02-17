@@ -24,6 +24,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "mbence/opentbs-bundle": "^1.9",
         "ncjoes/office-converter": "^1.0",
+        "orangehill/iseed": "^3.0",
         "phpoffice/phpword": "^1.1",
         "yajra/laravel-datatables-oracle": "^9.21",
         "zhpefe/select-tree": "^1.2"
