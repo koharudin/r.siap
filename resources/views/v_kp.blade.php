@@ -94,6 +94,7 @@
                         <th>JABATAN</th>
                         <th>PANGKAT TERAKHIR</th>
                         <th>RENTANG WAKTU</th>
+                        <th>Catatan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,7 +157,10 @@
                         data: 'rentang_waktu',
                         name: 'rentang_waktu',
                         html: true
-                    }
+                    }, {
+                        data: 'catatan',
+                        name: 'catatan'
+                    },
                 ]
             });
 

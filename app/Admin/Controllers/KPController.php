@@ -107,7 +107,7 @@ class KPController extends Controller
         }
         $filter_pengecekan = false;
         $query = Employee::whereIn('status_pegawai_id', [1, 2]) //only cpns & pns
-            ->with(['obj_riwayat_jabatan', 'obj_last_riwayat_pangkat']);
+            ->with(['obj_last_riwayat_pendidikan', 'obj_last_riwayat_jabatan', 'obj_riwayat_jabatan', 'obj_last_riwayat_pangkat']);
         $query->orderBy('first_name', 'asc');
         $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
 
@@ -129,7 +129,7 @@ class KPController extends Controller
             $query->whereNotIn('tipe_jabatan_id', [3, 4, 5]);
         });
         return  DataTables::eloquent($query)
-            ->only(['no', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat_terakhir', 'rentang_waktu'])
+            ->only(['no', 'action', 'catatan', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat_terakhir', 'rentang_waktu'])
             ->addIndexColumn()
 
             ->addColumn('unit_kerja', function (Employee $user) {
@@ -155,6 +155,17 @@ class KPController extends Controller
                 if ($last) {
                     return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode . "<br><b>{$last->tmt_pangkat->format('Y-m-d')}</b>";
                 }
+            })
+            ->addColumn('catatan', function (Employee $user) {
+                if ($user->obj_last_riwayat_jabatan) {
+                    if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 1 || $user->obj_last_riwayat_jabatan->tipe_jabatan_id == 6) { //1/6 struktural
+                        return "struktural";
+                    } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 2) { //JFU
+                        return "pelaksana";
+                    } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 3) { //JFT
+                        return "fungsional";
+                    }
+                } else return "Tidak ada data jabatan terakhir";
             })
             ->addColumn('rentang_waktu', function (Employee $user) use ($filter_periode) {
 
