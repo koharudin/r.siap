@@ -44,6 +44,7 @@ class DataPersonalController extends  ProfileController
         $form->column(1 / 2, function ($form) {
             //$form->fill($this->data());
             $form->hidden('id', 'ID');
+			
             $form->image('foto', 'FOTO')->disk("minio_foto")->name(function ($file) {
                 return $this->data['nip_baru'] . "_" . md5(uniqid()) . "." . $file->guessExtension();
             })->hidePreview();
@@ -65,6 +66,7 @@ class DataPersonalController extends  ProfileController
                 } else return "-";
             });
             $form->text('gelar_depan', 'GELAR DEPAN');
+
             $form->text('gelar_belakang', 'GELAR BELAKANG');
             $form->text('birth_place', 'TEMPAT LAHIR');
             $form->date('birth_date', 'TANGGAL LAHIR');
@@ -113,6 +115,8 @@ class DataPersonalController extends  ProfileController
             $tools->disableList();
             $tools->disableView();
             $tools->disableDelete();
+			$tools->disableDelete();
+			
         });
         if (!Admin::user()->can('save-data_personal')) {
             $form->disableSubmit();

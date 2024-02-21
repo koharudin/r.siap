@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class Employee extends Model
 {
@@ -34,6 +35,9 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
+		if(!$last){
+			throw new Exception ("Tidak ditemukan jabatan terkahir ".$this->nip_baru);
+		}
         if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;

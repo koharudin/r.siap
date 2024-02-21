@@ -32,6 +32,7 @@ class ExistingPegawaiController extends Controller
 
         $query->where("unit_id", request()->get('unit_id'));
         $query->where("nama_jabatan", request()->get('jabatan'));
+	$query->whereNotIn('tipe_jabatan_id', [1,6]);
         $query->where('status_riwayat', '1');
         
         $query->orderBy('nama_jabatan','asc');
