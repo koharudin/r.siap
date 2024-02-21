@@ -43,8 +43,8 @@ class KPController extends Controller
             if ($filter_jenis) {
                 $query->where('jenis_penghargaan_id', $filter_jenis);
             }
-        })->with(['obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat', 'obj_riwayat_penghargaan']);
-
+        })->with(['obj_last_riwayat_pangkat', 'obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat', 'obj_riwayat_penghargaan']);
+        $query->orderBy('first_name', 'asc');
         $employees = $query->get();
         $data = [];
         $employees->each(function ($user, $i) use (&$data) {
@@ -53,36 +53,57 @@ class KPController extends Controller
                 $unit_kerja =  $user->obj_satker->name;
             } else $unit_kerja = "Belum di tempatkan!";
 
-            $golongan = '';
+            $pangkat_text = '';
             $last = $user->obj_riwayat_pangkat->last();
-            $golongan =  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
+            if ($last) {
+                if ($last->obj_pangkat) {
+                    $pangkat_text =  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
+                } else   $pangkat_text = 'Tidak ditemukan obj_pangkat pada riwayat pada pegawai  $user->nip_baru';
+            } else $pangkat_text = 'Tidak ditemukan riwayat pada pegawai  $user->nip_baru';
 
             $jabatan = '';
             $last = $user->obj_riwayat_jabatan->last();
-            $jabatan =  $last->nama_jabatan;
+            if ($last) {
+                $jabatan =  $last->nama_jabatan;
+            } else $jabatan = 'Tidak ditemukan riwayat  pada pegawai  $user->nip_baru';
+
 
             $nama = $user->first_name;
 
-            $list = [];
-            $user->obj_riwayat_penghargaan->each(function ($o, $i) use (&$list) {
-                $list[] = $o->nama_penghargaan;
-            });
-            $penghargaan = implode(",", $list);
+
+            $catatan = "-";
+            $filter_periode = request()->input('periode_kp');
+            if (!$filter_periode) {
+                return response()->json("Tidak ada filter periode_kp", 500);
+            }
+            $last = $user->obj_last_riwayat_pangkat;
+
+            $rentang_waktu = '';
+            if ($last) {
+                if (!$last->tmt_pangkat) {
+                    return response()->json("Tidak ada TMT Pangkat pada pegawai  $user->nip_baru", 500);
+                }
+                if ($filter_periode) {
+                    $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
+                    $rentang_waktu = $last->tmt_pangkat->diff($dt_periode)->format('%y tahun, %m bulan and %d hari');
+                }
+            } else $rentang_waktu = "Tidak ada riwayat KP pada pegawai  $user->nip_baru";
 
             $data[] = [
                 'nip' => $user->nip_baru,
                 'unit_kerja' => $unit_kerja,
-                'gol' => $golongan,
+                'pangkat_text' => $pangkat_text,
                 'jabatan' => $jabatan,
                 'nama' => $nama,
-                'penghargaan' => $penghargaan
+                'catatan' => $catatan,
+                'rentang_waktu' => $rentang_waktu
             ];
         });
         $TBS->MergeBlock('r', $data);
         $now = Carbon::now();
         $today = $now->isoFormat('dddd, D MMMM Y');
         $today_ymd = $now->isoFormat('YMMDD');
-        $TBS->Show(OPENTBS_DOWNLOAD, "cetak_penghargaan_{$today_ymd}.xlsx");
+        $TBS->Show(OPENTBS_DOWNLOAD, "cetak_kandidat_usulan_kp_reguler_{$today_ymd}.xlsx");
         return response()->json($data, 200);
     }
     public function dt()

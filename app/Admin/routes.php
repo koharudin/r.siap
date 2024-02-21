@@ -3,6 +3,7 @@
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AuthController;
 use App\Admin\Controllers\KGBController;
+use App\Admin\Controllers\KPController;
 use App\Admin\Controllers\PenghargaanController;
 use App\Admin\Controllers\ProfilePegawai\RiwayatHukumanController;
 use App\Admin\Controllers\RiwayatHukumanController as ControllersRiwayatHukumanController;
