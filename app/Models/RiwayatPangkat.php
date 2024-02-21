@@ -111,7 +111,10 @@ class RiwayatPangkat extends Model
     }
     public function getTJenisKPAttribute()
     {
-        return $this->obj_jenis_kenaikan_pangkat->name;
+        if ($this->obj_jenis_kenaikan_pangkat) {
+            return $this->obj_jenis_kenaikan_pangkat->name;
+        }
+        return null;
     }
     public function getTPangkatGolonganAttribute()
     {

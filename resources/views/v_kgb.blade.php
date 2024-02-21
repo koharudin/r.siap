@@ -77,7 +77,7 @@
                         <div class="col-md-8">
                             <div class="btn-group pull-left">
                                 <button class="btn btn-info submit btn-sm"><i class="fa fa-search"></i>&nbsp;&nbsp;Cari</button>
-                                <button type="button" class="btn btn-primary btn-sm" style="display: none;" name="btn-cetak-riwayat-hukuman"><i class='fa fa-print'></i> Cetak</button>
+                                <button type="button" class="btn btn-primary btn-sm" name="btn-cetak-kgb"><i class='fa fa-print'></i> Cetak</button>
                             </div>
                         </div>
                     </div>
