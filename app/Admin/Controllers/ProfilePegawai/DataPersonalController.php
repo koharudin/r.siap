@@ -27,24 +27,40 @@ class DataPersonalController extends  ProfileController
 
     public $title = 'Data Personal';
 
+    public function addScript()
+    {
+        $script = <<<'SCRIPT'
+        $(".btn-sinkron").click(function(){
+            alert("sinkron");
+            // kasih modal
+            // pilihan IDS yg mau di sinkronkan
+            // Ajax Request
+        });
+        SCRIPT;
+
+        Admin::script($script);
+    }
     public function detail($id)
     {
         return Admin::content(function (Content $content) {
+
             $this->index($content);
         });
     }
     public function form()
     {
+        $this->addScript();
         $form = new Form(new Employee());
         $profile_id = $this->getProfileId();
         $form->tools(function ($tools) use ($profile_id) {
             $tools->add('<a href="' . route('admin.cetak-drh-singkat', ['profile_id' => $profile_id]) . '" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i>&nbsp;&nbsp;Cetak DRH Singkat</a>');
             $tools->add('<a href="' . route('admin.cetak-drh-lengkap', ['profile_id' => $profile_id]) . '" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Cetak DRH Lengkap</a>');
+            $tools->add('<a href="#" profile_id="' . $profile_id . '" class="btn btn-sm btn-info btn-sinkron"><i class="fa fa-link"></i>&nbsp;&nbsp;Sinkronisasi</a>');
         });
         $form->column(1 / 2, function ($form) {
             //$form->fill($this->data());
             $form->hidden('id', 'ID');
-			
+
             $form->image('foto', 'FOTO')->disk("minio_foto")->name(function ($file) {
                 return $this->data['nip_baru'] . "_" . md5(uniqid()) . "." . $file->guessExtension();
             })->hidePreview();
@@ -115,8 +131,7 @@ class DataPersonalController extends  ProfileController
             $tools->disableList();
             $tools->disableView();
             $tools->disableDelete();
-			$tools->disableDelete();
-			
+            $tools->disableDelete();
         });
         if (!Admin::user()->can('save-data_personal')) {
             $form->disableSubmit();
