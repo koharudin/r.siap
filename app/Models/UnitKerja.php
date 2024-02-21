@@ -20,6 +20,10 @@ class UnitKerja extends Model
         parent::__construct($attributes);
         $this->setTitleColumn('name');
     }
+    public function obj_eselon()
+    {
+        return $this->hasOne(Eselon::class, 'id', 'eselon_id');
+    }
     public function getNameWithParentAttribute()
     {
         $parentName = $this->parent ? " - " . $this->parent->name : "";

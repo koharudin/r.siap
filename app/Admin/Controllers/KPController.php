@@ -30,6 +30,61 @@ class KPController extends Controller
             ->title($this->title)
             ->body(view("v_kp", ['url_cetak' => URL::to('/admin/kp/cetak')]));
     }
+    public function getCatatan($user)
+    {
+        if ($user->obj_last_riwayat_jabatan) {
+            if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 1 || $user->obj_last_riwayat_jabatan->tipe_jabatan_id == 6) { //1/6 struktural
+                $unit_kerja = $user->obj_last_riwayat_jabatan->obj_unit_kerja;
+
+                if ($unit_kerja) {
+                    if ($unit_kerja->obj_eselon) {
+                        $obj_pangkat = $user->obj_last_riwayat_pangkat->obj_pangkat;
+                        if ($obj_pangkat->id == $unit_kerja->obj_eselon->pangkat_max) {
+                            return "MENTOK : struktural, PANGKAT MAX";
+                        }
+                    } else {
+                        return "ERR : struktural, tidak ada obj_eselon";
+                    }
+                } else {
+                    return "ERR : struktural , tidak ada obj_unit";
+                }
+                return "struktural ";
+            } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 2) { //JFU
+                $last_pendidikan = $user->obj_last_riwayat_pendidikan;
+                if (!$last_pendidikan) {
+                    return "MENTOK : Pelaksana, PANGKAT MAX, Tidak ada Riwayat";
+                }
+                $obj_parent  = $last_pendidikan->obj_pendidikan->obj_parent;
+                if (!$obj_parent) {
+                    return "ERR pelaksana, obj PARENT Last Pendidikan NULL ";
+                }
+                $obj_pangkat = $user->obj_last_riwayat_pangkat->obj_pangkat;
+                if ($obj_parent->id == 237) { // s1
+                    if ($obj_pangkat->id >= 34) {
+                        return "MENTOK : Pelaksana, PANGKAT MAX";
+                    }
+                } else if ($obj_parent->id == 531) { // S2
+
+                } else if ($obj_parent->id == 660) { // S3
+
+                } else if ($obj_parent->id == 225) { // D4
+                    if ($obj_pangkat->id >= 34) {
+                        return "MENTOK : Pelaksana, PANGKAT MAX";
+                    }
+                } else if ($obj_parent->id == 115) { // D3
+                    if ($obj_pangkat->id >= 33) {
+                        return "MENTOK : Pelaksana, PANGKAT MAX";
+                    }
+                } else { //D2 ke bawah
+                    return "MENTOK : Pelaksana, PANGKAT MAX";
+                }
+                //Jika pelaksana maka jika pendidikan terakhir D3 maka IIIc, jika S1 maka IIId, jika DII ke bawah maka IIIb
+                return "pelaksana, LASTPEND ";
+            } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 3) { //JFT
+                return "fungsional";
+            }
+        } else return "Tidak ada data jabatan terakhir";
+    }
     public function cetak()
     {
         $TBS = new OpenTBS();
@@ -43,7 +98,11 @@ class KPController extends Controller
             if ($filter_jenis) {
                 $query->where('jenis_penghargaan_id', $filter_jenis);
             }
-        })->with(['obj_last_riwayat_pangkat', 'obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat', 'obj_riwayat_penghargaan']);
+        })->with(['obj_last_riwayat_pendidikan.obj_pendidikan.obj_parent', 'obj_last_riwayat_jabatan.obj_unit_kerja.obj_eselon', 'obj_riwayat_jabatan', 'obj_last_riwayat_pangkat.obj_pangkat']);
+        // diluar fungsional
+        $query->whereHas('obj_last_riwayat_jabatan', function ($query) {
+            $query->whereNotIn('tipe_jabatan_id', [3, 4, 5]);
+        });
         $query->orderBy('first_name', 'asc');
         $employees = $query->get();
         $data = [];
@@ -71,7 +130,8 @@ class KPController extends Controller
             $nama = $user->first_name;
 
 
-            $catatan = "-";
+            $catatan = $this->getCatatan($user);
+
             $filter_periode = request()->input('periode_kp');
             if (!$filter_periode) {
                 return response()->json("Tidak ada filter periode_kp", 500);
@@ -128,7 +188,7 @@ class KPController extends Controller
         }
         $filter_pengecekan = false;
         $query = Employee::whereIn('status_pegawai_id', [1, 2]) //only cpns & pns
-            ->with(['obj_last_riwayat_pendidikan', 'obj_last_riwayat_jabatan', 'obj_riwayat_jabatan', 'obj_last_riwayat_pangkat']);
+            ->with(['obj_last_riwayat_pendidikan.obj_pendidikan.obj_parent', 'obj_last_riwayat_jabatan.obj_unit_kerja.obj_eselon', 'obj_riwayat_jabatan', 'obj_last_riwayat_pangkat.obj_pangkat']);
         $query->orderBy('first_name', 'asc');
         $dt_periode = Carbon::createFromFormat('Y/m/d', $filter_periode);
 
@@ -178,15 +238,7 @@ class KPController extends Controller
                 }
             })
             ->addColumn('catatan', function (Employee $user) {
-                if ($user->obj_last_riwayat_jabatan) {
-                    if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 1 || $user->obj_last_riwayat_jabatan->tipe_jabatan_id == 6) { //1/6 struktural
-                        return "struktural";
-                    } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 2) { //JFU
-                        return "pelaksana";
-                    } else  if ($user->obj_last_riwayat_jabatan->tipe_jabatan_id == 3) { //JFT
-                        return "fungsional";
-                    }
-                } else return "Tidak ada data jabatan terakhir";
+                return $this->getCatatan($user);
             })
             ->addColumn('rentang_waktu', function (Employee $user) use ($filter_periode) {
 
