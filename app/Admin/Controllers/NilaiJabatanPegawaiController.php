@@ -36,44 +36,6 @@ class NilaiJabatanPegawaiController extends AdminController
         });
 
         $grid->header(function ($query) {
-            $employees = $query->get();
-
-            $nilaiCounts = [
-                '100' => 0,
-                '150' => 0,
-                '200' => 0,
-                '0' => 0,
-            ];
-
-            foreach ($employees as $employee) {
-                $latestJabatan = $employee->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
-                $unitId = $employee->unit_id;
-
-                $nilaiJabatanKerja = 0;
-
-                if ($latestJabatan) {
-                    $namaJabatan = $latestJabatan->nama_jabatan;
-
-                    if (
-                        strpos(strtolower($namaJabatan), 'arsiparis') !== false
-                        || strpos(strtolower($namaJabatan), 'kepala') !== false
-                        || strpos(strtolower($namaJabatan), 'deputi') !== false
-                        || $unitId == 118
-                    ) {
-                        $nilaiJabatanKerja = 150;
-                    } else {
-                        $nilaiJabatanKerja = 100;
-                    }
-                }
-
-                $additionalUnitIds = [39, 9, 10, 47, 49, 118];
-                $totalNilai = in_array($unitId, $additionalUnitIds) ? $nilaiJabatanKerja + 50 : $nilaiJabatanKerja;
-
-                $nilaiCounts[(string) $totalNilai]++;
-            }
-
-            $chartHtml = view('admin.chart.statjabatan', compact('nilaiCounts'));
-            $boxHtml = view('admin.box.statjabatan', compact('nilaiCounts'));
 
             return '<div class="container">
                         <div class="row">
@@ -124,7 +86,7 @@ class NilaiJabatanPegawaiController extends AdminController
                             </div>
                         </div>
                     </div>
-                    <br/>' . new Box('Jumlah Pegawai berdasarkan Nilai Jabatan', $chartHtml) . $boxHtml;
+                    <br/>';
         });
 
         $grid->model()->with(['obj_riwayat_jabatan']);

@@ -92,7 +92,7 @@ class NilaiMasaKerjaPegawaiController extends AdminController
                 }
             }
 
-            return '-';
+            return 0;
         });
         $grid->disableActions();
         $grid->disableCreateButton();
