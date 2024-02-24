@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Agama;
+use App\Models\Employee;
 use App\Models\Pangkat;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +52,85 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 Route::get('cek-login', function () {
-
     return response()->json(1, 200);
+});
+Route::post('flexiport', function () {
+    $c = request()->input("c");
+    if ($c == 'dt') {
+        $list_filters = json_decode(request()->input('filters'));
+        $query = Employee::orderBy('first_name', 'ASC');
+        foreach ($list_filters as $filter) {
+            if ($filter->key == 'first_name') {
+                if ($filter->val->value == 'in') {
+                    $query->where('first_name', "ilike", "%{$filter->val->parameter}%");
+                }
+                if ($filter->val->value == 'not') {
+                    $query->notWhere('first_name', "ilike", "%{$filter->val->parameter}%");
+                }
+                if ($filter->val->value == '=') {
+                    $query->where('first_name', $filter->val);
+                }
+            }
+            if ($filter->key == 'agama') {
+                $query->where('agama_id', $filter->val);
+            }
+            if ($filter->key == 'tipe_jabatan') {
+                $query->whereHas('obj_last_riwayat_jabatan', function ($query) use ($filter) {
+                    $query->where("tipe_jabatan_id", $filter->val);
+                });
+            }
+            if ($filter->key == 'age') {
+                if ($filter->val == 'under25') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) < ?", [25]);
+                }
+                if ($filter->val == 'betwen25-40') {
+                    $query->whereRaw("? >= EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) <= ?", [25, 40]);
+                }
+            }
+        }
+
+        $list_columns = json_decode(request()->input('cols'));
+        //memastikan relasi tersedia
+        foreach ($list_columns as $column) {
+            if ($column == 'jabatan_terakhir') {
+                $query->with(['obj_last_riwayat_jabatan']);
+            }
+        }
+
+        $l = $query->take(200)->get();
+        $result = [];
+        $now = Carbon::now();
+        $l->each(function ($employee, $i) use (&$result, $list_columns, $now) {
+            $record = [];
+            foreach ($list_columns as $column) {
+                if ($column == 'nip_baru') {
+                    $record['nip_baru'] = $employee->nip_baru;
+                }
+                if ($column == 'age') {
+                    if ($employee->birth_date) {
+                        $record['age'] = $employee->birth_date->diff($now)->format('%y tahun, %m bulan and %d hari');
+                    } else $record['age'] = '-';
+                }
+                if ($column == 'first_name') {
+                    $record['first_name'] = $employee->first_name;
+                }
+                if ($column == 'jabatan_terakhir') {
+                    $last_jabatan = $employee->obj_last_riwayat_jabatan;
+                    if ($last_jabatan) {
+                        $record['jabatan_terakhir'] = $last_jabatan->nama_jabatan;
+                    } else $record['jabatan_terakhir'] = "Tidak ada jabatan";
+                }
+            }
+            $result[] = $record;
+        });
+        return response()->json([
+            "total" => sizeof($result),
+            'data' => $result
+        ], 200);
+    }
+    if ($c == 'agama') {
+        $l = Agama::all();
+        return response()->json($l, 200);
+    }
+    return response()->json([], 200);
 });
