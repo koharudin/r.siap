@@ -172,24 +172,24 @@ Route::post('flexiport', function () {
         $query = Employee::orderBy('first_name', 'ASC');
         foreach ($list_filters as $filter) {
             if ($filter->key == 'first_name') {
-                if ($filter->val->value == 'in') {
-                    $query->where('first_name', "ilike", "%{$filter->val->parameter}%");
+                if ($filter->val == 'in') {
+                    $query->where('first_name', "ilike", "%{$filter->parameter}%");
                 }
-                if ($filter->val->value == 'not') {
-                    $query->notWhere('first_name', "ilike", "%{$filter->val->parameter}%");
+                if ($filter->val == 'not') {
+                    $query->notWhere('first_name', "ilike", "%{$filter->parameter}%");
                 }
-                if ($filter->val->value == '=') {
+                if ($filter->val == '=') {
                     $query->where('first_name', $filter->val);
                 }
             }
             if ($filter->key == 'birth_place') {
-                if ($filter->val->value == 'in') {
-                    $query->where('birth_place', "ilike", "%{$filter->val->parameter}%");
+                if ($filter->val == 'in') {
+                    $query->where('birth_place', "ilike", "%{$filter->parameter}%");
                 }
-                if ($filter->val->value == 'not') {
-                    $query->notWhere('birth_place', "ilike", "%{$filter->val->parameter}%");
+                if ($filter->val == 'not') {
+                    $query->notWhere('birth_place', "ilike", "%{$filter->parameter}%");
                 }
-                if ($filter->val->value == '=') {
+                if ($filter->val == '=') {
                     $query->where('birth_place', $filter->val);
                 }
             }
