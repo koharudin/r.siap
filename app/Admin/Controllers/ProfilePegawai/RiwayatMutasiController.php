@@ -14,6 +14,8 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Carbon\Carbon;
+
 
 class RiwayatMutasiController extends ProfileController
 {
@@ -35,7 +37,7 @@ class RiwayatMutasiController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatMutasi());
-        $grid->model()->orderBy('tgl_sk', 'desc');
+        $grid->model()->orderBy('tmt_sk', 'desc');
         $grid->column('satker_lama', __('SATKER LAMA'));
         $grid->column('satker_baru', __('SATKER BARU'));
         $grid->column('no_sk', __('NO SK'));
@@ -51,6 +53,54 @@ class RiwayatMutasiController extends ProfileController
             }
             return "-";
         });
+        $grid->column('lama_kerja_diunit', __('LAMA BEKERJA'))->display(function () {
+            // Mendapatkan riwayat mutasi berdasarkan employee_id, diurutkan dari yang terbaru
+            $riwayatMutasi = RiwayatMutasi::where('employee_id', $this->employee_id)
+                ->orderBy('tmt_sk')
+                ->get();
+
+            // Mendapatkan tanggal saat ini
+            $currentDate = Carbon::now();
+
+            // Inisialisasi total bulan menjadi 0
+            $totalMonths = 0;
+
+            // Mendapatkan TMT_SK unit/satker pertama
+            $firstTmtSk = $riwayatMutasi->min('tmt_sk');
+
+            // Loop melalui setiap entri riwayat mutasi
+            foreach ($riwayatMutasi as $index => $mutasi) {
+                // Ambil tanggal TMT_SK dari entri mutasi
+                $tmtSk = $mutasi->tmt_sk;
+
+                // Jika ini bukan entri terakhir, hitung dari tmt_sk ke tmt_sk berikutnya
+                if ($index < count($riwayatMutasi) - 1) {
+                    $nextTmtSk = $riwayatMutasi[$index + 1]->tmt_sk;
+                    $totalMonths += $tmtSk->diffInMonths($nextTmtSk);
+                } else {
+                    // Jika ini entri terakhir, hitung dari tmt_sk terakhir ke waktu sekarang
+                    $totalMonths += $tmtSk->diffInMonths($currentDate);
+                }
+            }
+
+            // Check apakah firstTmtSk lebih kecil(tanggal terakhir dalam riwayat mutasi)
+            if ($firstTmtSk <= $riwayatMutasi->last()->tmt_sk) {
+                // Menghitung lama bekerja dari firstTmtSk ke waktu sekarang
+                $lengthOfService = $firstTmtSk->addMonths($totalMonths)->diff($currentDate);
+
+                // Konversi total bulan ke tahun, bulan, dan hari
+                $years = floor($totalMonths / 12);
+                $months = $totalMonths % 12;
+                $days = $lengthOfService->days;
+
+                // Mengembalikan hasil format lama bekerja dalam tahun, bulan, dan hari
+                return "$years tahun, $months bulan, $days hari";
+            } else {
+                // Invalid Date Range jika firstTmtSk > tanggal terakhir dalam riwayat mutasi
+                return "Invalid Date Range";
+            }
+        });
+
         $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
         if (!Admin::user()->can('create-riwayat_pangkat')) {
             $grid->disableCreateButton();
