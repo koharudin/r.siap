@@ -92,7 +92,7 @@ function getFlexiportConfig()
                 "key" => "agama",
                 "type" => "select",
                 "data" =>  [
-                    "url" => "/api/flexiport?c=agama",
+                    "url" => URL::to('/') ."/api/flexiport?c=agama",
                     "root" => "",
                     "keyField" => "id",
                     "labelField" => "name",
