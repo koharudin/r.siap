@@ -6,6 +6,8 @@ use App\Models\Pangkat;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\UrlHelper;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,9 +56,118 @@ Route::group(['middleware' => 'auth:api'], function () {
 Route::get('cek-login', function () {
     return response()->json(1, 200);
 });
+
+function getFlexiportConfig()
+{
+    $config = [
+        "urlData" => URL::to('/') . "/api/flexiport?c=dt",
+        "filters" => [
+            [
+                "label" => "NIP",
+                "key" => "nip_baru",
+                "type" => "text",
+            ],
+            [
+                "label" => "Nama",
+                "key" => "first_name",
+                "type" => "text",
+            ],
+            [
+                "label" => "Tempat Lahir",
+                "key" => "birth_place",
+                "type" => "text",
+            ],
+            [
+                "label" => "Email",
+                "key" => "email",
+                "type" => "text",
+            ],
+            [
+                "label" => "Nama Suami/Istri",
+                "key" => "nama_suami_istri",
+                "type" => "text",
+            ],
+            [
+                "label" => "Agama",
+                "key" => "agama",
+                "type" => "select",
+                "data" =>  [
+                    "url" => "/api/flexiport?c=agama",
+                    "root" => "",
+                    "keyField" => "id",
+                    "labelField" => "name",
+                ],
+            ],
+            [
+                "label" => "Umur",
+                "key" => "age",
+                "type" => "number",
+                "customOptions" => [
+                    [
+                        "text" => "<=25",
+                        "value" => "under25"
+                    ],
+                    [
+                        "text" => ">25 & <=40",
+                        "value" => "between 25-40"
+                    ],
+                    [
+                        "text" => ">40",
+                        "value" => "over>40"
+                    ],
+                ],
+
+            ],
+            [
+                "label" => "Tipe Jabatan",
+                "key" => "tipe_jabatan",
+                "type" => "select",
+                "data" => [
+                    [
+                        "text" => "Struktural",
+                        "value" => "1",
+                    ],
+                    [
+                        "text" => "Fungsional",
+                        "value" => "3",
+                    ],
+                    [
+                        "text" => "Pelaksana",
+                        "value" => "2",
+                    ],
+                ],
+            ],
+        ],
+        "cols" => [
+            [
+                "key" => "nip_baru",
+                "label" => "NIP",
+                "selected" => true,
+            ],
+            [
+                "key" => "first_name",
+                "label" => "Nama",
+                "selected" => true,
+            ],
+            [
+                "key" => "age",
+                "label" => "Umur",
+            ],
+            [
+                "key" => "jabatan_terakhir",
+                "label" => "Jabatan Terakhir",
+            ],
+        ],
+
+    ];
+
+    return $config;
+}
 Route::post('flexiport', function () {
     $c = request()->input("c");
-    if ($c == 'dt') {
+    if ($c == 'config') {
+        return response()->json(getFlexiportConfig(), 200);
+    } else if ($c == 'dt') {
         $list_filters = json_decode(request()->input('filters'));
         $query = Employee::orderBy('first_name', 'ASC');
         foreach ($list_filters as $filter) {
@@ -71,6 +182,17 @@ Route::post('flexiport', function () {
                     $query->where('first_name', $filter->val);
                 }
             }
+            if ($filter->key == 'birth_place') {
+                if ($filter->val->value == 'in') {
+                    $query->where('birth_place', "ilike", "%{$filter->val->parameter}%");
+                }
+                if ($filter->val->value == 'not') {
+                    $query->notWhere('birth_place', "ilike", "%{$filter->val->parameter}%");
+                }
+                if ($filter->val->value == '=') {
+                    $query->where('birth_place', $filter->val);
+                }
+            }
             if ($filter->key == 'agama') {
                 $query->where('agama_id', $filter->val);
             }
@@ -80,6 +202,21 @@ Route::post('flexiport', function () {
                 });
             }
             if ($filter->key == 'age') {
+                if ($filter->val == '=') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) = ?", [$filter->parameter]);
+                }
+                if ($filter->val == '<=') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) <= ?", [$filter->parameter]);
+                }
+                if ($filter->val == '<') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) < ?", [$filter->parameter]);
+                }
+                if ($filter->val == '>=') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) >= ?", [$filter->parameter]);
+                }
+                if ($filter->val == '>') {
+                    $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) > ?", [$filter->parameter]);
+                }
                 if ($filter->val == 'under25') {
                     $query->whereRaw("EXTRACT('YEAR' FROM AGE(CURRENT_DATE, birth_date)) < ?", [25]);
                 }
