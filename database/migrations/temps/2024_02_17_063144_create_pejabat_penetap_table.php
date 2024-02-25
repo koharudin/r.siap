@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('pejabat_penetap', function (Blueprint $table) {
-            $table->bigIncrements('id')->nullable();
+            $table->bigIncrements('id');
             $table->string('nama')->nullable();
             $table->string('nip')->nullable();
             $table->string('golongan')->nullable();

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->smallInteger('tahun');
             $table->timestamps(6);
 
-            $table->primary(['id', 'unit_id', 'jabatan_id', 'bulan', 'tahun']);
+            //$table->primary(['id', 'unit_id', 'jabatan_id', 'bulan', 'tahun']);
         });
     }
 
