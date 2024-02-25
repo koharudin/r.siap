@@ -1,10 +1,13 @@
 <?php
 
+use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
 use App\Models\Pangkat;
 use Carbon\Carbon;
+use Encore\Admin\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -44,6 +47,16 @@ Route::get('/list_pangkat', function (Request $request) {
         ];
     }
     return ['data' => $l];
+});
+
+Route::get('/token', function () {
+    $user = Administrator::find(377);
+    $token = $user->createToken('authToken')->accessToken;
+
+    return response()->json([
+        "token" => $token,
+        "user" => $user
+    ], 200);
 });
 
 Route::group(['middleware' => 'auth:api'], function () {

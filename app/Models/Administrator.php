@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * Class Administrator.
@@ -20,6 +21,7 @@ class Administrator extends Model implements AuthenticatableContract
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
+    use HasApiTokens;
 
     protected $fillable = ['username', 'password', 'name', 'avatar'];
 
@@ -91,7 +93,8 @@ class Administrator extends Model implements AuthenticatableContract
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
     }
 
-    public function obj_employee(){
-        return $this->hasOne(Employee::class,'nip_baru','username');
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'nip_baru', 'username');
     }
 }

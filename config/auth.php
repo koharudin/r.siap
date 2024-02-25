@@ -43,7 +43,7 @@ return [
         // you need to implement this
         'api' => [
             'driver' => 'passport',
-            'provider' => 'users',
+            'provider' => 'siap_users',
             'hash' => true,
         ],
     ],
@@ -69,6 +69,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'siap_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Administrator::class,
         ],
 
         // 'users' => [
