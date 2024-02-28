@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\FlexiportController;
+use App\Http\Controllers\RequestCategoryController;
+use App\Http\Controllers\RequestController;
 use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
@@ -84,4 +86,23 @@ Route::post('flexiport', function () {
         return response()->json($l, 200);
     }
     return response()->json([], 200);
+});
+
+
+Route::group(["prefix" => "pelayanan"], function () {
+    Route::group(["prefix" => "public"], function () {
+        Route::get('request-categories', function () {
+        });
+    });
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::resource('request-category', RequestCategoryController::class);
+
+        Route::group(['middleware' => 'role:verifikator'], function () {
+            Route::post('/requests/{uuid_request}/terima', [RequestController::class, "terima"]);
+            Route::post('/requests/{uuid_request}/tolak', [RequestController::class, "tolak"]);
+        });
+        //verifikator
+
+        Route::resource('requests', RequestController::class);
+    });
 });
