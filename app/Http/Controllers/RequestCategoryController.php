@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RequestCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RequestCategoryController extends Controller
 {
@@ -14,7 +15,16 @@ class RequestCategoryController extends Controller
      */
     public function index()
     {
-        //
+        $q = request()->input('q');
+        $query = RequestCategory::query();
+        $query->orderBy('name', 'asc');
+        if ($q) {
+            $query->where(function ($query) use ($q) {
+                $query->where('name', 'ilike', "%" . strtolower($q) . "%");
+            });
+        }
+
+        return $query->get();
     }
 
     /**
@@ -35,7 +45,21 @@ class RequestCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make(request()->all(), [
+            "name" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors(),
+                'message' => 'Harap lengkapi data yang diperlukan.',
+            ], 422);
+        }
+        $record = new RequestCategory();
+        $record->name = request()->input("name");
+        $record->save();
+
+        return response()->json($record, 200);
     }
 
     /**
@@ -69,6 +93,21 @@ class RequestCategoryController extends Controller
      */
     public function update(Request $request, RequestCategory $requestCategory)
     {
+        $validator = Validator::make(request()->all(), [
+            "name" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors(),
+                'message' => 'Harap lengkapi data yang diperlukan.',
+            ], 422);
+        }
+        $requestCategory = new RequestCategory();
+        $requestCategory->name = request()->input("name");
+        $requestCategory->save();
+
+        return response()->json($requestCategory, 200);
     }
 
     /**
