@@ -3,6 +3,7 @@
 use App\Http\Controllers\FlexiportController;
 use App\Http\Controllers\RequestCategoryController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\VerifikasiController;
 use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
@@ -98,8 +99,8 @@ Route::group(["prefix" => "pelayanan"], function () {
         Route::resource('request-category', RequestCategoryController::class);
 
         Route::group(['middleware' => 'role:verifikator'], function () {
-            Route::post('/requests/{uuid_request}/terima', [RequestController::class, "terima"]);
-            Route::post('/requests/{uuid_request}/tolak', [RequestController::class, "tolak"]);
+            Route::post('/verifikasi-request/{uuid_request}/terima', [VerifikasiController::class, "terima"]);
+            Route::post('/verifikasi-request/{uuid_request}/tolak', [VerifikasiController::class, "tolak"]);
         });
         //verifikator
 

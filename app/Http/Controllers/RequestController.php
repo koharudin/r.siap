@@ -137,42 +137,4 @@ class RequestController extends Controller
         $request->delete();
         return response()->json($request, 200);
     }
-    public function tolak(RequestPelayanan $request)
-    {
-        $validator = Validator::make(request()->all(), [
-            'keterangan' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors(),
-                'message' => 'Harap lengkapi data yang diperlukan.',
-            ], 422);
-        }
-        DB::beginTransaction();
-        $request->status_id = RequestStep::$TOLAK;
-        $request->save();
-        RequestLog::addLog($request, request()->input("keterangan"));
-        DB::commit();
-        return response()->json($request, 200);
-    }
-    public function terima(RequestPelayanan $request)
-    {
-        $validator = Validator::make(request()->all(), [
-            'keterangan' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors(),
-                'message' => 'Harap lengkapi data yang diperlukan.',
-            ], 422);
-        }
-        DB::beginTransaction();
-        $request->status_id = RequestStep::$TERIMA;
-        $request->save();
-        RequestLog::addLog($request, request()->input("keterangan"));
-        DB::commit();
-        return response()->json($request, 200);
-    }
 }

@@ -15,7 +15,7 @@ class RequestStep extends Model
     //1=DRAFT, 2=SUBMIT/Inbox Verifikator, 3=Proses Verifikasi, 4=Revisi,5=Terima, 6=Tolak
     public static  $DRAFT = 1;
     public static  $SUBMIT = 2;
-    public static  $VERIFIKASI = 3;
+    public static  $INVERIFIKASI = 3;
     public static  $REVISI = 4;
     public static  $TERIMA = 5;
     public static  $TOLAK = 6;

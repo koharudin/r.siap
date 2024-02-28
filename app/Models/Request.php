@@ -39,6 +39,16 @@ class Request extends Model
         return 'uuid';
     }
 
+    public function scopeInboxVerifikator($query)
+    {
+        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK, RequestStep::$SUBMIT, RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+    }
+    public function scopeMyInboxVerifikator($query, $verifikator_id)
+    {
+        $query->where("verifikator_id", $verifikator_id);
+        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK,  RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+    }
+
     public $date = ['date_created'];
     public $casts = ['old_data' => 'json', 'request_data' => 'json'];
 }
