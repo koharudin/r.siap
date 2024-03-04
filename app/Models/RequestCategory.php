@@ -14,6 +14,10 @@ class RequestCategory extends Model
     public $dates = ['birth_date'];
     private $cacheKeyPrefix = "request_category_id_";
 
+    public function obj_line_approval()
+    {
+        return $this->hasOne(LineApproval::class, 'request_category_id', 'id');
+    }
     protected static function booted(): void
     {
         self::creating(function (RequestCategory $record) {
