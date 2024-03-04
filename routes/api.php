@@ -7,6 +7,7 @@ use App\Http\Controllers\VerifikasiController;
 use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
+use App\Models\LineApproval;
 use App\Models\Pangkat;
 use Carbon\Carbon;
 use Encore\Admin\Admin;
@@ -93,6 +94,7 @@ Route::post('flexiport', function () {
 Route::group(["prefix" => "pelayanan"], function () {
     Route::group(["prefix" => "public"], function () {
         Route::get('request-categories', function () {
+            return 123;
         });
     });
     Route::group(['middleware' => 'auth:api'], function () {
@@ -105,5 +107,6 @@ Route::group(["prefix" => "pelayanan"], function () {
         //verifikator
 
         Route::resource('requests', RequestController::class);
+        Route::resource('line-approval', LineApproval::class);
     });
 });
