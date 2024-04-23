@@ -9,6 +9,7 @@ use App\Models\Agama;
 use App\Models\Employee;
 use App\Models\LineApproval;
 use App\Models\Pangkat;
+use App\Models\RequestCategory;
 use Carbon\Carbon;
 use Encore\Admin\Admin;
 use Illuminate\Http\Request;
@@ -94,7 +95,8 @@ Route::post('flexiport', function () {
 Route::group(["prefix" => "pelayanan"], function () {
     Route::group(["prefix" => "public"], function () {
         Route::get('request-categories', function () {
-            return 123;
+            $l = RequestCategory::all();
+            return request()->json($l, 200);
         });
     });
     Route::group(['middleware' => 'auth:api'], function () {
