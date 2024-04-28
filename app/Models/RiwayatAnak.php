@@ -8,6 +8,9 @@ class RiwayatAnak extends Model
 {
     public $table  = 'riwayat_anak';
 
+    public function obj_pegawai(){
+        return $this->hasOne(Employee::class,'id','employee_id');
+    }
     public function obj_jenis_kelamin(){
         return $this->hasOne(JenisKelamin::class,'id','jenis_kelamin');
     }

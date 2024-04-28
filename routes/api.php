@@ -121,7 +121,7 @@ Route::post('flexiport', function () {
 });
 
 
-Route::group([],function(){
+Route::group(["middleware"=>"auth:api"],function(){
     Route::resource('riwayat-anak', RiwayatAnakController::class);
     Route::resource('riwayat-angka-kredit', RiwayatAngkaKreditController::class);
     Route::resource('riwayat-diklat-fungsional', RiwayatDiklatFungsionalController::class);

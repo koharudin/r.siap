@@ -281,5 +281,6 @@ class Employee extends Model
             $this->last_riwayat_pendidikan_id = null;
         $this->save();
     }
+
     public $dates = ['birth_date', 'tgl_pensiun'];
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatAnak;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatAnakController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatAnakController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::whereRaw('simpeg_id::int = ?',[$user->id])->first();
+        return response()->json($employee);
     }
 
     /**
