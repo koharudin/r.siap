@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatDiklatTeknis;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatDiklatTeknisController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatDiklatTeknisController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_diklat_teknis'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_diklat_teknis);
     }
 
     /**
@@ -41,21 +46,22 @@ class RiwayatDiklatTeknisController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTeknis
+     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTekni
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatDiklatTeknis $riwayatDiklatTeknis)
+    public function show(RiwayatDiklatTeknis $riwayatDiklatTekni)
     {
-        //
+       return $riwayatDiklatTekni;
     }
+   
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTeknis
+     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTekni
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatDiklatTeknis $riwayatDiklatTeknis)
+    public function edit(RiwayatDiklatTeknis $riwayatDiklatTekni)
     {
         //
     }
@@ -64,10 +70,10 @@ class RiwayatDiklatTeknisController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTeknis
+     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTekni
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatDiklatTeknis $riwayatDiklatTeknis)
+    public function update(Request $request, RiwayatDiklatTeknis $riwayatDiklatTekni)
     {
         //
     }
@@ -75,10 +81,10 @@ class RiwayatDiklatTeknisController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTeknis
+     * @param  \App\Models\RiwayatDiklatTeknis  $riwayatDiklatTekni
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatDiklatTeknis $riwayatDiklatTeknis)
+    public function destroy(RiwayatDiklatTeknis $riwayatDiklatTekni)
     {
         //
     }

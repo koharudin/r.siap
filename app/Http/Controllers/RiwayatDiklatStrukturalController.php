@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatDiklatStruktural;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatDiklatStrukturalController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatDiklatStrukturalController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_diklat_struktural'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_diklat_struktural);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatDiklatStrukturalController extends Controller
     public function show(RiwayatDiklatStruktural $riwayatDiklatStruktural)
     {
         //
+        return response()->json($riwayatDiklatStruktural);
     }
 
     /**

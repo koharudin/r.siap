@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatDiklatFungsional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatDiklatFungsionalController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatDiklatFungsionalController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_diklat_fungsional'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_diklat_fungsional);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatDiklatFungsionalController extends Controller
     public function show(RiwayatDiklatFungsional $riwayatDiklatFungsional)
     {
         //
+        return response()->json($riwayatDiklatFungsional);
     }
 
     /**
