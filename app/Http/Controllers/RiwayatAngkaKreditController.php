@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatAngkaKredit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatAngkaKreditController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatAngkaKreditController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_angkakredit'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_angkakredit);
     }
 
     /**

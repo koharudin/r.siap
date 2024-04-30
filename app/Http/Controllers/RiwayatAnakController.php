@@ -18,8 +18,8 @@ class RiwayatAnakController extends Controller
     {
         //
         $user = Auth::user();
-        $employee = Employee::whereRaw('simpeg_id::int = ?',[$user->id])->first();
-        return response()->json($employee);
+        $employee = Employee::with(['obj_riwayat_anak'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_anak);
     }
 
     /**
