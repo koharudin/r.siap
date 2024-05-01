@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatOrangTua;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatOrangTuaController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatOrangTuaController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_orangtua'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_orangtua);
     }
 
     /**
@@ -44,9 +49,10 @@ class RiwayatOrangTuaController extends Controller
      * @param  \App\Models\RiwayatOrangTua  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatOrangTua $riwayatOrangTua)
+    public function show(RiwayatOrangTua $riwayat_orangtua)
     {
         //
+        return response()->json($riwayat_orangtua);
     }
 
     /**
@@ -55,7 +61,7 @@ class RiwayatOrangTuaController extends Controller
      * @param  \App\Models\RiwayatOrangTua  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatOrangTua $riwayatOrangTua)
+    public function edit(RiwayatOrangTua $riwayat_orangtua)
     {
         //
     }
@@ -67,7 +73,7 @@ class RiwayatOrangTuaController extends Controller
      * @param  \App\Models\RiwayatOrangTua  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatOrangTua $riwayatOrangTua)
+    public function update(Request $request, RiwayatOrangTua $riwayat_orangtua)
     {
         //
     }
@@ -78,7 +84,7 @@ class RiwayatOrangTuaController extends Controller
      * @param  \App\Models\RiwayatOrangTua  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatOrangTua $riwayatOrangTua)
+    public function destroy(RiwayatOrangTua $riwayat_orangtua)
     {
         //
     }

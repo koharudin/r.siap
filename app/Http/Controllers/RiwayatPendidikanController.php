@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatPendidikan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPendidikanController extends Controller
 {
@@ -14,7 +16,9 @@ class RiwayatPendidikanController extends Controller
      */
     public function index()
     {
-        return response()->json("ok",200);
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_pendidikan'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_pendidikan);
     }
 
     /**

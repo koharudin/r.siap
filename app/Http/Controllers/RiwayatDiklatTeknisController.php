@@ -51,7 +51,7 @@ class RiwayatDiklatTeknisController extends Controller
      */
     public function show(RiwayatDiklatTeknis $riwayatDiklatTekni)
     {
-       return $riwayatDiklatTekni;
+       return response()->json($riwayatDiklatTekni);
     }
    
 

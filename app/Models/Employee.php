@@ -148,6 +148,14 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
     }
+    public function obj_riwayat_orangtua()
+    {
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_pengalamankerja()
+    {
+        return $this->hasMany(RiwayatPengalamanKerja::class, 'employee_id', 'id')->orderBy('tgl_kerja', 'desc');
+    }
     public function calculateNilaiMasaKerja()
     {
         $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
@@ -183,6 +191,15 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatJabatan::class, 'employee_id', 'id')->orderBy('tmt_jabatan', 'asc');
     }
+    public function obj_riwayat_dp3()
+    {
+        return $this->hasMany(RiwayatDp3::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
+    public function obj_riwayat_gaji()
+    {
+        return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
+    }
+    
     public function obj_riwayat_diklat_struktural()
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
@@ -199,6 +216,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatHukuman::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
     }
+    public function obj_riwayat_kinerja()
+    {
+        return $this->hasMany(RiwayatKinerja::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
     public function obj_riwayat_penghargaan()
     {
         return $this->hasMany(RiwayatPenghargaan::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
@@ -210,6 +231,10 @@ class Employee extends Model
     public function obj_riwayat_kursus()
     {
         return $this->hasMany(RiwayatKursus::class, 'employee_id', 'id')->orderBy('tgl_mulai', 'asc');
+    }
+    public function obj_riwayat_nikah()
+    {
+        return $this->hasMany(RiwayatNikah::class, 'employee_id', 'id')->orderBy('tgl_kawin', 'asc');
     }
     public function getUsiaAttribute($from = null)
     {

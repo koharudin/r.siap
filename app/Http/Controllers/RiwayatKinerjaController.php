@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatKinerja;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatKinerjaController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatKinerjaController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_kinerja'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_kinerja);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatKinerjaController extends Controller
     public function show(RiwayatKinerja $riwayatKinerja)
     {
         //
+        return response()->json($riwayatKinerja);
     }
 
     /**

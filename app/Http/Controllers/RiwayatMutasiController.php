@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatMutasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatMutasiController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatMutasiController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_mutasi'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_mutasi);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatMutasiController extends Controller
     public function show(RiwayatMutasi $riwayatMutasi)
     {
         //
+        return response()->json($riwayatMutasi);
     }
 
     /**

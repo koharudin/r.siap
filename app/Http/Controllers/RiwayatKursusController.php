@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatKursus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatKursusController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatKursusController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_kursus'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_kursus);
     }
 
     /**
@@ -41,21 +46,22 @@ class RiwayatKursusController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatKursus  $riwayatKursus
+     * @param  \App\Models\RiwayatKursus  $riwayatKursu
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatKursus $riwayatKursus)
+    public function show(RiwayatKursus $riwayatKursu)
     {
         //
+        return response()->json($riwayatKursu);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatKursus  $riwayatKursus
+     * @param  \App\Models\RiwayatKursus  $riwayatKursu
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatKursus $riwayatKursus)
+    public function edit(RiwayatKursus $riwayatKursu)
     {
         //
     }
@@ -64,10 +70,10 @@ class RiwayatKursusController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatKursus  $riwayatKursus
+     * @param  \App\Models\RiwayatKursus  $riwayatKursu
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatKursus $riwayatKursus)
+    public function update(Request $request, RiwayatKursus $riwayatKursu)
     {
         //
     }
@@ -75,10 +81,10 @@ class RiwayatKursusController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatKursus  $riwayatKursus
+     * @param  \App\Models\RiwayatKursus  $riwayatKursu
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatKursus $riwayatKursus)
+    public function destroy(RiwayatKursus $riwayatKursu)
     {
         //
     }

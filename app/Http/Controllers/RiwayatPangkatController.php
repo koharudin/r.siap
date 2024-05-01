@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatPangkat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPangkatController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatPangkatController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_pangkat'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_pangkat);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatPangkatController extends Controller
     public function show(RiwayatPangkat $riwayatPangkat)
     {
         //
+        return response()->json($riwayatPangkat);
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatDp3;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatDp3Controller extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatDp3Controller extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_dp3'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_dp3);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatDp3Controller extends Controller
     public function show(RiwayatDp3 $riwayatDp3)
     {
         //
+        return $riwayatDp3;
     }
 
     /**
