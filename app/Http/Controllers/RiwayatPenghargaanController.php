@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatPenghargaan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPenghargaanController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatPenghargaanController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_penghargaan'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_penghargaan);
     }
 
     /**
@@ -47,6 +52,7 @@ class RiwayatPenghargaanController extends Controller
     public function show(RiwayatPenghargaan $riwayatPenghargaan)
     {
         //
+        return response()->json($riwayatPenghargaan);
     }
 
     /**

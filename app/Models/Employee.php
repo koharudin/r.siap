@@ -236,6 +236,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatNikah::class, 'employee_id', 'id')->orderBy('tgl_kawin', 'asc');
     }
+    public function obj_riwayat_penguasaanbahasa()
+    {
+        return $this->hasMany(RiwayatPenguasaanBahasa::class, 'employee_id', 'id')->orderBy('tgl_expired', 'asc');
+    }
     public function getUsiaAttribute($from = null)
     {
         if ($from == null) {
