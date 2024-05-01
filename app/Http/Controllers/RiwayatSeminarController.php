@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatSeminar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatSeminarController extends Controller
 {
@@ -15,6 +17,10 @@ class RiwayatSeminarController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_seminar'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_seminar);
+ 
     }
 
     /**
@@ -47,6 +53,7 @@ class RiwayatSeminarController extends Controller
     public function show(RiwayatSeminar $riwayatSeminar)
     {
         //
+        return response()->json($riwayatSeminar);
     }
 
     /**

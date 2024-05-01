@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatPensiun;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPensiunController extends Controller
 {
@@ -15,6 +17,10 @@ class RiwayatPensiunController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_pensiun'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_pensiun);
+
     }
 
     /**
@@ -47,6 +53,7 @@ class RiwayatPensiunController extends Controller
     public function show(RiwayatPensiun $riwayatPensiun)
     {
         //
+        return response()->json($riwayatPensiun);
     }
 
     /**

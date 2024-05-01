@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatUjiKompetensi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatUjiKompetensiController extends Controller
 {
@@ -15,6 +17,10 @@ class RiwayatUjiKompetensiController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_ujikompetensi'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_ujikompetensi);
+ 
     }
 
     /**
@@ -41,21 +47,22 @@ class RiwayatUjiKompetensiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatUjiKompetensi  $riwayatUjiKompetensi
+     * @param  \App\Models\RiwayatUjiKompetensi  $riwayat_ujikompetensi
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatUjiKompetensi $riwayatUjiKompetensi)
+    public function show(RiwayatUjiKompetensi $riwayat_ujikompetensi)
     {
         //
+        return response()->json($riwayat_ujikompetensi);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatUjiKompetensi  $riwayatUjiKompetensi
+     * @param  \App\Models\RiwayatUjiKompetensi  $riwayat_ujikompetensi
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatUjiKompetensi $riwayatUjiKompetensi)
+    public function edit(RiwayatUjiKompetensi $riwayat_ujikompetensi)
     {
         //
     }
@@ -64,10 +71,10 @@ class RiwayatUjiKompetensiController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatUjiKompetensi  $riwayatUjiKompetensi
+     * @param  \App\Models\RiwayatUjiKompetensi  $riwayat_ujikompetensi
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatUjiKompetensi $riwayatUjiKompetensi)
+    public function update(Request $request, RiwayatUjiKompetensi $riwayat_ujikompetensi)
     {
         //
     }
@@ -75,10 +82,10 @@ class RiwayatUjiKompetensiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatUjiKompetensi  $riwayatUjiKompetensi
+     * @param  \App\Models\RiwayatUjiKompetensi  $riwayat_ujikompetensi
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatUjiKompetensi $riwayatUjiKompetensi)
+    public function destroy(RiwayatUjiKompetensi $riwayat_ujikompetensi)
     {
         //
     }

@@ -28,6 +28,7 @@ use App\Http\Controllers\RiwayatRekamMedisController;
 use App\Http\Controllers\RiwayatSaudaraController;
 use App\Http\Controllers\RiwayatSeminarController;
 use App\Http\Controllers\RiwayatSKCPNSController;
+use App\Http\Controllers\RiwayatSKPNSController;
 use App\Http\Controllers\RiwayatSumpahController;
 use App\Http\Controllers\RiwayatUjiKompetensiController;
 use App\Http\Controllers\VerifikasiController;
@@ -147,7 +148,7 @@ Route::group(["middleware"=>"auth:api"],function(){
     Route::resource('riwayat-saudara', RiwayatSaudaraController::class);
     Route::resource('riwayat-seminar', RiwayatSeminarController::class);
     Route::resource('riwayat-skcpns', RiwayatSKCPNSController::class);
-    Route::resource('riwayat-skpns', RiwayatSKCPNSController::class);
+    Route::resource('riwayat-skpns', RiwayatSKPNSController::class);
     Route::resource('riwayat-sumpah', RiwayatSumpahController::class);
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
 

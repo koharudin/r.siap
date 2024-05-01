@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatRekamMedis;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatRekamMedisController extends Controller
 {
@@ -15,6 +17,10 @@ class RiwayatRekamMedisController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_rekammedis'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_rekammedis);
+
     }
 
     /**
@@ -41,21 +47,22 @@ class RiwayatRekamMedisController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatRekamMedis  $riwayatRekamMedis
+     * @param  \App\Models\RiwayatRekamMedis  $riwayat_rekammedi
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatRekamMedis $riwayatRekamMedis)
+    public function show(RiwayatRekamMedis $riwayat_rekammedi)
     {
         //
+        return response()->json($riwayat_rekammedi);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatRekamMedis  $riwayatRekamMedis
+     * @param  \App\Models\RiwayatRekamMedis  $riwayat_rekammedi
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatRekamMedis $riwayatRekamMedis)
+    public function edit(RiwayatRekamMedis $riwayat_rekammedi)
     {
         //
     }
@@ -64,10 +71,10 @@ class RiwayatRekamMedisController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatRekamMedis  $riwayatRekamMedis
+     * @param  \App\Models\RiwayatRekamMedis  $riwayat_rekammedi
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatRekamMedis $riwayatRekamMedis)
+    public function update(Request $request, RiwayatRekamMedis $riwayat_rekammedi)
     {
         //
     }
@@ -75,10 +82,10 @@ class RiwayatRekamMedisController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatRekamMedis  $riwayatRekamMedis
+     * @param  \App\Models\RiwayatRekamMedis  $riwayat_rekammedi
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatRekamMedis $riwayatRekamMedis)
+    public function destroy(RiwayatRekamMedis $riwayat_rekammedi)
     {
         //
     }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatSKPNS;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatSKPNSController extends Controller
 {
@@ -15,6 +17,9 @@ class RiwayatSKPNSController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_skpns'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_skpns);
     }
 
     /**
@@ -41,21 +46,22 @@ class RiwayatSKPNSController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatSKPNS  $riwayatSKPNS
+     * @param  \App\Models\RiwayatSKPNS  $riwayat_skpn
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatSKPNS $riwayatSKPNS)
+    public function show(RiwayatSKPNS $riwayat_skpn)
     {
         //
+        return response()->json($riwayat_skpn);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatSKPNS  $riwayatSKPNS
+     * @param  \App\Models\RiwayatSKPNS  $riwayat_skpn
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatSKPNS $riwayatSKPNS)
+    public function edit(RiwayatSKPNS $riwayat_skpn)
     {
         //
     }
@@ -64,10 +70,10 @@ class RiwayatSKPNSController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatSKPNS  $riwayatSKPNS
+     * @param  \App\Models\RiwayatSKPNS  $riwayat_skpn
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatSKPNS $riwayatSKPNS)
+    public function update(Request $request, RiwayatSKPNS $riwayat_skpn)
     {
         //
     }
@@ -75,10 +81,10 @@ class RiwayatSKPNSController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatSKPNS  $riwayatSKPNS
+     * @param  \App\Models\RiwayatSKPNS  $riwayat_skpn
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatSKPNS $riwayatSKPNS)
+    public function destroy(RiwayatSKPNS $riwayat_skpn)
     {
         //
     }

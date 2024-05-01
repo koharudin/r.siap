@@ -148,6 +148,14 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
     }
+    public function obj_riwayat_skpns()
+    {
+        return $this->hasMany(RiwayatSKPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
+    }
+    public function obj_riwayat_sumpah()
+    {
+        return $this->hasMany(RiwayatSumpah::class, 'employee_id', 'id')->orderBy('tgl_sumpah', 'desc');
+    }
     public function obj_riwayat_orangtua()
     {
         return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
@@ -155,6 +163,22 @@ class Employee extends Model
     public function obj_riwayat_pengalamankerja()
     {
         return $this->hasMany(RiwayatPengalamanKerja::class, 'employee_id', 'id')->orderBy('tgl_kerja', 'desc');
+    }
+    public function obj_riwayat_potensidiri()
+    {
+        return $this->hasMany(RiwayatPotensiDiri::class, 'employee_id', 'id')->orderBy('tahun', 'desc');
+    }
+    public function obj_riwayat_rekammedis()
+    {
+        return $this->hasMany(RiwayatRekamMedis::class, 'employee_id', 'id')->orderBy('tgl_periksa', 'desc');
+    }
+    public function obj_riwayat_saudara()
+    {
+        return $this->hasMany(RiwayatSaudara::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_ujikompetensi()
+    {
+        return $this->hasMany(RiwayatUjiKompetensi::class, 'employee_id', 'id')->orderBy('tanggal', 'desc');
     }
     public function calculateNilaiMasaKerja()
     {

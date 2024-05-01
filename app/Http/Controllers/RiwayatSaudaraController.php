@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\RiwayatSaudara;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatSaudaraController extends Controller
 {
@@ -15,6 +17,10 @@ class RiwayatSaudaraController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        $employee = Employee::with(['obj_riwayat_saudara'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_saudara);
+
     }
 
     /**
@@ -47,6 +53,7 @@ class RiwayatSaudaraController extends Controller
     public function show(RiwayatSaudara $riwayatSaudara)
     {
         //
+        return response()->json($riwayatSaudara);
     }
 
     /**
