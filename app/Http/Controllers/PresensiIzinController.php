@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\EmployeePresensi;
+use App\Models\Presensi\RiwayatIzin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AdminEmployeeController extends Controller
+class PresensiIzinController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,14 +18,10 @@ class AdminEmployeeController extends Controller
     public function index()
     {
         //
-    }
-    public function dataSaya()
-    {
         $user = Auth::user();
-        $employee = Employee::whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee);
- 
-        
+        $employee = EmployeePresensi::with(['obj_riwayat_izin'])->whereRaw('nipp = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_izin);
+  
     }
 
     /**
@@ -50,21 +48,23 @@ class AdminEmployeeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
      * @return \Illuminate\Http\Response
      */
-    public function show(Employee $employee)
+    public function show(RiwayatIzin $riwayatIzin)
     {
         //
+        return response()->json($riwayatIzin);
+  
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
      * @return \Illuminate\Http\Response
      */
-    public function edit(Employee $employee)
+    public function edit(RiwayatIzin $riwayatIzin)
     {
         //
     }
@@ -73,10 +73,10 @@ class AdminEmployeeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, RiwayatIzin $riwayatIzin)
     {
         //
     }
@@ -84,10 +84,10 @@ class AdminEmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Employee $employee)
+    public function destroy(RiwayatIzin $riwayatIzin)
     {
         //
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\FlexiportController;
+use App\Http\Controllers\PresensiIzinController;
 use App\Http\Controllers\RequestCategoryController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RiwayatAnakController;
@@ -123,6 +125,10 @@ Route::post('flexiport', function () {
 
 
 Route::group(["middleware"=>"auth:api"],function(){
+
+    Route::get('employee-me', [AdminEmployeeController::class,'dataSaya']);
+    Route::resource('riwayat-izin', PresensiIzinController::class);
+    
     Route::resource('riwayat-anak', RiwayatAnakController::class);
     Route::resource('riwayat-angka-kredit', RiwayatAngkaKreditController::class);
     Route::resource('riwayat-diklat-fungsional', RiwayatDiklatFungsionalController::class);
