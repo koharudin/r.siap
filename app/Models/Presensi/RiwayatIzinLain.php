@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatIzinLain extends Model
 {
-     public $table  = 'presensi.riwayat_izin_lain';
-     public $primaryKey = 'id';
+     public $connection = 'db_presensi';
+     public $table  = 'tbl_izin_lain';
+     public $primaryKey = 'no_izin';
 
-     public function obj_employee(){
-          return $this->hasOne(Employee::class,'id','employee_id');
-     }
      public function scopeOrderTanggal($query){
           $query->orderBy('tgl_mulai','desc');
      }

@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\FlexiportController;
+use App\Http\Controllers\PresensiCutiController;
 use App\Http\Controllers\PresensiIzinController;
+use App\Http\Controllers\PresensiIzinLainController;
+use App\Http\Controllers\PresensiKehadiranController;
+use App\Http\Controllers\PresensiSesiKerjaController;
 use App\Http\Controllers\RequestCategoryController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RiwayatAnakController;
@@ -127,8 +131,12 @@ Route::post('flexiport', function () {
 Route::group(["middleware"=>"auth:api"],function(){
 
     Route::get('employee-me', [AdminEmployeeController::class,'dataSaya']);
+    Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
+    Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
     Route::resource('riwayat-izin', PresensiIzinController::class);
-    
+    Route::resource('riwayat-cuti', PresensiCutiController::class);
+    Route::resource('riwayat-izin-lain', PresensiIzinLainController::class);
+
     Route::resource('riwayat-anak', RiwayatAnakController::class);
     Route::resource('riwayat-angka-kredit', RiwayatAngkaKreditController::class);
     Route::resource('riwayat-diklat-fungsional', RiwayatDiklatFungsionalController::class);

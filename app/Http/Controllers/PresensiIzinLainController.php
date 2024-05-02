@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\EmployeePresensi;
-use App\Models\Presensi\RiwayatIzin;
+use App\Models\Presensi\RiwayatIzinLain;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class PresensiIzinController extends Controller
+class PresensiIzinLainController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -36,7 +36,7 @@ class PresensiIzinController extends Controller
         $bulan = request()->input("bulan");
 
         $user = Auth::user();
-        $employee = EmployeePresensi::with(['obj_riwayat_izin' => function ($query) use ($tahun, $bulan) {
+        $employee = EmployeePresensi::with(['obj_riwayat_izin_lain' => function ($query) use ($tahun, $bulan) {
             $dt = Carbon::now();
             $dt->setTime(0, 0, 0);
             $dt->setYear($tahun);
@@ -54,8 +54,8 @@ class PresensiIzinController extends Controller
             });
         }])->whereRaw('nipp = ?', [$user->username])->first();
         if ($use_response) {
-            return response()->json($employee->obj_riwayat_izin);
-        } else return $employee->obj_riwayat_izin;
+            return response()->json($employee->obj_riwayat_izin_lain);
+        } else return $employee->obj_riwayat_izin_lain;
     }
 
     /**
@@ -82,22 +82,22 @@ class PresensiIzinController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
+     * @param  \App\Models\Presensi\RiwayatIzinLain  $riwayat_izin_lain
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatIzin $riwayatIzin)
+    public function show(RiwayatIzinLain $riwayat_izin_lain)
     {
         //
-        return response()->json($riwayatIzin);
+        return response()->json($riwayat_izin_lain);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
+     * @param  \App\Models\Presensi\RiwayatIzinLain  $riwayat_izin_lain
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatIzin $riwayatIzin)
+    public function edit(RiwayatIzinLain $riwayat_izin_lain)
     {
         //
     }
@@ -106,10 +106,10 @@ class PresensiIzinController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
+     * @param  \App\Models\Presensi\RiwayatIzinLain  $riwayat_izin_lain
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatIzin $riwayatIzin)
+    public function update(Request $request, RiwayatIzinLain $riwayat_izin_lain)
     {
         //
     }
@@ -117,10 +117,10 @@ class PresensiIzinController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Presensi\RiwayatIzin  $riwayatIzin
+     * @param  \App\Models\Presensi\RiwayatIzinLain  $riwayat_izin_lain
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatIzin $riwayatIzin)
+    public function destroy(RiwayatIzinLain $riwayat_izin_lain)
     {
         //
     }
