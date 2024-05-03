@@ -8,4 +8,13 @@ class RiwayatPenghargaan extends Model
 {
     public $table  = 'riwayat_penghargaan';
     public $dates = ['tgl_sk'];
+
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
+    public function obj_jenis_penghargaan()
+    {
+        return $this->hasOne(JenisPenghargaan::class, 'id', 'jenis_penghargaan_id');
+    }
 }

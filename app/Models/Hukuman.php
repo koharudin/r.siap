@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Hukuman extends Model
 {
-     use ModelTree, AdminBuilder;
-     //
-     public $table  = 'hukuman';
-     public function __construct(array $attributes = [])
-     {
-         parent::__construct($attributes);
-         $this->setTitleColumn('hukuman');
-     }
+    use ModelTree, AdminBuilder;
+    
+    public $table = 'hukuman';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setTitleColumn('hukuman');
+    }
 }

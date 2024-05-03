@@ -1,0 +1,7 @@
+services:
+  wkw:
+    build: .
+    volumes:
+      - .:/var/www/
+    ports:
+      - 81:80

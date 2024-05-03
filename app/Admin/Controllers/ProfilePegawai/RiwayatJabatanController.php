@@ -3,11 +3,13 @@
 namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Admin\Selectable\GridJabatan;
+use App\Admin\Selectable\GridJabatanStruktural;
 use Illuminate\Http\UploadedFile;
 use App\Admin\Selectable\GridPejabatPenetap;
 use App\Admin\Selectable\GridUnitKerja;
 use App\Models\DokumenPegawai;
 use App\Models\Eselon;
+use App\Models\Jabatan;
 use App\Models\JenisKP;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
@@ -44,7 +46,7 @@ class RiwayatJabatanController extends ProfileController
      */
     protected function grid()
     {
-        
+
         $grid = new Grid(new RiwayatJabatan());
         $grid->model()->orderBy('tmt_jabatan', 'desc');
         $grid->column('nama_jabatan', __('JABATAN'));
@@ -63,6 +65,14 @@ class RiwayatJabatanController extends ProfileController
             return "-";
         });
         $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
+	$grid->column('status_riwayat', __('STATUS RIWAYAT JABATAN'))->display(function ($o){
+            if($o == 1){
+                return "Aktif";
+            }
+            else{
+                return "Inaktif";
+            }
+        });
 
         return $grid;
     }
@@ -97,6 +107,7 @@ class RiwayatJabatanController extends ProfileController
         $show->field('penetap_nip', __('PENETAP NIP'));
         $show->field('penetap_nama', __('PENETAP NAMA'));
         $show->field('penetap_jabatan', __('PENETAP JABATAN'));
+ 	$show->field('status_riwayat', __('STATUS RIWAYAT JABATAN'));
         return $show;
     }
 
@@ -112,21 +123,24 @@ class RiwayatJabatanController extends ProfileController
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->date('tmt_jabatan', __('TMT JABATAN'))->default(date('Y-m-d'));
+        $form->hidden('jabatan_id');
         $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
             $form->date('tmt_eselon', __('TMT ESELON'))->default(date('Y-m-d'));
-            $form->belongsTo('jabatan_id', GridUnitKerja::class, 'JABATAN');
+            $form->belongsTo('jabatan_id_struktural', GridJabatanStruktural::class, 'JABATAN STRUKTURAL');
         })->when('in', [2, 3, 4, 5], function (Form $form) {
-            $form->belongsTo('jabatan_id', GridJabatan::class, 'JABATAN');
+            $form->belongsTo('jabatan_id_fungsional', GridJabatan::class, 'JABATAN FUNGSIONAL/UMUM');
         });
-        $form->text('nama_jabatan', __('NAMA JABATAN'));
+        $form->display('nama_jabatan', __('NAMA JABATAN'));
         $form->text('no_pelantikan', __('NO PELANTIKAN'));
         $form->date('tgl_pelantikan', __('TGL PELANTIKAN'))->default(date('Y-m-d'));
         $form->text('tunjangan', __('TUNJANGAN'));
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
+        //Add Status Riwayat
+        $form->select('status_riwayat', __('STATUS RIWAYAT JABATAN'))->options(['1'=>'Aktif', '0' => 'Inaktif'])->default('1');
         $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'));
         $form->text("unit_text", __("UNIT KERJA"));
-        $form->select('status_jabatan_id', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
+        $form->select('status_jabatan_id', __('STATUS JABATAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
 
         $form->divider("Pejabat Penetap");
         $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
@@ -139,11 +153,28 @@ class RiwayatJabatanController extends ProfileController
         $form->submitted(function (Form $form) use ($d) {
             $form->ignore('dokumen');
             $form->ignore('jabatan_struktural_id');
+            $form->ignore('jabatan_id_fungsional');
+            $form->ignore('jabatan_id_struktural');
         });
         $_this = $this;
         $form->saving(function (Form $form) use ($d, $_this) {
+            $jabatan_id_fungsional = request()->input('jabatan_id_fungsional');
+            $jabatan_id_struktural = request()->input('jabatan_id_struktural');
+            if (in_array($form->tipe_jabatan_id, [1, 6])) {
+                if ($jabatan_id_struktural) {
+                    $form->jabatan_id = $jabatan_id_struktural;
+                    $form->nama_jabatan = UnitKerja::find($form->jabatan_id)->pejabat_jabatan;
+                } else
+                    $form->jabatan_id = null;
+            } else {
+                if ($jabatan_id_fungsional) {
+                    $form->jabatan_id = $jabatan_id_fungsional;
+                    $form->nama_jabatan = Jabatan::find($form->jabatan_id)->name;
+                } else
+                    $form->jabatan_id = null;
+            }
             if ($form->pejabat_penetap_id) {
-                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
                 if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
@@ -151,7 +182,7 @@ class RiwayatJabatanController extends ProfileController
                 }
             }
             if ($form->unit_id) {
-                $unit_kerja =  UnitKerja::where('id', $form->unit_id)->get()->first();
+                $unit_kerja = UnitKerja::where('id', $form->unit_id)->get()->first();
                 if ($unit_kerja) {
                     $form->unit_text = $unit_kerja->name;
                 }
@@ -171,6 +202,7 @@ class RiwayatJabatanController extends ProfileController
                 $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
             }
         });
+
         return $form;
     }
 }

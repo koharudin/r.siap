@@ -10,34 +10,36 @@
 
     <!-- /.box-header -->
     <div class="box-body">
-        <form id="form-search">
-            <div class="form-group">
+        <form id="form-search-penghargaan">
+            <div class="form-group" style="display:none">
                 <label for="exampleFormControlSelect1">KRITERIA</label>
                 <select class="form-control" name="kriteria">
-                    <option>USULAN</option>
-                    <option>SUDAH MENDAPAT</option>
+                    <option value=-1>USULAN</option>
+                    <option value=1 selected>SUDAH MENDAPAT</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Jenis Penghargaan</label>
                 <select class="form-control" name="jenis">
-                    <option>SATYALANCANA KARYA SATYA PERAK</option>
-                    <option>SATYALANCANA KARYA SATYA PERUNGGU</option>
-                    <option>SATYALANCANA KARYA SATYA EMAS</option>
+                    <option value=38>SATYALANCANA KARYA SATYA PERAK</option>
+                    <option value=39>SATYALANCANA KARYA SATYA PERUNGGU</option>
+                    <option value=40>SATYALANCANA KARYA SATYA EMAS</option>
+                    <option value=56>SATYALANCANA WIRA KARYA</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">CARI</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class='fa fa-search'></i> Cari</button>
+            <button type="button" class="btn btn-primary btn-sm" name="btn-cetak-penghargaan"><i class='fa fa-print'></i> Cetak</button>
         </form>
         <div class="table-responsive">
             <table class="table table-bordered yajra-datatable" style="width:100%">
                 <thead>
                     <tr>
+                        <th>PENGHARGAAN</th>
                         <th>NIP</th>
                         <th>NAMA</th>
                         <th>JABATAN</th>
                         <th>GOL. RUANG</th>
                         <th>UNIT KERJA</th>
-                        <th>JENIS PENGHARGAAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +50,14 @@
     </div>
     <script type="text/javascript">
         $(function() {
+            $("[name=btn-cetak-penghargaan]").click(function() {
+                var base_url = "<?php echo $url_cetak; ?>";
+                window.open(base_url + "?" + $("#form-search-penghargaan").serialize(), '_blank');
+            });
+            $("#form-search-penghargaan").submit((function(e) {
+                table.ajax.reload();
+                e.preventDefault();
+            }));
             var table = $('.yajra-datatable').DataTable({
                 dom: '<"top">r<t><"bottom" <"pull-left"i><"pull-right"p>><"clear">',
                 processing: true,
@@ -62,11 +72,15 @@
                     'type': 'POST',
                     'url': "{{route('admin.penghargaan.dt')}}",
                     "data": function(d) {
-                        d.extra_search = $('#form-search').serializeArray();
+                        d.extra_search = $('#form-search-penghargaan').serializeArray();
                         d._token = "{{ csrf_token() }}";
                     },
                 },
                 columns: [{
+                        data: 'penghargaan',
+                        name: 'penghargaan'
+                    },
+                    {
                         data: 'nip_baru',
                         name: 'nip_baru'
                     },
@@ -86,10 +100,7 @@
                         data: 'unit_kerja',
                         name: 'unit_kerja'
                     },
-                    {
-                        data: 'jenis_penghargaan',
-                        name: 'jenis_penghargaan'
-                    }
+
                 ]
             });
 

@@ -15,7 +15,7 @@ use Encore\Admin\Show;
 class RiwayatPenghargaanController extends ProfileController
 {
     public $activeTab = 'riwayat_penghargaan';
-    public $klasifikasi_id = 19;   
+    public $klasifikasi_id = 19;
     /**
      * Title for current resource.
      *
@@ -31,7 +31,7 @@ class RiwayatPenghargaanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPenghargaan());
-        $grid->model()->orderBy('tgl_sk','asc');
+        $grid->model()->orderBy('tgl_sk', 'asc');
         $grid->column('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
@@ -40,7 +40,7 @@ class RiwayatPenghargaanController extends ProfileController
             }
             return "-";
         });
-        $grid->column('pejabat_penetap', __('PEJABAT PENETAP'));
+        $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
         $grid->column('tahun', __('TAHUN'));
         $grid->column('jenis_penghargaan', __('JENIS PENGHARGAAN'));
 
@@ -75,24 +75,24 @@ class RiwayatPenghargaanController extends ProfileController
     protected function form()
     {
         $form = new Form(new RiwayatPenghargaan());
-
+        $form->belongsTo('jenis_penghargaan_id', GridPenghargaan::class, __('JENIS PENGHARGAAN'));
         $form->hidden('employee_id', __('Employee id'));
-        $form->text('nama_penghargaan', __('NAMA PENGHARGAAN'));
+        //$form->text('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $form->text('no_sk', __('NO SK'));
         $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
         $form->number('tahun', __('TAHUN'));
-        $form->belongsTo('jenis_penghargaan_id',GridPenghargaan::class, __('JENIS PENGHARGAAN'));
-        $form->text('jenis_penghargaan', __('JENIS PENGHARGAAN'));
-        
-        $form->belongsTo('pejabat_penetap_id',GridPejabatPenetap::class,'PEJABAT PENETAP');
+
+        //$form->text('jenis_penghargaan', __('JENIS PENGHARGAAN'));
+
+        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
         $form->text('pejabat_penetap_jabatan', __('JABATAN'));
         $form->text('pejabat_penetap_nip', __('NIP'));
         $form->text('pejabat_penetap_nama', __('NAMA'));
 
         $form->saving(function (Form $form) {
-            if($form->pejabat_penetap_id){
-                $r =  PejabatPenetap::where('id',$form->pejabat_penetap_id)->get()->first();
-                if($r){
+            if ($form->pejabat_penetap_id) {
+                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
+                if ($r) {
                     $form->pejabat_penetap_jabatan = $r->jabatan;
                     $form->pejabat_penetap_nip = $r->nip;
                     $form->pejabat_penetap_nama = $r->nama;

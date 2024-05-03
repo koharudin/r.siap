@@ -34,7 +34,7 @@ return [
     'filter'                => 'Saringan',
     'search'                => 'Cari',
     'close'                 => 'Tutup',
-    'show'                  => 'Perlihatkan',
+    'show'                  => 'Detail',
     'entries'               => 'Masukan',
     'captcha'               => 'Captcha',
     'action'                => 'Aksi',

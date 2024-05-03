@@ -64,19 +64,19 @@ return [
         ],
         'db_presensi' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => 'localhost',
-            'port' => '3306',
-            'database' => 'anri_presensi',
-            'username' => 'root',
-            'password' => 'root',
-            'unix_socket' => env('DB_SOCKET', ''),
+            'url' => env('DATABASE_PRESENSI_URL'),
+            'host' => env('DB_PRESENSI_HOST', '127.0.0.1'),
+            'port' => env('DB_PRESENSI_PORT', '3306'),
+            'database' => env('DB_PRESENSI_DATABASE', 'forge'),
+            'username' => env('DB_PRESENSI_USERNAME', 'forge'),
+            'password' => env('DB_PRESENSI_PASSWORD', ''),
+            'unix_socket' => env('DB_PRESENSI_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
-            'engine' => null, 
+            'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
@@ -92,7 +92,7 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'schema' => 'public',
+            'schema' => env('DB_SCHEMA', ''),
             'sslmode' => 'prefer',
         ],
         'pgsql_presensi' => [
@@ -154,7 +154,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

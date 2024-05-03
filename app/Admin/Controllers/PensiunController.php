@@ -80,11 +80,74 @@ class PensiunController extends Controller
             ->body($tab)
             ->body(view("pensiun.album"));
     }
+
     public function dt_akan_pensiun()
+    {
+        $query = RiwayatPensiun::akanPensiun()->whereHas('obj_employee', function ($q) {
+            $q->aktif();
+        })->orderBy('tgl_pensiun', 'desc')->with(['obj_employee.obj_riwayat_jabatan', 'obj_employee.obj_satker', 'obj_employee.obj_riwayat_pangkat.obj_pangkat']);
+        return Datatables::eloquent($query)
+            ->addColumn('nip_baru', function (RiwayatPensiun $r) {
+                return $r->obj_employee->nip_baru;
+            })
+            ->addColumn('sex', function (RiwayatPensiun $r) {
+                return $r->obj_employee->sex;
+            })
+            ->addColumn('first_name', function (RiwayatPensiun $r) {
+                return $r->obj_employee->first_name;
+            })
+            ->addColumn('unit_kerja', function (RiwayatPensiun $r) {
+                if ($r->obj_employee->obj_satker) {
+                    return $r->obj_employee->obj_satker->name;
+                }
+                return "Belum di tempatkan!";
+            })
+            ->addColumn('jabatan', function (RiwayatPensiun $r) {
+                $last = $r->obj_employee->obj_riwayat_jabatan->last();
+                return  $last->nama_jabatan;
+            })
+            ->addColumn('sisa_masa_kerja', function (RiwayatPensiun $r) {
+                if ($r->obj_employee->obj_riwayat_pensiun && $r->obj_employee->obj_riwayat_pensiun->tgl_pensiun) {
+                    $days = $r->obj_employee->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
+                    $month = (int) ($days / 30);
+                    $day = $days % 30;
+                    return  "{$month} Bulan {$day} Hari";
+                } else return  "-";
+            })
+            ->addColumn('usia', function (RiwayatPensiun $r) {
+                $months = $r->obj_employee->usia;
+                $thn = (int)($months / 12);
+                $bl = $months % 12;
+                return "{$thn} Tahun {$bl} Bulan";
+            })
+            ->addColumn('tmt_jabatan', function (RiwayatPensiun $r) {
+                $last = $r->obj_employee->obj_riwayat_jabatan->last();
+                if ($last) {
+                    return $last->tmt_jabatan->format('d-m-Y');
+                }
+                return "-";
+            })
+            ->addColumn('tgl_pensiun', function (RiwayatPensiun $r) {
+                $tgl_pensiun = $r->obj_employee->obj_riwayat_pensiun->tgl_pensiun;
+                if ($tgl_pensiun) {
+                    return $tgl_pensiun->format('d-m-Y');
+                }
+                return "-";
+            })
+            ->addColumn('pangkat', function (RiwayatPensiun $r) {
+                $last = $r->obj_employee->obj_riwayat_pangkat->last();
+                return  $last->obj_pangkat->name . " - " . $last->obj_pangkat->kode;
+            })
+            ->addColumn('action', function (RiwayatPensiun $r) {
+                return "<a class='btn btn-danger' href='" . route('admin.pensiun.akan2mpp.form', $r->obj_employee->id) . "'>Pindah ke MPP</a>";
+            })
+            ->make(true);
+    }
+    public function dt_akan_pensiun2()
     {
         $query = Employee::aktif()->whereHas('obj_riwayat_pensiun', function ($q) {
             $q->akanPensiun();
-        })->with(['obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
+        })->orderBy('tgl_pensiunx', 'asc')->with(['obj_riwayat_jabatan', 'obj_satker', 'obj_riwayat_pangkat.obj_pangkat']);
         return  DataTables::eloquent($query)
             ->only(['no', 'sex', 'usia', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'tgl_pensiun', 'tmt_jabatan', 'sisa_masa_kerja'])
             ->addIndexColumn()
@@ -108,10 +171,13 @@ class PensiunController extends Controller
                 return  $last->nama_jabatan;
             })
             ->addColumn('sisa_masa_kerja', function (Employee $u) {
-                $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
-                $month = (int) ($days / 30);
-                $day = $days % 30;
-                return  "{$month} Bulan {$day} Hari";
+                if ($u->obj_riwayat_pensiun && $u->obj_riwayat_pensiun->tgl_pensiun) {
+
+                    $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
+                    $month = (int) ($days / 30);
+                    $day = $days % 30;
+                    return  "{$month} Bulan {$day} Hari";
+                } else return "-";
             })
             ->addColumn('usia', function (Employee $u) {
                 $months = $u->usia;
@@ -165,10 +231,13 @@ class PensiunController extends Controller
                 return  $last->nama_jabatan;
             })
             ->addColumn('sisa_masa_kerja', function (Employee $u) {
-                $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
-                $month = (int) ($days / 30);
-                $day = $days % 30;
-                return  "{$month} Bulan {$day} Hari";
+                if ($u->obj_riwayat_pensiun && $u->obj_riwayat_pensiun->tgl_pensiun) {
+
+                    $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
+                    $month = (int) ($days / 30);
+                    $day = $days % 30;
+                    return  "{$month} Bulan {$day} Hari";
+                } else return "-";
             })
             ->addColumn('usia', function (Employee $user) {
                 $months = $user->usia;
@@ -221,10 +290,13 @@ class PensiunController extends Controller
                 return  $last->nama_jabatan;
             })
             ->addColumn('sisa_masa_kerja', function (Employee $u) {
-                $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
-                $month = (int) ($days / 30);
-                $day = $days % 30;
-                return  "{$month} Bulan {$day} Hari";
+                if ($u->obj_riwayat_pensiun && $u->obj_riwayat_pensiun->tgl_pensiun) {
+
+                    $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
+                    $month = (int) ($days / 30);
+                    $day = $days % 30;
+                    return  "{$month} Bulan {$day} Hari";
+                } else return "-";
             })
             ->addColumn('usia', function (Employee $user) {
                 $months = $user->usia;
@@ -261,6 +333,7 @@ class PensiunController extends Controller
         return  DataTables::eloquent($query)
             ->only(['no', 'sex', 'usia', 'action', 'first_name', 'intro', 'nip_baru', 'jabatan', 'pangkat', 'unit_kerja', 'tgl_pensiun', 'tmt_jabatan', 'sisa_masa_kerja'])
             ->addIndexColumn()
+
             ->addColumn('no', function (Employee $user) {
                 return 'Hi ' . $user->name . '!';
             })
@@ -275,10 +348,13 @@ class PensiunController extends Controller
                 return  $last->nama_jabatan;
             })
             ->addColumn('sisa_masa_kerja', function (Employee $u) {
-                $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
-                $month = (int) ($days / 30);
-                $day = $days % 30;
-                return  "{$month} Bulan {$day} Hari";
+                if ($u->obj_riwayat_pensiun && $u->obj_riwayat_pensiun->tgl_pensiun) {
+
+                    $days = $u->obj_riwayat_pensiun->tgl_pensiun->diffInDays(Carbon::now());
+                    $month = (int) ($days / 30);
+                    $day = $days % 30;
+                    return  "{$month} Bulan {$day} Hari";
+                } else return "-";
             })
             ->addColumn('usia', function (Employee $user) {
                 $months = $user->usia;
@@ -294,10 +370,13 @@ class PensiunController extends Controller
                 return "-";
             })
             ->addColumn('tgl_pensiun', function (Employee $u) {
-                $tgl_pensiun = $u->obj_riwayat_pensiun->tgl_pensiun;
-                if ($tgl_pensiun) {
-                    return $tgl_pensiun->format('d-m-Y');
+                if ($u->obj_riwayat_pensiun && $u->obj_riwayat_pensiun->tgl_pensiun) {
+                    $tgl_pensiun = $u->obj_riwayat_pensiun->tgl_pensiun;
+                    if ($tgl_pensiun) {
+                        return $tgl_pensiun->format('d-m-Y');
+                    }
                 }
+
                 return "-";
             })
             ->addColumn('pangkat', function (Employee $user) {

@@ -30,6 +30,9 @@ use MBence\OpenTBSBundle\Services\OpenTBS;
 use App\Mnvx\Unoconv\Converter;
 use App\Mnvx\Unoconv\UnoconvParameters;
 use App\Mnvx\Unoconv\Format;
+use App\Models\Employee;
+use App\Models\RiwayatHukuman;
+use App\Models\UnitKerja;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
 use Dompdf\Dompdf;
@@ -67,11 +70,12 @@ Route::get('/test-unoconv2', function () {
 });
 Route::get('/test-unoconv3', function () {
     $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_singkat.docx';
-    $process = Process::fromShellCommandline('unoconv', null,[
+    $process = Process::fromShellCommandline('unoconv', null, [
         'APP_ENV' => false,
-    'SYMFONY_DOTENV_VARS' => false,
-        'ENV_VAR_NAME' => 'value']);
-        $process = new Process(['ls', '-lsa']);
+        'SYMFONY_DOTENV_VARS' => false,
+        'ENV_VAR_NAME' => 'value'
+    ]);
+    $process = new Process(['ls', '-lsa']);
     $process->run(function ($type, $buffer): void {
         if (Process::ERR === $type) {
             echo 'ERR > ' . $buffer;
@@ -105,6 +109,7 @@ Route::get('/test-conv1', function () {
     $converter->convertTo('output-file.pdf'); //generates pdf file in same directory as test-file.docx
 });
 Route::get('/test-opentbs', function () {
+
     $TBS = new OpenTBS();
     \Carbon\Carbon::setLocale('id');
     // load your template
@@ -114,11 +119,18 @@ Route::get('/test-opentbs', function () {
     $today = Carbon::now()->isoFormat('dddd, D MMMM Y');
     $TBS->MergeField('o', array('date' => $today));
     // send the file
-    $TBS->Show(OPENTBS_FILE, 'drh2.docx');
+    //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
+    $TBS->Show(OPENTBS_DOWNLOAD, 'drh2.docx');
 });
 Route::get('/d', function () {
     $doc = DokumenPegawai::where('id', request('id'))->get()->first();
     return Storage::disk('minio_dokumen')->response($doc->file);
+});
+Route::get('/test-db', function () {
+    $e = Employee::find(218);
+    $e->setTanggalPensiun();
+    dd('done');
+    dd($e->getBup());
 });
 Route::get('/test', function () {
     $minio = Storage::disk('minio');

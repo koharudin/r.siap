@@ -20,4 +20,8 @@ class Pendidikan extends Model
         parent::__construct($attributes);
         $this->setTitleColumn('name');
     }
+    public function obj_parent()
+    {
+        return $this->hasOne(Pendidikan::class, 'id', 'parent_id');
+    }
 }

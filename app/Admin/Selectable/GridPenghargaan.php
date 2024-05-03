@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Admin\Selectable;
 
 use App\Models\PejabatPenetap;
@@ -14,9 +15,10 @@ class GridPenghargaan extends Selectable
 
     public function make()
     {
-        $this->column('id',__('ID'));
-        $this->column('name',__('NAMA'));
-
+        $this->column('id', __('ID'));
+        $this->column('name', __('NAMA'));
+        $this->model()->orderBy('order', 'DESC');
+        $this->model()->orderBy('name', 'ASC');
         $this->filter(function (Filter $filter) {
             $filter->disableIdFilter();
             $filter->ilike('name');

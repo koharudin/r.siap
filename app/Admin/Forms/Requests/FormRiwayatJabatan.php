@@ -59,6 +59,14 @@ class FormRiwayatJabatan extends FF
             return "-";
         });
         $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
+	$grid->column('status_riwayat', __('STATUS RIWAYAT JABATAN'))->display(function ($o){
+            if($o == 1){
+                return "Aktif";
+            }
+            else{
+                return "Inaktif";
+            }
+        });
 
         return $grid;
     }
@@ -84,9 +92,11 @@ class FormRiwayatJabatan extends FF
         $form->date('tgl_pelantikan', __('TGL PELANTIKAN'))->default(date('Y-m-d'));
         $form->text('tunjangan', __('TUNJANGAN'));
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
+        //Add Status Riwayat
+        $form->select('status_riwayat', __('STATUS RIWAYAT JABATAN'))->options(['1'=>'Aktif', '0' => 'Inaktif'])->default('1');
         $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'));
         $form->text("unit_text", __("UNIT KERJA"));
-        $form->select('status_jabatan_id', __('KETERANGAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
+        $form->select('status_jabatan_id', __('STATUS JABATAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
 
         $form->divider("Pejabat Penetap");
         $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
@@ -115,7 +125,7 @@ class FormRiwayatJabatan extends FF
                 }
             }
         });
-        
+
         return $this;
     }
     public function onCreateForm()
