@@ -22,6 +22,7 @@ use App\Http\Controllers\RiwayatHukumanController;
 use App\Http\Controllers\RiwayatJabatanController;
 use App\Http\Controllers\RiwayatKinerjaController;
 use App\Http\Controllers\RiwayatKursusController;
+use App\Http\Controllers\RiwayatMertuaController;
 use App\Http\Controllers\RiwayatMutasiController;
 use App\Http\Controllers\RiwayatNikahController;
 use App\Http\Controllers\RiwayatOrangTuaController;
@@ -165,6 +166,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::resource('riwayat-kursus', RiwayatKursusController::class);
     Route::resource('riwayat-mutasi', RiwayatMutasiController::class);
     Route::resource('riwayat-nikah', RiwayatNikahController::class);
+    Route::resource('riwayat-mertua', RiwayatMertuaController::class);
     Route::resource('riwayat-orangtua', RiwayatOrangTuaController::class);
     Route::resource('riwayat-pangkat', RiwayatPangkatController::class);
     Route::resource('riwayat-pendidikan', RiwayatPendidikanController::class);

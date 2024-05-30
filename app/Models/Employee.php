@@ -156,6 +156,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatSumpah::class, 'employee_id', 'id')->orderBy('tgl_sumpah', 'desc');
     }
+    public function obj_riwayat_mertua()
+    {
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
+    }
     public function obj_riwayat_orangtua()
     {
         return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
