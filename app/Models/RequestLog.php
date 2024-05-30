@@ -14,6 +14,13 @@ class RequestLog extends Model
     public $table  = 'request_log';
     private $cacheKeyPrefix = "request_log_id_";
 
+    public function obj_user(){
+        return $this->hasOne(Administrator::class,'id','user_id');
+    } 
+    public function obj_riwayat_usulan(){
+        return $this->hasOne(Request::class,'id','request_id');
+    } 
+
     public static function  addLog(Request $request, $keterangan)
     {
         $log = new RequestLog();

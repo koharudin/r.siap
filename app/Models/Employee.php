@@ -160,6 +160,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
     }
+    public function obj_riwayat_organisasi()
+    {
+        return $this->hasMany(RiwayatOrganisasi::class, 'employee_id', 'id');
+    }
     public function obj_riwayat_orangtua()
     {
         return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');

@@ -13,6 +13,18 @@ class Request extends Model
     public $table  = 'requests';
     private $cacheKeyPrefix = "request_id_";
 
+    //action : 1=createNew,2=edit,3=delete
+
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
+    public function obj_status(){
+        return $this->hasOne(StatusUsulan::class,'id','status_id');
+    } 
+    public function obj_kategori(){
+        return $this->hasOne(RequestCategory::class,'id','category_id');
+    } 
     protected static function booted(): void
     {
         self::creating(function (Request $record) {
@@ -50,5 +62,5 @@ class Request extends Model
     }
 
     public $date = ['date_created'];
-    public $casts = ['old_data' => 'json', 'request_data' => 'json'];
+    public $casts = ['data' => 'json'];
 }

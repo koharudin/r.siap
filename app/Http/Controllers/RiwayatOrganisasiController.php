@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\RiwayatNikah;
+use App\Models\RiwayatOrganisasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class RiwayatNikahController extends Controller
+class RiwayatOrganisasiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +18,8 @@ class RiwayatNikahController extends Controller
     {
         //
         $user = Auth::user();
-        $employee = Employee::with(['obj_riwayat_nikah'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_nikah()->getQuery()->with(['obj_jenis_pekerjaan','obj_status_menikah'])->paginate());
+        $employee = Employee::with(['obj_riwayat_organisasi'])->whereRaw('nip_baru = ?',[$user->username])->first();
+        return response()->json($employee->obj_riwayat_organisasi()->paginate());
     }
 
     /**
@@ -46,22 +46,22 @@ class RiwayatNikahController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\RiwayatNikah  $riwayatNikah
+     * @param  \App\Models\RiwayatOrganisasi  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function show(RiwayatNikah $riwayatNikah)
+    public function show(RiwayatOrganisasi $riwayat_orangtua)
     {
         //
-        return response()->json($riwayatNikah);
+        return response()->json($riwayat_orangtua);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\RiwayatNikah  $riwayatNikah
+     * @param  \App\Models\RiwayatOrganisasi  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function edit(RiwayatNikah $riwayatNikah)
+    public function edit(RiwayatOrganisasi $riwayat_orangtua)
     {
         //
     }
@@ -70,10 +70,10 @@ class RiwayatNikahController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RiwayatNikah  $riwayatNikah
+     * @param  \App\Models\RiwayatOrganisasi  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, RiwayatNikah $riwayatNikah)
+    public function update(Request $request, RiwayatOrganisasi $riwayat_orangtua)
     {
         //
     }
@@ -81,10 +81,10 @@ class RiwayatNikahController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\RiwayatNikah  $riwayatNikah
+     * @param  \App\Models\RiwayatOrganisasi  $riwayatOrangTua
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RiwayatNikah $riwayatNikah)
+    public function destroy(RiwayatOrganisasi $riwayat_orangtua)
     {
         //
     }

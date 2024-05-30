@@ -43,4 +43,8 @@ class RequestCategory extends Model
     {
         return 'uuid';
     }
+
+    public function obj_category(){
+        return $this->hasOne(RequestCategory::class,'id','category_id');
+    } 
 }
