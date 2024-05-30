@@ -19,7 +19,7 @@ class RiwayatAngkaKreditController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_angkakredit'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_angkakredit);
+        return response()->json($employee->obj_riwayat_angkakredit()->with('obj_pangkat')->paginate(-1));
     }
 
     /**

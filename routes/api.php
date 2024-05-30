@@ -1,6 +1,8 @@
 <?php
 
+use App\Admin\Controllers\UsulanController;
 use App\Http\Controllers\AdminEmployeeController;
+use App\Http\Controllers\DaftarUsulanController;
 use App\Http\Controllers\FlexiportController;
 use App\Http\Controllers\PresensiCutiController;
 use App\Http\Controllers\PresensiIzinController;
@@ -40,12 +42,24 @@ use App\Http\Controllers\RiwayatUjiKompetensiController;
 use App\Http\Controllers\VerifikasiController;
 use App\Models\Administrator;
 use App\Models\Agama;
+use App\Models\AlasanHukuman;
+use App\Models\Diklat;
+use App\Models\DiklatSiasn;
 use App\Models\Employee;
+use App\Models\Hukuman;
+use App\Models\Jabatan;
+use App\Models\JenisKenaikanGaji;
+use App\Models\JenisPenghargaan;
 use App\Models\LineApproval;
 use App\Models\Pangkat;
+use App\Models\PejabatPenetap;
+use App\Models\Pendidikan;
 use App\Models\RequestCategory;
 use App\Models\RiwayatAngkaKredit;
 use App\Models\RiwayatDiklatFungsional;
+use App\Models\TingkatHukuman;
+use App\Models\UnitKerja;
+use App\Models\User;
 use Carbon\Carbon;
 use Encore\Admin\Admin;
 use Illuminate\Http\Request;
@@ -128,9 +142,10 @@ Route::post('flexiport', function () {
 });
 
 
-Route::group(["middleware"=>"auth:api"],function(){
-
-    Route::get('employee-me', [AdminEmployeeController::class,'dataSaya']);
+Route::group(["middleware" => "auth:api"], function () {
+    Route::post("usulan-saya", [DaftarUsulanController::class, "list"]);
+    Route::post("usulan-saya/baru/{}", [DaftarUsulanController::class, "createBaru"]);
+    Route::get('employee-me', [AdminEmployeeController::class, 'dataSaya']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
     Route::resource('riwayat-izin', PresensiIzinController::class);
@@ -165,9 +180,70 @@ Route::group(["middleware"=>"auth:api"],function(){
     Route::resource('riwayat-skpns', RiwayatSKPNSController::class);
     Route::resource('riwayat-sumpah', RiwayatSumpahController::class);
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
-
 });
+
+Route::post("/master-jabatan", function () {
+    return response()->json(Jabatan::paginate(), 200);
+});
+Route::post("/master-pangkat", function () {
+    return response()->json(Pangkat::paginate(), 200);
+});
+Route::post("/master-unitkerja", function () {
+    return response()->json(UnitKerja::paginate(), 200);
+});
+Route::post("/master-jenis-kenaikan-gaji", function () {
+    return response()->json(JenisKenaikanGaji::paginate(), 200);
+});
+Route::post("/master-jenis-penghargaan", function () {
+    return response()->json(JenisPenghargaan::orderBy('order', 'DESC')->orderBy('name', 'ASC')->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-siasn", function () {
+    return response()->json(DiklatSiasn::where('jenis_sertifikat', 'P')->where('id_siasn', '!=', 9)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-struktural", function () {
+    return response()->json(Diklat::where('parent_id', 1)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-fungsional", function () {
+    return response()->json(Diklat::where('parent_id', 12)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-teknis", function () {
+    return response()->json(Diklat::where('parent_id', 70)->paginate(), 200);
+});
+Route::post("/master-pejabat-penetap", function () {
+    return response()->json(PejabatPenetap::paginate(), 200);
+});
+Route::post("/master-tingkat-hukuman", function () {
+    $array = [
+        ["id"=>"R","name"=>"Hukuman Ringan"],
+        ["id"=>"S","name"=>"Hukuman Sedang"],
+        ["id"=>"B","name"=>"Hukuman Berat"],
+        ["id"=>"K","name"=>"Hukuman Kode Etik"]
+    ];
+    return response()->json(["data"=>$array], 200);
+});
+Route::post("/master-jenis-hukuman", function () {
+    $list = Hukuman::select("id","hukuman as name")->whereNotNull('siasn_id')->orderBy('id', 'asc')->get();
+    return response()->json(["data"=>$list], 200);
+});
+Route::post("/master-pendidikan", function () {
+    $list = Pendidikan::select("id as id","name as name" )->get();
+    return response()->json(["data"=>$list], 200);
+});
+Route::post("/master-pelanggaran", function () {
+    $list = AlasanHukuman::select("id_hukuman as id","nama_hukuman as name" )->get();
+    return response()->json(["data"=>$list], 200);
+});
+Route::post("/master-peraturan-hukuman", function () {
+    $array = [
+        ["id"=>"07","name"=>"PP 94 TAHUN 2021"],
+        ["id"=>"03","name"=>"PP 53 TAHUN 2010"],
+    ];
+    return response()->json(["data"=>$array], 200);
+});
+
+
 Route::group(["prefix" => "pelayanan"], function () {
+
     Route::group(["prefix" => "public"], function () {
         Route::get('request-categories', function () {
             $l = RequestCategory::all();

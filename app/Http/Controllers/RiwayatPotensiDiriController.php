@@ -19,7 +19,7 @@ class RiwayatPotensiDiriController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_potensidiri'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_potensidiri);
+        return response()->json($employee->obj_riwayat_potensidiri()->paginate());
 
     }
 

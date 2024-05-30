@@ -19,7 +19,7 @@ class RiwayatAnakController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_anak'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_anak);
+        return response()->json($employee->obj_riwayat_anak()->paginate(-1));
     }
 
     /**

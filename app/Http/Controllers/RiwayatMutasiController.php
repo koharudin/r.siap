@@ -19,7 +19,7 @@ class RiwayatMutasiController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_mutasi'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_mutasi);
+        return response()->json($employee->obj_riwayat_mutasi()->orderBy('tmt_sk', 'desc')->paginate());
     }
 
     /**
