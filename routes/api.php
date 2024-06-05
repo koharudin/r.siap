@@ -1,6 +1,5 @@
 <?php
 
-use App\Admin\Controllers\UsulanController;
 use App\Http\Controllers\AdminEmployeeController;
 use App\Http\Controllers\DaftarUsulanController;
 use App\Http\Controllers\FlexiportController;
@@ -151,8 +150,10 @@ Route::post('flexiport', function () {
 
 Route::group(["middleware" => "auth:api"], function () {
     Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
-    Route::post("usulan-saya/baru/{}", [DaftarUsulanController::class, "createBaru"]);
-    Route::get('employee-me', [AdminEmployeeController::class, 'dataSaya']);
+    Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
+    Route::post("usulan/{uuid}/hapus", [DaftarUsulanController::class, "hapus"]);
+    Route::post("usulan", [DaftarUsulanController::class, "store"]);
+    Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
     Route::resource('riwayat-izin', PresensiIzinController::class);
@@ -197,14 +198,44 @@ Route::post("/master-jabatan", function () {
 Route::post("/master-pangkat", function () {
     return response()->json(Pangkat::paginate(), 200);
 });
-Route::post("/master-unitkerja", function () {
-    return response()->json(UnitKerja::paginate(), 200);
+Route::get("/master-pangkat/{id}/detail", function ($id) {
+    $query = Pangkat::query();
+    $query->where("id",$id);
+    $data = $query->get()->first();
+    if($data) {
+        return response()->json($data,200);
+    }
+    else return response()->json("data tidak ditemukan",404);
 });
+
+Route::post("/master-unitkerja", function () {
+    $query = UnitKerja::query();
+    $q = request()->input("q");
+    $query->where("name","ilike","%{$q}%");
+    $query->orderBy("name","asc");
+    return response()->json($query->paginate(), 200);
+});
+Route::get("/master-unitkerja/{id}/detail", function ($id) {
+    $query = UnitKerja::query();
+    $query->where("id",$id);
+    $data = $query->get()->first();
+    if($data) {
+        return response()->json($data,200);
+    }
+    else return response()->json("data tidak ditemukan",404);
+});
+
 Route::post("/master-jenis-kenaikan-gaji", function () {
     return response()->json(JenisKenaikanGaji::paginate(), 200);
 });
 Route::post("/master-jenis-bahasa", function () {
     return response()->json(JenisBahasa::paginate(), 200);
+});
+Route::post("/master-jenis-layanan", function () {
+    if(request()->input('pagination')=="false"){
+        return response()->json(RequestCategory::whereNotNull('parent_id')->orderBy('name','asc')->get(), 200); 
+    }
+    return response()->json(RequestCategory::orderBy('name','asc')->paginate(), 200);
 });
 Route::post("/master-kemampuan-bicara", function () {
     return response()->json(KemampuanBicara::paginate(), 200);

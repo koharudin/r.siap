@@ -4,17 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Request extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     public $table  = 'requests';
     private $cacheKeyPrefix = "request_id_";
 
     //action : 1=createNew,2=edit,3=delete
-
+    public function obj_logs()
+    {
+        return $this->hasMany(RequestLog::class, 'request_id', 'id');
+    }
     public function obj_employee()
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');

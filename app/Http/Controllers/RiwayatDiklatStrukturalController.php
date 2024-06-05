@@ -19,7 +19,7 @@ class RiwayatDiklatStrukturalController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_diklat_struktural'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_diklat_struktural()->paginate(-1));
+        return response()->json($employee->obj_riwayat_diklat_struktural()->paginate());
     }
 
     /**

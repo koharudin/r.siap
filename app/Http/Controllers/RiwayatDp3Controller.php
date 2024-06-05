@@ -19,7 +19,7 @@ class RiwayatDp3Controller extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_dp3'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_dp3()->orderBy('tahun','desc')->paginate(-1));
+        return response()->json($employee->obj_riwayat_dp3()->orderBy('tahun','desc')->paginate());
     }
 
     /**

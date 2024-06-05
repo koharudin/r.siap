@@ -19,7 +19,7 @@ class RiwayatDiklatTeknisController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_diklat_teknis'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_diklat_teknis()->paginate(-1));
+        return response()->json($employee->obj_riwayat_diklat_teknis()->paginate());
     }
 
     /**
