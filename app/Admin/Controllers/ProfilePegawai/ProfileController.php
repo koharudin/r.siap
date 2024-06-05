@@ -43,7 +43,7 @@ class ProfileController
             'Riwayat Mutasi' => "riwayat_mutasi",
             'Riwayat Sumpah' => "riwayat_sumpah",
             'Riwayat Gaji' => "riwayat_gaji",
-            //'Riwayat SK Mutasi PAS' =>  "riwayat_sk_mutasi_pas",
+            // 'Riwayat Mutasi PAS' => "riwayat_sk_mutasi_pas",
             'SK Pensiun' => "riwayat_sk_pensiun",
             'Riwayat Pendidikan' => "riwayat_pendidikan",
             'Diklat Struktural' => "riwayat_diklat_struktural",
@@ -56,7 +56,7 @@ class ProfileController
             'Uji Kompetensi' => "riwayat_uji_kompetensi",
             'Penghargaan' => "riwayat_penghargaan",
             'Potensi Diri' => "riwayat_potensi_diri",
-            'Prestasi Kerja' => "riwayat_prestasi_kerja",
+            'Kinerja' => "riwayat_prestasi_kerja",
             'Pengalaman Kerja' => "riwayat_pengalaman_kerja",
 
             'Rekam Medis' => "riwayat_rekam_medis",
@@ -124,13 +124,14 @@ class ProfileController
 
     public function getDokumenUrl($arr)
     {
+        // print_r(@$arr);
         $href = '';
-        if (@$arr['id']) {
+        if(@$arr['id']) {
             $dokumen = DokumenPegawai::where('ref_id', $arr['id'])->where('klasifikasi_id', $arr['klasifikasi_id'])->get()->first();
         }
-        if ($dokumen) {
-            if (str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') {
-                $href = 'File SIAP tidak ada.';
+        if($dokumen) {
+            if(str_replace(' ', '', $dokumen->file) == '' || $dokumen->file == '-') {
+                $href = 'File SIAP tidak ada';
             } else {
                 $url = route('admin.download.dokumen', [
                     'f' => base64_encode($dokumen->file)
@@ -138,17 +139,16 @@ class ProfileController
                 $href = "<a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIAP</b></a>";
             }
         } else {
-            $href = 'File SIAP tidak ada.';
+            $href = 'File SIAP tidak ada';
         }
-        if (!empty(@$arr['dok_uri'])) {
+        if(!empty(@$arr['id_siasn'])) {
             $url = route('admin.download.dokumensiasn', [
-                'f' => base64_encode(@$arr['id_siasn']),
-                'g' => base64_encode(@$arr['klasifikasi_id']),
-                'h' => base64_encode(@$arr['nip'])
+                'f' => base64_encode(@$arr['id']),
+                'g' => base64_encode(@$arr['klasifikasi_id'])
             ]);
-            $href = $href . "<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>SIASN</b></a>";
+            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>MyASN</b></a>";
         } else {
-            $href = $href . "<hr style='margin-bottom: 5px; margin-top: 5px;'>File SIASN tidak ada.";
+            $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'>File MyASN tidak ada";
         }
         return $href;
     }
@@ -159,18 +159,15 @@ class ProfileController
             ->title($this->title())
             ->description($this->description['index'] ?? trans('admin.list'))
             ->body($this->header()->render());
-        if (method_exists($this, 'grid')) {
+        if(method_exists($this, 'grid')) {
             $grid = $this->grid();
-            $grid->paginate(10);
-            $employee = $this->getEmployee();
-            if ($this->use_document) {
+            $grid->paginate(15);
+            if($this->use_document) {
                 $_this = $this;
-                $grid->column('dokumen', 'DOKUMEN')->display(function ($cb) use ($employee, $_this) {
+                $grid->column('dokumen', 'DOKUMEN')->display(function($cb) use($_this) {
                     return $_this->getDokumenUrl([
                         'klasifikasi_id' => $_this->klasifikasi_id,
                         'id' => $this->id,
-                        'dok_uri' => $this->dok_siasn,
-                        'nip' => $this->nip,
                         'id_siasn' => $this->id_siasn,
                     ]);
                 });
@@ -240,32 +237,32 @@ class ProfileController
         $_this = $this;
         $c->panel()
             ->tools(function ($tools) use ($_this, $id) {
-                if (!Admin::user()->can("delete-{$_this->activeTab}")) {
+                if(!Admin::user()->can("delete-{$_this->activeTab}")) {
                     $tools->disableDelete();
                 }
-                if (!Admin::user()->can("edit-{$_this->activeTab}l")) {
+                if(!Admin::user()->can("edit-{$_this->activeTab}l")) {
                     $tools->disableEdit();
                 }
-                if ((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
-                    $tools->append('<a id="customButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
+                if((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
+                    $tools->append('<a style="margin-right: 10px;" id="getButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
+                    // $tools->append('<a style="margin-right: 10px;" class="btn btn-sm btn-warning"><i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Kirim ke SIASN</a>');
                     $url = route('admin.download.datasiasn', [
                         'f' => $id,
                         'g' => $_this->klasifikasi_id,
-
                     ]);
 
                     $script = <<<SCRIPT
                         <script>
                             $(document).ready(function() {
-                                $('#customButton').on('click', function() {
+                                $('#getButton').on('click', function() {
                                     Swal.fire({
-                                        title: "Anda yakin ambil data dari SIASN?",
+                                        title: "Konfirmasi ambil data dari SIASN?",
                                         type: "info",
                                         showCancelButton: true,
                                         confirmButtonColor: "#DD6B55",
-                                        confirmButtonText: "Konfirmasi",
+                                        confirmButtonText: "Ya",
                                         showLoaderOnConfirm: true,
-                                        cancelButtonText: "Batalkan",
+                                        cancelButtonText: "Batal",
                                     }).then((result) => {
                                         if(result.isConfirmed) {
                                             console.log('Confirmed!');
@@ -278,10 +275,6 @@ class ProfileController
                     SCRIPT;
 
                     $tools->append($script);
-                    // $tools->append('<a class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
-                    // $tools->append('<a style="margin-right: 10px;" class="btn btn-sm btn-warning"><i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Kirim ke SIASN</a>');
-                    if (isset($_this->apiData) and $_this->apiData != '')
-                        var_dump($_this->apiData);
                 }
             });
         $content
@@ -334,28 +327,34 @@ class ProfileController
         $e = Employee::findOrFail($profile_id);
         return $e;
     }
+    
+    public function getEmployeeNip($nip)
+    {
+        $e = Employee::where('nip_baru', $nip)->firstOrFail();
+        return $e;
+    }
 
     public function setDokumenPendukung(Form &$form)
     {
-        if ($this->use_document) {
+        if($this->use_document) {
             $_this = $this;
-            $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->rules([
+            $d = $form->file('dokumen', 'DOKUMEN')->rules([
                 'mimes:pdf',
                 'max:2048'
             ], [
-                'mimes' => 'DOKUMEN HANYA DIPERBOLEHKAN FORMAT PDF',
+                'mimes' => 'FORMAT DOKUMEN HARUS PDF',
                 'max' => 'UKURAN DOKUMEN MELEBIHI 2MB'
-            ])->disk('minio_dokumen')->name(function ($file) use ($_this) {
-                return $_this->getEmployee()->nip_baru . "_" . md5(uniqid()) . "." . $file->guessExtension();
+            ])->disk('minio_dokumen')->name(function($file) use($_this) {
+                return $_this->getEmployee()->nip_baru."_".md5(uniqid()).".".$file->guessExtension();
             });
-            $form->saving(function (Form $form) {
+            $form->saving(function(Form $form) {
             });
-            $form->submitted(function (Form $form) {
+            $form->submitted(function(Form $form) {
                 $form->ignore('dokumen');
             });
-            $form->saved(function (Form $form) use ($d, $_this) {
+            $form->saved(function(Form $form) use($d, $_this) {
                 $file = request()->file('dokumen');
-                if ($file) {
+                if($file) {
                     $newFileName = $d->prepare($file);
                     $keys = explode("#", $form->model()->simpeg_id);
                     $arr = [

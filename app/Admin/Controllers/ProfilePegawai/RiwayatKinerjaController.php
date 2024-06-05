@@ -29,9 +29,11 @@ class RiwayatKinerjaController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatKinerja());
-        $grid->model()->orderBy('tgl_penilaian', 'asc');
+        $grid->model()->orderBy('tgl_penilaian', 'desc');
         $grid->column('tahun', __('TAHUN'));
-        $grid->column('nilai', __('NILAI'));
+        $grid->column('nilai', __('HASIL KERJA'));
+        $grid->column('perilaku', __('PERILAKU KERJA'));
+        $grid->column('predikat', __('PREDIKAT KERJA'));
         $grid->column('tgl_penilaian', __('TANGGAL PENILAIAN'))->display(function ($o) {
             if ($o) {
                 return $this->tgl_penilaian->format('d-m-Y');
@@ -40,8 +42,8 @@ class RiwayatKinerjaController extends ProfileController
         });
         $grid->column('satuan_kerja', __('SATUAN  KERJA'));
         $grid->column('jabatan', __('JABATAN'));
-        $grid->column('nilai_skp', __('NILAI SKP'));
-        $grid->column('nilai_perilaku', __('NILAI PERILAKU'));
+        // $grid->column('nilai_skp', __('NILAI SKP'));
+        // $grid->column('nilai_perilaku', __('NILAI PERILAKU'));
 
         return $grid;
     }

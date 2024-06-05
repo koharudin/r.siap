@@ -21,6 +21,8 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\URL;
 use MBence\OpenTBSBundle\Services\OpenTBS;
+use Illuminate\Support\Facades\Storage;
+use DateTime;
 
 class DataPersonalController extends  ProfileController
 {
@@ -206,9 +208,36 @@ class DataPersonalController extends  ProfileController
         //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
         $TBS->Show(OPENTBS_DOWNLOAD, "drhsingkat_{$e->nip_baru}_{$today_ymd}.docx");
     }
+
     public function cetak_drh_lengkap()
     {
         $e = $this->getEmployee();
+        $this->proses_drh_lengkap($e);
+    }
+
+    public function cetak_drh_public($f)
+    {
+		$key = "WxCLKSJDU3";
+
+        $decoded = str_replace(['-', '_'], ['+', '/'], $f);
+        $padding = strlen($decoded) % 4;
+        if($padding) {
+            $decoded .= str_repeat('=', 4 - $padding);
+        }
+        $data = base64_decode($decoded);
+
+        $cipher = "aes-256-cbc";
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = substr($data, 0, $ivlen);
+        $data = substr($data, $ivlen);
+        $nip = openssl_decrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+
+        $e = $this->getEmployeeNip($nip);
+        $this->proses_drh_lengkap($e);
+    }
+    
+    public function proses_drh_lengkap($e)
+    {
         $arr_e = $e->toArray();
         $arr_e['t_nama_gelar'] = $e->nama_gelar;
         $arr_e['t_ttd'] = $e->ttd;
@@ -217,7 +246,7 @@ class DataPersonalController extends  ProfileController
         $arr_e['t_agama'] = $e->t_agama;
         $arr_e['t_tipe_pegawai'] = $e->t_tipe_pegawai;
         $e->load('obj_riwayat_jabatan');
-        $jabatan =  $e->obj_riwayat_jabatan->last();
+        $jabatan = $e->obj_riwayat_jabatan->last();
         $arr_e['jabatan'] = $jabatan ? $jabatan->nama_jabatan : '-';
         $e->load('obj_satker');
         $arr_e['t_unit_kerja'] = $e->obj_satker->name;
@@ -232,20 +261,45 @@ class DataPersonalController extends  ProfileController
         });
         $pkt_pns = $pkt_pns->first();
         $arr_e['t_tmt_pns'] = $pkt_pns ? $pkt_pns->tmt_pangkat->format('d-m-Y') : '-';
-        $arr_e['t_masa_kerja'] = '';
+
+        if(!empty($pkt_cpns->tmt_pangkat)) {
+            $date1 = new DateTime($pkt_cpns->tmt_pangkat->format('Y-m-d'));
+            $date2 = new DateTime();
+            $diff = $date1->diff($date2);
+            $years = $diff->y;
+            $months = $diff->m;
+            $days = $diff->d;
+            $arr_e['t_masa_kerja'] = $years." Tahun ".$months." Bulan ".$days." Hari";
+        } else {
+            $arr_e['t_masa_kerja'] = "-";
+        }
+        $arr_e['pertgl'] = date("d-m-Y");
 
         $TBS = new OpenTBS();
         \Carbon\Carbon::setLocale('id');
-        // load your template
-        $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_lengkap.docx';
+        
+        $file = base_path() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'drh_lengkap_new.docx';
         $TBS->LoadTemplate($file);
         $TBS->MergeField('e', $arr_e);
+
+        try {
+            $disk = Storage::disk('minio_foto')->get($e->foto);
+            $tempFileName = tempnam(sys_get_temp_dir(), 'temp-file-');
+            $tempFilePath = $tempFileName.".jpg";
+            file_put_contents($tempFilePath, $disk);
+            // var_dump($disk);
+            // die();
+            $TBS->VarRef['x'] = $tempFilePath;
+        } catch (\Illuminate\Contracts\Filesystem\FileNotFoundException $exception) {
+            $TBS->VarRef['x'] = "";
+        }
+
         $now = Carbon::now();
         $today = $now->isoFormat('dddd, D MMMM Y');
         $today_ymd = $now->isoFormat('YMMDD');
         $TBS->MergeField('o', array('date' => $today));
         $e->load('obj_riwayat_pendidikan');
-        //dd($e->obj_riwayat_pendidikan);
+        // dd($e->obj_riwayat_pendidikan);
         $TBS->MergeBlock('rp', $e->obj_riwayat_pendidikan);
 
         $e->load('obj_riwayat_pangkat');
@@ -270,7 +324,6 @@ class DataPersonalController extends  ProfileController
         });
         $TBS->MergeBlock('kin', $kin_arr);
 
-
         $e->load('obj_riwayat_uji_kompetensi');
         $uk_arr = [];
         $e->obj_riwayat_uji_kompetensi->each(function ($t) use (&$uk_arr) {
@@ -279,7 +332,6 @@ class DataPersonalController extends  ProfileController
             $uk_arr[] = $r_arr;
         });
         $TBS->MergeBlock('uk', $uk_arr);
-
 
         $e->load('obj_riwayat_jabatan');
         $jab_arr = [];
@@ -339,7 +391,6 @@ class DataPersonalController extends  ProfileController
             $r_arr['jp'] = $t->jumlah_jam;
             $dfung_arr[] = $r_arr;
         });
-
         $TBS->MergeBlock('ko2', $dfung_arr);
 
         $e->load('obj_riwayat_diklat_teknis');
@@ -361,7 +412,6 @@ class DataPersonalController extends  ProfileController
         });
         $TBS->MergeBlock('ko4', $d_arr);
 
-
         $e->load('obj_riwayat_kursus');
         $d_arr = [];
         $e->obj_riwayat_kursus->each(function ($t) use (&$d_arr) {
@@ -370,8 +420,9 @@ class DataPersonalController extends  ProfileController
         });
         $TBS->MergeBlock('ko5', $d_arr);
 
-        // send the file
-        //$TBS->Show(OPENTBS_FILE, 'drh2.docx');
+        // $TBS->Show(OPENTBS_FILE, 'drh2.docx');
         $TBS->Show(OPENTBS_DOWNLOAD, "drhlengkap_{$e->nip_baru}_{$today_ymd}.docx");
+        unlink($tempFilePath);
+        unlink($tempFileName);
     }
 }

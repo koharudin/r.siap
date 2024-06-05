@@ -5,6 +5,7 @@ use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
 use App\Models\Pangkat;
+use App\Models\Presensi\RiwayatIzin;
 use Carbon\Carbon;
 use Encore\Admin\Admin;
 use Illuminate\Http\Request;
@@ -69,6 +70,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 Route::get('cek-login', function () {
     return response()->json(1, 200);
+});
+
+Route::get('cekpresensi',function(){
+	$rs = RiwayatIzin::take(7)->get();
+	return response()->json($rs, 200);
 });
 
 

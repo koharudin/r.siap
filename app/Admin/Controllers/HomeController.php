@@ -17,12 +17,17 @@ class HomeController extends Controller
     {
         return $content
             ->title('Dashboard')
-            ->description('Description...')
             ->row(Dashboard::title())
             ->row(function (Row $row) {
 
                 $row->column(4, function (Column $column) {
                     $column->append(self::user_profile()); 
+                });
+            })
+	    ->row(function (Row $row) {
+
+                $row->column(12, function (Column $column) {
+                    $column->append(self::statistik_chart()); 
                 });
             });
     }
@@ -39,10 +44,14 @@ class HomeController extends Controller
 
         return view('admin::dashboard.environment', compact('envs'));
     }
-    public function download_dokumen($f){
+    protected static function statistik_chart(){
+        return view('admin::dashboard.statistik');
+    }
+
+    public function download_dokumen($f) {
         $file = base64_decode($f);
         $disk = Storage::disk("minio_dokumen");
-        if($disk->exists($file)){
+        if($disk->exists($file)) {
            return $disk->response($file);
         }
         else abort(404);

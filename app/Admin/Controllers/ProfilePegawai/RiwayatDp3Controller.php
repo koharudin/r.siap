@@ -27,7 +27,7 @@ class RiwayatDp3Controller extends  ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatDp3());
-        $grid->model()->orderBy('tahun','asc');
+        $grid->model()->orderBy('tahun','desc');
         $grid->column('tahun', __('TAHUN'));
         $grid->column('kesetiaan', __('KESETIAAN'));
         $grid->column('prestasi', __('PRESTASI'));
