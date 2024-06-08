@@ -27,7 +27,7 @@ class RiwayatPengalamanKerjaController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPengalamanKerja());
-        $grid->model()->orderBy('tgl_kerja','asc');
+        $grid->model()->orderBy('tgl_kerja','desc');
         $grid->column('instansi', __('INSTANSI'));
         $grid->column('jabatan', __('JABATAN'));
         $grid->column('masa_kerja_tahun', __('MASA KERJA TAHUN'));

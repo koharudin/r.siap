@@ -29,7 +29,7 @@ class RiwayatNikahController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatNikah());
-        $grid->model()->orderBy('tgl_kawin','asc');
+        $grid->model()->orderBy('tgl_kawin','desc');
         $grid->column('name', __('NAMA SUAMI/ISTRI'));
         $grid->column('obj_status_menikah.name', __('STATUS PERNIKAHAN'));
         
@@ -141,8 +141,8 @@ class RiwayatNikahController extends ProfileController
         
         $form->divider('KETERANGAN CERAI');
         $form->text('no_sk_cerai', __('NO SK CERAI'));
-        $form->date('tmt_sk_cerai', __('TMT SK CERAI'))->default(date('Y-m-d'));
-        $form->date('tgl_sk_cerai', __('TGL SK CERAI'))->default(date('Y-m-d'));
+        $form->date('tmt_sk_cerai', __('TMT SK CERAI'));
+        $form->date('tgl_sk_cerai', __('TGL SK CERAI'));
         
 
         return $form;

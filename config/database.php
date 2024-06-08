@@ -65,11 +65,11 @@ return [
         'db_presensi' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => 'localhost',
-            'port' => '3306',
-            'database' => 'anri_presensi',
-            'username' => 'root',
-            'password' => 'root',
+            'host' => env('DB_PRESENSI_HOST', '127.0.0.1'),
+            'port' => env('DB_PRESENSI_PORT', '3306'),
+            'database' => env('DB_PRESENSI_DATABASE', 'forge'),
+            'username' => env('DB_PRESENSI_USERNAME', 'forge'),
+            'password' => env('DB_PRESENSI_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -121,7 +121,19 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
-
+        'presensi_2020' => [
+            'driver' => 'mysql',
+            'host' => '10.37.1.100',
+            'port' => '8008',
+            'database' => 'presensi_2020',
+            'username' => 'root',
+            'password' => 'traspaC123',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
 
     /*

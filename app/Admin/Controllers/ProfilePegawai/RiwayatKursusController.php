@@ -30,7 +30,7 @@ class RiwayatKursusController extends ProfileController
     {
         $grid = new Grid(new RiwayatKursus());
 
-        $grid->model()->orderBy('tgl_mulai', 'asc');
+        $grid->model()->orderBy('tgl_mulai', 'desc');
         $grid->column('nama', __('NAMA KURSUS'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
         $grid->column('tahun', __('TAHUN'));

@@ -30,7 +30,7 @@ class RiwayatDiklatFungsionalController extends ProfileController
     {
         $grid = new Grid(new RiwayatDiklatFungsional());
         $grid->model()->diklatfungsional();
-        $grid->model()->orderBy('tgl_mulai','asc');
+        $grid->model()->orderBy('tgl_mulai','desc');
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
         $grid->column('tahun', __('TAHUN'));
