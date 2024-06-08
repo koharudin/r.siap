@@ -12,6 +12,8 @@ use App\Models\Employee;
 use App\Models\RiwayatJabatan;
 use App\Models\UnitKerja;
 use App\Models\Tupas;
+use Illuminate\Http\Request;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 
 class DashboardTupasController extends AdminController
@@ -75,12 +77,7 @@ class DashboardTupasController extends AdminController
             ->row(function (Row $row) {
                 $row->column(8, $this->grid1());
                 $row->column(4, function (Column $column) {
-                    $column->append('<div class="text-right"><form action="' . //route('import').
-                        '" method="POST" enctype="multipart/form-data">
-                    <input class="form-control" type="file" name="excel_file" accept=".xlsx, .xls">
-                    <button class="btn btn-primary" type="submit">Import Excel</button>
-                    </form></div>');
-
+                    $column->append($this->formImportTupasExcel()->render());
                     $column->append($this->grid2()->render());
                 });
             });
@@ -409,5 +406,28 @@ class DashboardTupasController extends AdminController
         });
 
         return $grid;
+    }
+    public function importTupasExcel(Request $request)
+    {
+        // Validasi file Excel
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls|max:2048', // Sesuaikan dengan kebutuhan
+        ]);
+
+        // Proses impor Excel
+        $file = $request->file('excel_file');
+
+        // Logika impor dengan rap2hpoutre/fast-excel
+        (new FastExcel)->import($file, function ($line) {
+            // Lakukan proses penyimpanan data ke tabel database
+            Tupas::create($line);
+        });
+
+        // Redirect pesan sukses
+        return redirect()->back()->with('success', 'Data imported successfully!');
+    }
+    public function formImportTupasExcel()
+    {
+        return view('admin.importtupasexcel');
     }
 }

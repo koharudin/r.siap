@@ -32,7 +32,7 @@ class RiwayatPendidikanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPendidikan());
-        $grid->model()->orderBy('tahun','asc');
+        $grid->model()->orderBy('tahun','desc');
         $grid->column('jurusan', __('JURUSAN'));
         $grid->column('nama_sekolah', __('NAMA SEKOLAH'));
         $grid->column('tempat_sekolah', __('TEMPAT SEKOLAH'));

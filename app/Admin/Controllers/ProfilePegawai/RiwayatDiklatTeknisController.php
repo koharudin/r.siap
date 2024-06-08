@@ -32,7 +32,7 @@ class RiwayatDiklatTeknisController extends ProfileController
     {
         $grid = new Grid(new RiwayatDiklatTeknis());
         $grid->model()->diklatteknis();
-        $grid->model()->orderBy('tgl_mulai', 'asc');
+        $grid->model()->orderBy('tgl_mulai', 'desc');
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));
         $grid->column('tahun', __('TAHUN'));

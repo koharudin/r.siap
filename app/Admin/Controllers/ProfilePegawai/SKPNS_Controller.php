@@ -44,13 +44,19 @@ class SKPNS_Controller extends  ProfileController
         }
 
         $form = new Form(new RiwayatSKPNS());
-        if($dokumen){
-            $url = route('admin.download.dokumen', [
-                'f' => base64_encode($dokumen->file)
-            ]);
-            $form->tools(function($tools) use($url){
-                $tools->add('<a href="'.$url.'" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
-            });
+        if($dokumen) {
+            if(!empty($dokumen->file)) {
+                $url = route('admin.download.dokumen', [
+                    'f' => base64_encode($dokumen->file)
+                ]);
+                $form->tools(function($tools) use($url) {
+                    $tools->add('<a href="'.$url.'" target="_blank" class="btn btn-sm btn-danger"><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
+                });
+            } else {
+                $form->tools(function($tools) {
+                    $tools->add('<a href="#" class="btn btn-sm btn-danger" disabled><i class="fa fa-download"></i>&nbsp;&nbsp;Download SK</a>');
+                });
+            }
         }
         $form->hidden('employee_id', 'ID');
         // Add an input box of type text
@@ -69,7 +75,7 @@ class SKPNS_Controller extends  ProfileController
             $form->text('pejabat_penetap_nip', 'NIP');
             $form->text('pejabat_penetap_nama', 'NAMA');
         });
-
+        $this->setDokumenPendukung($form);
         $form->tools(function ($tools) {
             $tools->disableList();
             $tools->disableView();

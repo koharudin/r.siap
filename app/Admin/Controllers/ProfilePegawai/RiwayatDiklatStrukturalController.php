@@ -33,7 +33,7 @@ class RiwayatDiklatStrukturalController extends ProfileController
     {
         $grid = new Grid(new RiwayatDiklatStruktural());
 
-        $grid->model()->orderBy('tgl_mulai', 'asc');
+        $grid->model()->orderBy('tgl_mulai', 'desc');
         $grid->column('diklat', __('DIKLAT'));
         $grid->column('nama_diklat', __('NAMA DIKLAT'));
         $grid->column('penyelenggara', __('PENYELENGGARA'));

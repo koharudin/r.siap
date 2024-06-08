@@ -30,7 +30,7 @@ class RiwayatHukumanController  extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatHukuman());
-        $grid->model()->orderBy('tmt_sk', 'asc');
+        $grid->model()->orderBy('tmt_sk', 'desc');
 
         $grid->column('tingkat_hukuman', __('TINGKAT'))->display(function($o) {
             if($o == "R") {

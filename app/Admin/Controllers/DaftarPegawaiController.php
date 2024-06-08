@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class DaftarPegawaiController extends Controller
 {
-    public $title  = 'Daftar Pegawai';
+    public $title  = 'Daftar Pegawai Aktif';
     public function index(Content $content)
     {
 
@@ -26,6 +26,7 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
+        $grid->model()->whereIn('status_pegawai_id', [1, 2, 23]);
         $grid->model()->orderBy('first_name', 'asc');
         $grid->paginate(10);
         $grid->actions(function ($actions) {
@@ -36,8 +37,10 @@ class DaftarPegawaiController extends Controller
         });
         $grid->disableCreateButton();
         $grid->disableRowSelector();
-        $grid->column('first_name', __('PEGAWAI'))->display(function ($o) {
-            return $this->first_name . " <br> " . $this->nip_baru;
+        $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
+            $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
+
+            return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
         });
         $grid->column('email_kantor', __('EMAIL KANTOR'));
         $grid->column('email', __('EMAIL'));

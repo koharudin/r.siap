@@ -31,7 +31,8 @@ class RiwayatPenghargaanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPenghargaan());
-        $grid->model()->orderBy('tgl_sk', 'asc');
+        
+        $grid->model()->orderBy('tgl_sk', 'desc');
         $grid->column('nama_penghargaan', __('NAMA PENGHARGAAN'));
         $grid->column('no_sk', __('NO SK'));
         $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
