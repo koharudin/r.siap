@@ -40,8 +40,8 @@ class DaftarUsulanController extends Controller
             $request->data = [
                 "action" => $action,
                 "id" => $id,
-                "ref_data" =>json_decode($ref_data),
-                "new_data" => json_decode($action==3?$ref_data:$new_data)
+                "ref_data" =>$ref_data,
+                "new_data" => $action==3?$ref_data:$new_data
             ];
             $request->action = $action;
             $request->category_id = $layanan_id;
@@ -56,8 +56,8 @@ class DaftarUsulanController extends Controller
             $requestLog->values = [
                 "status_id"=>StatusUsulan::SEND,
                 "keterangan"=>"Pembuatan Usulan ",
-                "ref_data" =>json_decode($ref_data),
-                "new_data" => json_decode($action==3?$ref_data:$new_data)
+                "ref_data" =>$ref_data,
+                "new_data" => $action==3?$ref_data:$new_data
             ];
             $requestLog->save();
             DB::commit();
