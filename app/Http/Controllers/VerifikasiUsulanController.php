@@ -8,19 +8,20 @@ use App\Models\Request as RequestPelayanan;
 use App\Models\RequestLog;
 use App\Models\RequestStep;
 use App\Models\RiwayatUsulan;
-use App\Models\StatusUsulan;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Zendesk\API\Resources\Core\Requests;
 
 class VerifikasiUsulanController extends Controller
 {
     public function list()
     {
-        $list = RequestPelayanan::with(['obj_status','obj_employee', 'obj_kategori']);
+        $list = RequestPelayanan::with(['obj_status', 'obj_employee', 'obj_kategori']);
+        $list->where("status_id",">=",RequestStep::SEND);
         return response()->json($list->orderBy('created_at', 'desc')->paginate());
     }
     public function verifikasi()

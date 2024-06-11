@@ -25,7 +25,7 @@ class Request extends Model
         return $this->hasOne(Employee::class, 'id', 'employee_id');
     }
     public function obj_status(){
-        return $this->hasOne(StatusUsulan::class,'id','status_id');
+        return $this->hasOne(RequestStep::class,'id','status_id');
     } 
     public function obj_kategori(){
         return $this->hasOne(RequestCategory::class,'id','category_id');
@@ -58,12 +58,12 @@ class Request extends Model
 
     public function scopeInboxVerifikator($query)
     {
-        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK, RequestStep::$SUBMIT, RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+        $query->whereIn('status_id', [RequestStep::REVISI, RequestStep::TOLAK, RequestStep::SEND, RequestStep::INVERIFIKASI, RequestStep::TERIMA]);
     }
     public function scopeMyInboxVerifikator($query, $verifikator_id)
     {
         $query->where("verifikator_id", $verifikator_id);
-        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK,  RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+        $query->whereIn('status_id', [RequestStep::REVISI, RequestStep::TOLAK,  RequestStep::INVERIFIKASI, RequestStep::TERIMA]);
     }
 
     public $date = ['date_created'];

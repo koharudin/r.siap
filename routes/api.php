@@ -159,6 +159,9 @@ Route::post('/login-token', function () {
     $username = request()->input("username");
     $password = request()->input("password");
     $user = Administrator::where("username", $username)->get()->first();
+    if(!$user){
+        return response()->json("User tidak ditemukan", 404);
+    }
     if (md5($password) == $user->password_x) {
 
         $token = $user->createToken('authToken')->accessToken;
@@ -222,6 +225,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
     Route::post("usulan/{uuid}/hapus", [DaftarUsulanController::class, "hapus"]);
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
+    Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
     Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
@@ -372,11 +376,6 @@ Route::group(["prefix" => "pelayanan"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('request-category', RequestCategoryController::class);
 
-        Route::group(['middleware' => 'role:verifikator'], function () {
-            Route::post('/verifikasi-request/{uuid_request}/terima', [VerifikasiController::class, "terima"]);
-            Route::post('/verifikasi-request/{uuid_request}/tolak', [VerifikasiController::class, "tolak"]);
-        });
-        //verifikator
 
         Route::resource('requests', RequestController::class);
         Route::resource('line-approval', LineApproval::class);

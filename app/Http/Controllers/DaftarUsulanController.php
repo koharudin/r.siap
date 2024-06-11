@@ -3,18 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\LineApproval;
 use App\Models\Request as RequestPelayanan;
 use App\Models\RequestLog;
 use App\Models\RequestStep;
-use App\Models\RiwayatUsulan;
-use App\Models\StatusUsulan;
-use Auth;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class DaftarUsulanController extends Controller
 {
@@ -47,14 +40,14 @@ class DaftarUsulanController extends Controller
             $request->category_id = $layanan_id;
             $request->employee_id =  $employee->id;
             $request->creator = $user->id;
-            $request->status_id = StatusUsulan::SEND;
+            $request->status_id = RequestStep::SEND;
             $request->save();
 
             $requestLog = new RequestLog();
             $requestLog->user_id = $user->id;
             $requestLog->request_id = $request->id;
             $requestLog->values = [
-                "status_id"=>StatusUsulan::SEND,
+                "status_id"=>RequestStep::SEND,
                 "keterangan"=>"Pembuatan Usulan ",
                 "ref_data" =>$ref_data,
                 "new_data" => $action==3?$ref_data:$new_data

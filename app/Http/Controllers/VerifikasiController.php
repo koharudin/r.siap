@@ -42,44 +42,62 @@ class VerifikasiController extends Controller
 
         return $query->paginate(10);
     }
-
-    public function tolak(ModelsRequest $request)
+    public function doVerify(ModelsRequest $request)
     {
         $validator = Validator::make(request()->all(), [
-            'keterangan' => 'required',
+            'uuid' => 'required',
+            'alasan' => 'required',
+            'action' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors(),
-                'message' => 'Harap lengkapi data yang diperlukan.',
+                'message' => 'Harap lengkapi alasan.',
             ], 422);
         }
+        $record = ModelsRequest::where("uuid",request()->input("uuid"))->get()->first();
+        if(!$record){
+            return response()->json([
+                'message' => 'Data tidak ditemukan',
+            ], 422);
+        }
+        if($record->status_id == RequestStep::DRAFT){
+            return response()->json([
+                'message' => 'Status Usulan masih DRAFT',
+            ], 422);
+        }
+        if($record->status_id == RequestStep::REVISI || $record->status_id == RequestStep::TERIMA || $record->status_id == RequestStep::TOLAK){
+            return response()->json([
+                'message' => 'Status Usulan SUDAH DIVERIFIKASI',
+            ], 422);
+        }
+        if(request()->input("action")=="terima"){
+            return $this->terima($record);
+        }
+        else if(request()->input("action")=="tolak"){
+            return $this->tolak($record);
+        }
+    }
+    public function tolak(ModelsRequest $request)
+    {
+        
         DB::beginTransaction();
-        $request->status_id = RequestStep::$TOLAK;
+        $request->status_id = RequestStep::TOLAK;
         $request->verifikator_id  = Auth::user()->id;
         $request->save();
-        RequestLog::addLog($request, request()->input("keterangan"));
+        RequestLog::addLog($request, request()->input("alasan"));
         DB::commit();
         return response()->json($request, 200);
     }
     public function terima(ModelsRequest $request)
     {
-        $validator = Validator::make(request()->all(), [
-            'keterangan' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors(),
-                'message' => 'Harap lengkapi data yang diperlukan.',
-            ], 422);
-        }
+        
         DB::beginTransaction();
-        $request->status_id = RequestStep::$TERIMA;
+        $request->status_id = RequestStep::TERIMA;
         $request->verifikator_id  = Auth::user()->id;
         $request->save();
-        RequestLog::addLog($request, request()->input("keterangan"));
+        RequestLog::addLog($request, request()->input("alasan"));
         DB::commit();
         return response()->json($request, 200);
     }
