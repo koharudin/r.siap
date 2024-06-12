@@ -10,7 +10,6 @@ use App\Admin\Controllers\RiwayatHukumanController as ControllersRiwayatHukumanC
 use App\Models\Penghargaan;
 use App\Admin\Controllers\DashboardTupasController as ControllersDashboardTupasController;
 
-
 Admin::routes();
 
 Route::group(['middleware' => ['web']], function () {
