@@ -64,6 +64,7 @@ return [
         ],
         'db_presensi' => [
             'driver' => 'mysql',
+            'url' => env('DATABASE_PRESENSI_URL'),
             'url' => env('DATABASE_URL'),
             'host' => env('DB_PRESENSI_HOST', '127.0.0.1'),
             'port' => env('DB_PRESENSI_PORT', '3306'),

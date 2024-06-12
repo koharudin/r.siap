@@ -65,7 +65,7 @@ class RequestController extends Controller
         $record->creator = Auth::user()->id;
         $record->employee_id = Auth::user()->id;
         $record->category_id = 1;
-        $record->status_id = RequestStep::$DRAFT;
+        $record->status_id = RequestStep::DRAFT;
         $record->date_created = Carbon::now();
         $record->old_data = [];
         $record->request_data = [];
@@ -117,7 +117,7 @@ class RequestController extends Controller
         $request->creator = Auth::user()->id;
         $request->employee_id = Auth::user()->id;
         $request->category_id = 1;
-        $request->status_id = RequestStep::$DRAFT;
+        $request->status_id = RequestStep::DRAFT;
         $request->date_created = Carbon::now();
         $request->old_data = [];
         $request->request_data = [];

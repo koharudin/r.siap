@@ -99,12 +99,18 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatKinerja::class, 'employee_id', 'id')->orderBy('tgl_penilaian', 'asc');
     }
-
+    public function obj_riwayat_angkakredit()
+    {
+        return $this->hasMany(RiwayatAngkaKredit::class, 'employee_id', 'id')->orderBy('tmt_pak', 'asc');
+    }
     public function obj_riwayat_uji_kompetensi()
     {
         return $this->hasMany(RiwayatUjiKompetensi::class, 'employee_id', 'id')->orderBy('tanggal', 'asc');
     }
-
+    public function obj_requests()
+    {
+        return $this->hasMany(Request::class, 'employee_id', 'id');
+    }
     public function obj_riwayat_pangkat()
     {
         return $this->hasMany(RiwayatPangkat::class, 'employee_id', 'id')->orderBy('tmt_pangkat', 'asc');
@@ -112,6 +118,10 @@ class Employee extends Model
     public function obj_riwayat_kgb()
     {
         return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
+    }
+    public function obj_riwayat_anak()
+    {
+        return $this->hasMany(RiwayatAnak::class, 'employee_id', 'id')->orderBy('birth_date', 'asc');
     }
     public function obj_last_riwayat_jabatan()
     {
@@ -140,6 +150,46 @@ class Employee extends Model
     public function obj_riwayat_skcpns()
     {
         return $this->hasMany(RiwayatSKCPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
+    }
+    public function obj_riwayat_skpns()
+    {
+        return $this->hasMany(RiwayatSKPNS::class, 'employee_id', 'id')->orderBy('tgl_sk', 'desc');
+    }
+    public function obj_riwayat_sumpah()
+    {
+        return $this->hasMany(RiwayatSumpah::class, 'employee_id', 'id')->orderBy('tgl_sumpah', 'desc');
+    }
+    public function obj_riwayat_mertua()
+    {
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_organisasi()
+    {
+        return $this->hasMany(RiwayatOrganisasi::class, 'employee_id', 'id');
+    }
+    public function obj_riwayat_orangtua()
+    {
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_pengalamankerja()
+    {
+        return $this->hasMany(RiwayatPengalamanKerja::class, 'employee_id', 'id')->orderBy('tgl_kerja', 'desc');
+    }
+    public function obj_riwayat_potensidiri()
+    {
+        return $this->hasMany(RiwayatPotensiDiri::class, 'employee_id', 'id')->orderBy('tahun', 'desc');
+    }
+    public function obj_riwayat_rekammedis()
+    {
+        return $this->hasMany(RiwayatRekamMedis::class, 'employee_id', 'id')->orderBy('tgl_periksa', 'desc');
+    }
+    public function obj_riwayat_saudara()
+    {
+        return $this->hasMany(RiwayatSaudara::class, 'employee_id', 'id')->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_ujikompetensi()
+    {
+        return $this->hasMany(RiwayatUjiKompetensi::class, 'employee_id', 'id')->orderBy('tanggal', 'desc');
     }
     public function calculateNilaiMasaKerja()
     {
@@ -176,6 +226,15 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatJabatan::class, 'employee_id', 'id')->orderBy('tmt_jabatan', 'asc');
     }
+    public function obj_riwayat_dp3()
+    {
+        return $this->hasMany(RiwayatDp3::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
+    public function obj_riwayat_gaji()
+    {
+        return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
+    }
+    
     public function obj_riwayat_diklat_struktural()
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
@@ -192,6 +251,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatHukuman::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
     }
+    public function obj_riwayat_kinerja()
+    {
+        return $this->hasMany(RiwayatKinerja::class, 'employee_id', 'id')->orderBy('tahun', 'asc');
+    }
     public function obj_riwayat_penghargaan()
     {
         return $this->hasMany(RiwayatPenghargaan::class, 'employee_id', 'id')->orderBy('tgl_sk', 'asc');
@@ -203,6 +266,14 @@ class Employee extends Model
     public function obj_riwayat_kursus()
     {
         return $this->hasMany(RiwayatKursus::class, 'employee_id', 'id')->orderBy('tgl_mulai', 'asc');
+    }
+    public function obj_riwayat_nikah()
+    {
+        return $this->hasMany(RiwayatNikah::class, 'employee_id', 'id')->orderBy('tgl_kawin', 'asc');
+    }
+    public function obj_riwayat_penguasaanbahasa()
+    {
+        return $this->hasMany(RiwayatPenguasaanBahasa::class, 'employee_id', 'id')->orderBy('tgl_expired', 'asc');
     }
     public function getUsiaAttribute($from = null)
     {
@@ -281,5 +352,6 @@ class Employee extends Model
             $this->last_riwayat_pendidikan_id = null;
         $this->save();
     }
+
     public $dates = ['birth_date', 'tgl_pensiun'];
 }

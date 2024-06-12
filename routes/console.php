@@ -7,8 +7,6 @@ use App\Models\Employee;
 use App\Models\RiwayatAnak;
 use App\Models\RiwayatNikah;
 use App\Models\RiwayatOrangTua;
-use App\Models\RiwayatUsulan;
-use Encore\Admin\Facades\Admin;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;

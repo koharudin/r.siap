@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RequestLog extends Model
@@ -14,8 +15,16 @@ class RequestLog extends Model
     public $table  = 'request_log';
     private $cacheKeyPrefix = "request_log_id_";
 
+    public function obj_user(){
+        return $this->hasOne(Administrator::class,'id','user_id');
+    } 
+    public function obj_riwayat_usulan(){
+        return $this->hasOne(Request::class,'id','request_id');
+    } 
+
     public static function  addLog(Request $request, $keterangan)
     {
+        DB::beginTransaction();
         $log = new RequestLog();
         $log->request_id = $request->id;
         $log->user_id = Auth::user()->id;
@@ -25,6 +34,7 @@ class RequestLog extends Model
             'obj_request' => $request,
         ];
         $log->save();
+        DB::commit();
     }
     protected static function booted(): void
     {
