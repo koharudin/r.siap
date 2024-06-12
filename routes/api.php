@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\FlexiportController;
+use App\Http\Controllers\RequestCategoryController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\VerifikasiController;
 use App\Models\Administrator;
 use App\Models\Agama;
 use App\Models\Employee;
+use App\Models\LineApproval;
 use App\Models\Pangkat;
 use App\Models\Presensi\RiwayatIzin;
 use Carbon\Carbon;
@@ -90,4 +94,25 @@ Route::post('flexiport', function () {
         return response()->json($l, 200);
     }
     return response()->json([], 200);
+});
+
+
+Route::group(["prefix" => "pelayanan"], function () {
+    Route::group(["prefix" => "public"], function () {
+        Route::get('request-categories', function () {
+            return 123;
+        });
+    });
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::resource('request-category', RequestCategoryController::class);
+
+        Route::group(['middleware' => 'role:verifikator'], function () {
+            Route::post('/verifikasi-request/{uuid_request}/terima', [VerifikasiController::class, "terima"]);
+            Route::post('/verifikasi-request/{uuid_request}/tolak', [VerifikasiController::class, "tolak"]);
+        });
+        //verifikator
+
+        Route::resource('requests', RequestController::class);
+        Route::resource('line-approval', LineApproval::class);
+    });
 });
