@@ -17,21 +17,25 @@ class AuthController extends BaseAuthController
                 $password = Administrator::where('username', $request->username)->select('password_x')->first();
                 $request->merge(['password' => $password->password_x]);
                 $md5 = 1;
+                session(['token_sso' => $request->refresh_token]);
             }
         }
+        $request->merge(['md5' => $md5]);
 
         $this->loginValidator($request->all())->validate();
 
-        // $users = Administrator::where('username', $request->username)->where('password_x', md5($request->password))->first();
-        // if(isset($users)) {
-        //     if(is_null($users->change_password)) {
-        //         return view('admin.password_check', [
-        //             'username' => $users->username,
-        //             'pass' => $request->password,
-        //             'jenis' => $request->jenis,
-        //         ]);
-        //     }
-        // }
+        if($md5 == 0) {
+            $users = Administrator::where('username', $request->username)->where('password_x', md5($request->password))->first();
+            if(isset($users)) {
+                if(is_null($users->change_password)) {
+                    return view('admin.password_check', [
+                        'username' => $users->username,
+                        'pass' => $request->password,
+                        'jenis' => $request->jenis,
+                    ]);
+                }
+            }
+        }
         
         $credentials = $request->only([$this->username(), 'password']);
         $credentials['password'] = ($md5 == 0) ? md5($credentials['password']) : $credentials['password'];
@@ -63,6 +67,6 @@ class AuthController extends BaseAuthController
 
         $request->session()->invalidate();
 
-        return redirect('https://sso-siasn.bkn.go.id/auth/realms/public-siasn/protocol/openid-connect/logout?post_logout_redirect_uri=https://kepegawaian.anri.go.id/siap/');
+        return redirect('https://sso-siasn.bkn.go.id/auth/realms/public-siasn/protocol/openid-connect/logout?post_logout_redirect_uri=https://kepegawaian.anri.go.id/siap');
     }
 }

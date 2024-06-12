@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
+  <title>{{ config('admin.title') }} | {{ trans('admin.login') }}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
@@ -14,40 +14,46 @@
 
   <style>
     #loadingIndicator {
-        display: block;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(219, 215, 210, 0.95);
-        padding: 100%;
-        border-radius: 10px;
-        text-align: center;
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(219, 215, 210, 0.95);
+      padding: 100%;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 9999;
     }
     .loader {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        border: 3px solid rgba(0, 0, 0, 0.3);
-        border-radius: 50%;
-        border-top-color: #007bff;
-        animation: spin 1s ease-in-out infinite;
-        margin-right: 10px;
-        margin-bottom: 5px;
-        vertical-align: middle;
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: #007bff;
+      animation: spin 1s ease-in-out infinite;
+      /* margin-right: 10px; */
+      margin-bottom: 5px;
+      vertical-align: middle;
     }
     .loading-text {
-        display: inline-block;
-        font-size: 16px;
+      display: inline-block;
+      font-size: 20px;
+      color: black;
     }
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 
 <body onload="actionLoginSso()">
+  <div id="loadingIndicator">
+    <div class="loader"></div>
+    <p class="loading-text">Login SSO</p>
+  </div>
   <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
@@ -77,11 +83,11 @@
                     <div class="alert alert-danger">{{ $message }}</div>
                   @endforeach
                 @endif
-                <!-- @if(env('USE_CAPTCHA'))
+                @if(env('USE_CAPTCHA'))
                   @error('g-recaptcha-response')
                     <div class="alert alert-danger">{{ $message }}</div>
                   @enderror
-                @endif -->
+                @endif
                 @if(session('success'))
                   <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -106,12 +112,12 @@
                   <label class="label" for="password">Password</label>
                   <input type="password" class="form-control" name="password" placeholder="Masukan password" required>
                 </div>
-                <!-- <div class="form-group mb-3">
+                <div class="form-group mb-3">
                   @if(env('USE_CAPTCHA'))
                     {!! NoCaptcha::renderJs() !!}
                     {!! NoCaptcha::display() !!}
                   @endif
-                </div> -->
+                </div>
                 <div class="form-group">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
                   <input type="hidden" name="jenis" value=2>
@@ -120,7 +126,7 @@
                 <div class="form-group">
                   <center>
                     <!-- <a href="{{ route('auth.sso') }}" class='btn btn-primary rounded submit px-3'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a> -->
-                    <a onclick="keycloak.login()" class='btn btn-primary rounded submit px-3 col-md-6'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
+                    <a onclick="keycloak.login()" class='btn btn-info rounded submit px-3 col-md-6' style="color: black;"><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
                   </center>
                 </div>
               </form>
@@ -155,6 +161,7 @@
       }
       try {
         if(authenticate) {
+          $('#loadingIndicator').show();
           var credentials = {
             _token: '{{ csrf_token() }}',
             refresh_token: keycloak.refreshToken,

@@ -27,8 +27,8 @@ class SiasnController
         ));
         $response = curl_exec($curl);
         curl_close($curl);
-        $result = json_decode($response)->access_token;
-        if(isset($result) && !empty($result)) {
+        $result = json_decode($response);
+        if(isset($result->access_token) && !empty($result->access_token)) {
             return true;
         } else {
             return false;

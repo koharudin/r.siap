@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
+  <title>{{ config('admin.title') }} | {{ trans('admin.login') }}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
@@ -131,5 +131,4 @@
   <script src="{{ admin_asset('login/js/bootstrap.min.js') }}"></script>
   <script src="{{ admin_asset('login/js/main.js') }}"></script>
 </body>
-
 </html>
