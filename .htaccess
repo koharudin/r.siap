@@ -2,3 +2,15 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule (.*) /index.php/$1 [L]
+
+<IfModule mod_headers.c>
+	Header always append X-Frame-Options SAMEORIGIN
+	Header set Content-Security-Policy "frame-ancestors 'self';"
+	Header set X-Xss-Protection "1; mode=block"
+	Header set X-Content-Type-Options "nosniff"
+	Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	Header set Referrer-Policy "strict-origin-when-cross-origin"
+	Header set Feature-Policy "geolocation 'self'; vibrate 'none'"
+	Header set Permissions-Policy "geolocation=self"
+	Header set X-Permitted-Cross-Domain-Policies "none"
+</IfModule>

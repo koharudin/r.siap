@@ -14,40 +14,46 @@
 
   <style>
     #loadingIndicator {
-        display: block;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(219, 215, 210, 0.95);
-        padding: 100%;
-        border-radius: 10px;
-        text-align: center;
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(219, 215, 210, 0.95);
+      padding: 100%;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 9999;
     }
     .loader {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        border: 3px solid rgba(0, 0, 0, 0.3);
-        border-radius: 50%;
-        border-top-color: #007bff;
-        animation: spin 1s ease-in-out infinite;
-        margin-right: 10px;
-        margin-bottom: 5px;
-        vertical-align: middle;
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: #007bff;
+      animation: spin 1s ease-in-out infinite;
+      /* margin-right: 10px; */
+      margin-bottom: 5px;
+      vertical-align: middle;
     }
     .loading-text {
-        display: inline-block;
-        font-size: 16px;
+      display: inline-block;
+      font-size: 20px;
+      color: black;
     }
     @keyframes  spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 
 <body onload="actionLoginSso()">
+  <div id="loadingIndicator">
+    <div class="loader"></div>
+    <p class="loading-text">Login SSO</p>
+  </div>
   <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
@@ -77,7 +83,7 @@
                     <div class="alert alert-danger"><?php echo e($message, false); ?></div>
                   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endif; ?>
-                <!-- <?php if(env('USE_CAPTCHA')): ?>
+                <?php if(env('USE_CAPTCHA')): ?>
                   <?php $__errorArgs = ['g-recaptcha-response'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -88,7 +94,7 @@ $message = $__bag->first($__errorArgs[0]); ?>
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                <?php endif; ?> -->
+                <?php endif; ?>
                 <?php if(session('success')): ?>
                   <div class="alert alert-success"><?php echo e(session('success'), false); ?></div>
                 <?php endif; ?>
@@ -113,14 +119,14 @@ unset($__errorArgs, $__bag); ?>
                   <label class="label" for="password">Password</label>
                   <input type="password" class="form-control" name="password" placeholder="Masukan password" required>
                 </div>
-                <!-- <div class="form-group mb-3">
+                <div class="form-group mb-3">
                   <?php if(env('USE_CAPTCHA')): ?>
                     <?php echo NoCaptcha::renderJs(); ?>
 
                     <?php echo NoCaptcha::display(); ?>
 
                   <?php endif; ?>
-                </div> -->
+                </div>
                 <div class="form-group">
                   <input type="hidden" name="_token" value="<?php echo e(csrf_token(), false); ?>">
                   <input type="hidden" name="jenis" value=2>
@@ -129,7 +135,7 @@ unset($__errorArgs, $__bag); ?>
                 <div class="form-group">
                   <center>
                     <!-- <a href="<?php echo e(route('auth.sso'), false); ?>" class='btn btn-primary rounded submit px-3'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a> -->
-                    <a onclick="keycloak.login()" class='btn btn-primary rounded submit px-3 col-md-6'><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
+                    <a onclick="keycloak.login()" class='btn btn-info rounded submit px-3 col-md-6' style="color: black;"><i class='fa fa-cog'></i>&nbsp; Login dengan SSO</a>
                   </center>
                 </div>
               </form>
@@ -164,6 +170,7 @@ unset($__errorArgs, $__bag); ?>
       }
       try {
         if(authenticate) {
+          $('#loadingIndicator').show();
           var credentials = {
             _token: '<?php echo e(csrf_token(), false); ?>',
             refresh_token: keycloak.refreshToken,

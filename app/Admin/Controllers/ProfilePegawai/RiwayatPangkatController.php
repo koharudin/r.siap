@@ -85,7 +85,7 @@ class RiwayatPangkatController extends ProfileController
         $show = new Show(RiwayatPangkat::findOrFail($id));
         $apiData = SiasnController::get_nip_pangkat($id);
         $apiData = (array) $apiData;
-        // var_dump($apiData);
+        // var_dump(session('token_sso'));
         // die();
 
         $show->field(__('PANGKAT/GOLONGAN'))->as(function() {

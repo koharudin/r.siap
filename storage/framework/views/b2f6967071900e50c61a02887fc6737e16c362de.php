@@ -88,10 +88,10 @@
         var isSame = password != pass;
         $('#passwordRequirements').html(
           (!isLengthValid ? 'Minimal 8 karakter<br>' : '') +
-          (!hasNumber ? 'Mengandung angka<br>' : '') +
-          (!hasUpperCase ? 'Mengandung huruf kapital<br>' : '') +
-          (!hasLowerCase ? 'Mengandung huruf kecil<br>': '') +
-          (!hasSymbol ? 'Mengandung simbol (bukan petik satu atau dua)<br>': '') +
+          (!hasNumber ? 'Harus mengandung angka<br>' : '') +
+          (!hasUpperCase ? 'Harus mengandung huruf kapital<br>' : '') +
+          (!hasLowerCase ? 'Harus mengandung huruf kecil<br>': '') +
+          (!hasSymbol ? 'Harus mengandung simbol (bukan petik satu atau dua)<br>': '') +
           (!isSame ? 'Tidak boleh sama dengan password sebelumnya': '')
         );
         updateSubmitButtonState();
@@ -101,7 +101,7 @@
         var password = $('#password').val();
         var confirmPassword = $(this).val();
         if(!(password === confirmPassword)) {
-          $('#passwordMatchMessage').text('Konfirmasi password tidak cocok');
+          $('#passwordMatchMessage').text('Password tidak sama');
         } else {
           $('#passwordMatchMessage').text('');
         }
@@ -131,5 +131,5 @@
   <script src="<?php echo e(admin_asset('login/js/bootstrap.min.js'), false); ?>"></script>
   <script src="<?php echo e(admin_asset('login/js/main.js'), false); ?>"></script>
 </body>
-
-</html><?php /**PATH /home/webapps/anri.siap/resources/views/admin/password_check.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH /home/webapps/anri.siap/resources/views/admin/password_check.blade.php ENDPATH**/ ?>
