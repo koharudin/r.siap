@@ -13,7 +13,7 @@ class AlterRequestCategory extends Migration
      */
     public function up()
     {
-        Schema::table('requests', function (Blueprint $table) {
+        Schema::table('request_category', function (Blueprint $table) {
             $table->string("panelclass",200)->nullable();
         });
     }
