@@ -14,6 +14,5 @@ class RiwayatNikah extends Model
     public function obj_jenis_pekerjaan(){
         return $this->hasOne(JenisPekerjaan::class,'id','jenis_pekerjaan');
     }
-
     public $dates = ['tgl_kawin','tgl_sk_cerai'];
 }

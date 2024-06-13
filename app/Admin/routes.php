@@ -8,11 +8,13 @@ use App\Admin\Controllers\PenghargaanController;
 use App\Admin\Controllers\ProfilePegawai\RiwayatHukumanController;
 use App\Admin\Controllers\RiwayatHukumanController as ControllersRiwayatHukumanController;
 use App\Models\Penghargaan;
+use App\Admin\Controllers\DashboardTupasController as ControllersDashboardTupasController;
 
 Admin::routes();
 
 Route::group(['middleware' => ['web']], function () {
     Route::post('/admin/auth-period', 'App\Admin\Controllers\AuthController@postPeriod')->name('auth.period');
+    Route::get('/admin/cetakdrh/{f}', 'App\Admin\Controllers\ProfilePegawai\DataPersonalController@cetak_drh_public')->name('cetakdrh');
 });
 
 Route::group([
@@ -65,7 +67,7 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->get('/download/dokumen/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
     $router->get('/download/foto/{f}', 'HomeController@download_foto')->name('download.foto');
-    $router->get('/download/dokumensiasn/{f}/{g}/{h}', 'SiasnController@download_dok')->name('download.dokumensiasn');
+    $router->get('/download/dokumensiasn/{f}/{g}', 'SiasnController@download_dok')->name('download.dokumensiasn');
     $router->post('/download/datasiasn/{f}/{g}', 'SiasnController@download_data')->name('download.datasiasn');
 
     $router->resource('test', TestController::class);
@@ -123,6 +125,7 @@ Route::group([
 
     $router->any('absensi', 'HomeController@absensi');
     $router->get('daftar_pegawai', 'DaftarPegawaiController@Index');
+    $router->get('cuti_besar', 'CutiBesarController@Index');
     $router->any('duk', 'DukController@Index');
     $router->any('kgb', 'KGBController@Index');
     $router->any('dt-kgb', 'KGBController@dt')->name('kgb.dt');
@@ -168,4 +171,5 @@ Route::group([
     $router->resource('nilaiunitkerja', NilaiUnitKerjaPegawaiController::class);
     $router->resource('tupas', DashboardTupasController::class);
     $router->resource('nominaltupas', NominalTupasPegawaiController::class);
+    $router->post('tupas/importtupasexcel', [ControllersDashboardTupasController::class, 'importTupasExcel'])->name('tupas.importtupasexcel');
 });

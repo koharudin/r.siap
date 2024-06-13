@@ -13,12 +13,12 @@ class RequestStep extends Model
     public $table  = 'request_step';
     private $cacheKeyPrefix = "request_step_id_";
     //1=DRAFT, 2=SUBMIT/Inbox Verifikator, 3=Proses Verifikasi, 4=Revisi,5=Terima, 6=Tolak
-    public static  $DRAFT = 1;
-    public static  $SUBMIT = 2;
-    public static  $INVERIFIKASI = 3;
-    public static  $REVISI = 4;
-    public static  $TERIMA = 5;
-    public static  $TOLAK = 6;
+    public const  DRAFT = 1;
+    public const  SEND = 2;
+    public const  INVERIFIKASI = 3;
+    public const  REVISI = 4;
+    public const  TERIMA = 5;
+    public const  TOLAK = 6;
 
     protected static function booted(): void
     {

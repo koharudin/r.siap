@@ -1,6 +1,6 @@
 <div class="box box-default">
     <div class="box-header with-border">
-        <h3 class="box-title">Hukuman Disiplin</h3>
+        <!-- <h3 class="box-title">Hukuman Disiplin</h3> -->
 
         <div class=" pull-right">
 
@@ -40,6 +40,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"> TAHUN</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-pencil"></i>
+                                        </div>
+                                        <input type="text" class="form-control tahun" id="tahun" placeholder="Tahun" name="tahun" pattern="\d{4}" title="Masukkan tahun yang benar (YYYY)">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -67,7 +78,7 @@
                     <tr>
                         <th>NIP</th>
                         <th>NAMA</th>
-                        <th>TMT SK</th>
+                        <th>TGL SK</th>
                         <th>NAMA HUKUMAN</th>
                         <th>PELANGGARAN</th>
                         <th>PEJABAT PENETAP</th>
@@ -115,8 +126,8 @@
                         name: 'first_name'
                     },
                     {
-                        data: 'tmt_sk',
-                        name: 'tmt_sk'
+                        data: 'tgl_sk',
+                        name: 'tgl_sk'
                     },
                     {
                         data: 'nama_hukuman',

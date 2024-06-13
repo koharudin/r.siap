@@ -15,3 +15,4 @@ class DokumenPegawai extends Model
           return $this->hasOne(Employee::class, 'simpeg_id', 'pk1');
      }
 }
+

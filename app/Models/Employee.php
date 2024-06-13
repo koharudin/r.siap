@@ -107,7 +107,10 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatUjiKompetensi::class, 'employee_id', 'id')->orderBy('tanggal', 'asc');
     }
-
+    public function obj_requests()
+    {
+        return $this->hasMany(Request::class, 'employee_id', 'id');
+    }
     public function obj_riwayat_pangkat()
     {
         return $this->hasMany(RiwayatPangkat::class, 'employee_id', 'id')->orderBy('tmt_pangkat', 'asc');
@@ -155,6 +158,14 @@ class Employee extends Model
     public function obj_riwayat_sumpah()
     {
         return $this->hasMany(RiwayatSumpah::class, 'employee_id', 'id')->orderBy('tgl_sumpah', 'desc');
+    }
+    public function obj_riwayat_mertua()
+    {
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
+    }
+    public function obj_riwayat_organisasi()
+    {
+        return $this->hasMany(RiwayatOrganisasi::class, 'employee_id', 'id');
     }
     public function obj_riwayat_orangtua()
     {

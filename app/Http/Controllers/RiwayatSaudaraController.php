@@ -19,7 +19,7 @@ class RiwayatSaudaraController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_saudara'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_saudara);
+        return response()->json($employee->obj_riwayat_saudara()->paginate());
 
     }
 

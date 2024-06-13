@@ -18,8 +18,8 @@ class RiwayatPangkatController extends Controller
     {
         //
         $user = Auth::user();
-        $employee = Employee::with(['obj_riwayat_pangkat'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_pangkat);
+        $employee = Employee::with(['obj_riwayat_pangkat'])->whereRaw('nip_baru = ?', [$user->username])->first();
+        return response()->json($employee->obj_riwayat_pangkat()->with(['obj_pangkat','obj_jenis_kenaikan_pangkat'])->paginate());
     }
 
     /**

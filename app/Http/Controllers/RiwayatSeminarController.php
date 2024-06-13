@@ -19,7 +19,7 @@ class RiwayatSeminarController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_seminar'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_seminar);
+        return response()->json($employee->obj_riwayat_seminar()->orderBy('tgl_mulai','asc')->paginate());
  
     }
 

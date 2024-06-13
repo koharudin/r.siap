@@ -4,15 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Request extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     public $table  = 'requests';
     private $cacheKeyPrefix = "request_id_";
 
+    //action : 1=createNew,2=edit,3=delete
+    public function obj_logs()
+    {
+        return $this->hasMany(RequestLog::class, 'request_id', 'id');
+    }
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
+    public function obj_status(){
+        return $this->hasOne(RequestStep::class,'id','status_id');
+    } 
+    public function obj_kategori(){
+        return $this->hasOne(RequestCategory::class,'id','category_id');
+    } 
     protected static function booted(): void
     {
         self::creating(function (Request $record) {
@@ -41,14 +58,14 @@ class Request extends Model
 
     public function scopeInboxVerifikator($query)
     {
-        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK, RequestStep::$SUBMIT, RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+        $query->whereIn('status_id', [RequestStep::REVISI, RequestStep::TOLAK, RequestStep::SEND, RequestStep::INVERIFIKASI, RequestStep::TERIMA]);
     }
     public function scopeMyInboxVerifikator($query, $verifikator_id)
     {
         $query->where("verifikator_id", $verifikator_id);
-        $query->whereIn('status_id', [RequestStep::$REVISI, RequestStep::$TOLAK,  RequestStep::$INVERIFIKASI, RequestStep::$TERIMA]);
+        $query->whereIn('status_id', [RequestStep::REVISI, RequestStep::TOLAK,  RequestStep::INVERIFIKASI, RequestStep::TERIMA]);
     }
 
     public $date = ['date_created'];
-    public $casts = ['old_data' => 'json', 'request_data' => 'json'];
+    public $casts = ['data' => 'json'];
 }

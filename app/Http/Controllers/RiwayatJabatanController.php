@@ -19,7 +19,7 @@ class RiwayatJabatanController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_jabatan'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_jabatan);
+        return response()->json($employee->obj_riwayat_jabatan()->orderBy('tmt_jabatan', 'desc')->paginate());
     }
 
     /**

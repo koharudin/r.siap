@@ -19,7 +19,7 @@ class RiwayatPensiunController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_pensiun'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_pensiun);
+        return response()->json($employee->obj_riwayat_pensiun()->paginate());
 
     }
 

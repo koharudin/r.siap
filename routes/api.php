@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminEmployeeController;
+use App\Http\Controllers\DaftarUsulanController;
 use App\Http\Controllers\FlexiportController;
 use App\Http\Controllers\PresensiCutiController;
 use App\Http\Controllers\PresensiIzinController;
@@ -20,9 +21,11 @@ use App\Http\Controllers\RiwayatHukumanController;
 use App\Http\Controllers\RiwayatJabatanController;
 use App\Http\Controllers\RiwayatKinerjaController;
 use App\Http\Controllers\RiwayatKursusController;
+use App\Http\Controllers\RiwayatMertuaController;
 use App\Http\Controllers\RiwayatMutasiController;
 use App\Http\Controllers\RiwayatNikahController;
 use App\Http\Controllers\RiwayatOrangTuaController;
+use App\Http\Controllers\RiwayatOrganisasiController;
 use App\Http\Controllers\RiwayatPangkatController;
 use App\Http\Controllers\RiwayatPendidikanController;
 use App\Http\Controllers\RiwayatPengalamanKerjaController;
@@ -38,18 +41,38 @@ use App\Http\Controllers\RiwayatSKPNSController;
 use App\Http\Controllers\RiwayatSumpahController;
 use App\Http\Controllers\RiwayatUjiKompetensiController;
 use App\Http\Controllers\VerifikasiController;
+use App\Http\Controllers\VerifikasiUsulanController;
 use App\Models\Administrator;
 use App\Models\Agama;
+use App\Models\AlasanHukuman;
+use App\Models\Diklat;
+use App\Models\DiklatSiasn;
 use App\Models\Employee;
+use App\Models\Hukuman;
+use App\Models\Jabatan;
+use App\Models\JenisBahasa;
+use App\Models\JenisKenaikanGaji;
+use App\Models\JenisPekerjaan;
+use App\Models\JenisPenghargaan;
+use App\Models\KemampuanBicara;
 use App\Models\LineApproval;
 use App\Models\Pangkat;
+use App\Models\PejabatPenetap;
+use App\Models\Pendidikan;
 use App\Models\RequestCategory;
 use App\Models\RiwayatAngkaKredit;
 use App\Models\RiwayatDiklatFungsional;
+use App\Models\StatusMenikah;
+use App\Models\StatusPernikahan;
+use App\Models\TingkatHukuman;
+use App\Models\UnitKerja;
+use App\Models\User;
+use App\Models\Presensi\RiwayatIzin;
 use Carbon\Carbon;
 use Encore\Admin\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -112,6 +135,11 @@ Route::get('cek-login', function () {
     return response()->json(1, 200);
 });
 
+Route::get('cekpresensi', function () {
+    $rs = RiwayatIzin::take(7)->get();
+    return response()->json($rs, 200);
+});
+
 
 Route::post('flexiport', function () {
     $c = request()->input("c");
@@ -127,10 +155,78 @@ Route::post('flexiport', function () {
     return response()->json([], 200);
 });
 
+Route::post('/login-token', function () {
+    $username = request()->input("username");
+    $password = request()->input("password");
+    $user = Administrator::where("username", $username)->get()->first();
+    if(!$user){
+        return response()->json("User tidak ditemukan", 404);
+    }
+    if (md5($password) == $user->password_x) {
 
-Route::group(["middleware"=>"auth:api"],function(){
+        $token = $user->createToken('authToken')->accessToken;
+        return response()->json([
+            "token" => $token,
+            "user" => $user
+        ], 200);
+    } else return response()->json("Kombinasi user dan password tidak cocok", 404);
+});
+Route::group(["middleware" => "auth:api"], function () {
+    Route::post("menus",function(){
+        $user = Auth::user();
+        $user->load('roles');
+        $isVerifikator = false;
+        $isPegawai = false;
+        $user->roles->each(function($v,$i) use(&$isVerifikator,&$isPegawai){
+            if($v->id==5) $isVerifikator = true;
+            if($v->id==2) $isPegawai = true;
+        });
+        $items = [];
+        $child = new stdClass;
+        $child->id = "ui-element";
+        $child->title = "Usulan";
+        $child->type=  "group";
+        $child->icon = "icon-ui" ;
+        $child->children = [];
+        $items[] = $child;
 
-    Route::get('employee-me', [AdminEmployeeController::class,'dataSaya']);
+        $item = new stdClass;
+        $item->id = "dashboard";
+        $item->title = "Dashboard";
+        $item->type=  "item";
+        $item->icon = "feather icon-server" ;
+        $item->url = '/dashboard';
+        $child->children [] = $item;
+
+        if($isPegawai){
+            $item = new stdClass;
+            $item->id = "menu-daftar-usulan";
+            $item->title = "Daftar Usulan";
+            $item->type=  "item";
+            $item->icon = "feather icon-server" ;
+            $item->url = '/usulan-ku/daftar-usulan';
+            $child->children [] = $item;
+        }
+        if($isVerifikator){
+            $item = new stdClass;
+            $item->id = "verifikasi-usulan";
+            $item->title = "Verifikasi Usulan";
+            $item->type=  "item";
+            $item->icon = "feather icon-server" ;
+            $item->url = '/verifikasi-usulan';
+            $child->children [] = $item;
+        }
+        return response()->json([
+            "items"=>$items
+        ]);
+    });
+    Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
+    Route::get("verifikasi-usulan", [VerifikasiUsulanController::class, "list"]);
+    Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
+    Route::post("usulan/{uuid}/hapus", [DaftarUsulanController::class, "hapus"]);
+    Route::post("usulan", [DaftarUsulanController::class, "store"]);
+    Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
+    Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
     Route::resource('riwayat-izin', PresensiIzinController::class);
@@ -150,6 +246,8 @@ Route::group(["middleware"=>"auth:api"],function(){
     Route::resource('riwayat-kursus', RiwayatKursusController::class);
     Route::resource('riwayat-mutasi', RiwayatMutasiController::class);
     Route::resource('riwayat-nikah', RiwayatNikahController::class);
+    Route::resource('riwayat-mertua', RiwayatMertuaController::class);
+    Route::resource('riwayat-organisasi', RiwayatOrganisasiController::class);
     Route::resource('riwayat-orangtua', RiwayatOrangTuaController::class);
     Route::resource('riwayat-pangkat', RiwayatPangkatController::class);
     Route::resource('riwayat-pendidikan', RiwayatPendidikanController::class);
@@ -165,9 +263,110 @@ Route::group(["middleware"=>"auth:api"],function(){
     Route::resource('riwayat-skpns', RiwayatSKPNSController::class);
     Route::resource('riwayat-sumpah', RiwayatSumpahController::class);
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
-
 });
+
+Route::post("/master-jabatan", function () {
+    return response()->json(Jabatan::paginate(), 200);
+});
+Route::post("/master-pangkat", function () {
+    return response()->json(Pangkat::paginate(), 200);
+});
+Route::get("/master-pangkat/{id}/detail", function ($id) {
+    $query = Pangkat::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+
+Route::post("/master-unitkerja", function () {
+    $query = UnitKerja::query();
+    $q = request()->input("q");
+    $query->where("name", "ilike", "%{$q}%");
+    $query->orderBy("name", "asc");
+    return response()->json($query->paginate(), 200);
+});
+Route::get("/master-unitkerja/{id}/detail", function ($id) {
+    $query = UnitKerja::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+
+Route::post("/master-jenis-kenaikan-gaji", function () {
+    return response()->json(JenisKenaikanGaji::paginate(), 200);
+});
+Route::post("/master-jenis-bahasa", function () {
+    return response()->json(JenisBahasa::paginate(), 200);
+});
+Route::post("/master-jenis-layanan", function () {
+    if (request()->input('pagination') == "false") {
+        return response()->json(RequestCategory::whereNotNull('parent_id')->orderBy('name', 'asc')->get(), 200);
+    }
+    return response()->json(RequestCategory::orderBy('name', 'asc')->paginate(), 200);
+});
+Route::post("/master-kemampuan-bicara", function () {
+    return response()->json(KemampuanBicara::paginate(), 200);
+});
+Route::post("/master-status-pernikahan", function () {
+    return response()->json(StatusMenikah::orderBy('name', 'ASC')->paginate(), 200);
+});
+Route::post("/master-jenis-pekerjaan", function () {
+    return response()->json(JenisPekerjaan::orderBy('name', 'ASC')->paginate(), 200);
+});
+Route::post("/master-jenis-penghargaan", function () {
+    return response()->json(JenisPenghargaan::orderBy('order', 'DESC')->orderBy('name', 'ASC')->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-siasn", function () {
+    return response()->json(DiklatSiasn::where('jenis_sertifikat', 'P')->where('id_siasn', '!=', 9)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-struktural", function () {
+    return response()->json(Diklat::where('parent_id', 1)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-fungsional", function () {
+    return response()->json(Diklat::where('parent_id', 12)->paginate(), 200);
+});
+Route::post("/master-jenis-diklat-teknis", function () {
+    return response()->json(Diklat::where('parent_id', 70)->paginate(), 200);
+});
+Route::post("/master-pejabat-penetap", function () {
+    return response()->json(PejabatPenetap::paginate(), 200);
+});
+Route::post("/master-tingkat-hukuman", function () {
+    $array = [
+        ["id" => "R", "name" => "Hukuman Ringan"],
+        ["id" => "S", "name" => "Hukuman Sedang"],
+        ["id" => "B", "name" => "Hukuman Berat"],
+        ["id" => "K", "name" => "Hukuman Kode Etik"]
+    ];
+    return response()->json(["data" => $array], 200);
+});
+Route::post("/master-jenis-hukuman", function () {
+    $list = Hukuman::select("id", "hukuman as name")->whereNotNull('siasn_id')->orderBy('id', 'asc')->get();
+    return response()->json(["data" => $list], 200);
+});
+Route::post("/master-pendidikan", function () {
+    $list = Pendidikan::select("id as id", "name as name")->get();
+    return response()->json(["data" => $list], 200);
+});
+Route::post("/master-pelanggaran", function () {
+    $list = AlasanHukuman::select("id_hukuman as id", "nama_hukuman as name")->get();
+    return response()->json(["data" => $list], 200);
+});
+Route::post("/master-peraturan-hukuman", function () {
+    $array = [
+        ["id" => "07", "name" => "PP 94 TAHUN 2021"],
+        ["id" => "03", "name" => "PP 53 TAHUN 2010"],
+    ];
+    return response()->json(["data" => $array], 200);
+});
+
+
 Route::group(["prefix" => "pelayanan"], function () {
+
     Route::group(["prefix" => "public"], function () {
         Route::get('request-categories', function () {
             $l = RequestCategory::all();
@@ -177,11 +376,6 @@ Route::group(["prefix" => "pelayanan"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('request-category', RequestCategoryController::class);
 
-        Route::group(['middleware' => 'role:verifikator'], function () {
-            Route::post('/verifikasi-request/{uuid_request}/terima', [VerifikasiController::class, "terima"]);
-            Route::post('/verifikasi-request/{uuid_request}/tolak', [VerifikasiController::class, "tolak"]);
-        });
-        //verifikator
 
         Route::resource('requests', RequestController::class);
         Route::resource('line-approval', LineApproval::class);

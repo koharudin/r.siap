@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Presensi;
 
 use App\Models\Employee;
@@ -10,6 +9,6 @@ class RiwayatIzin extends Model
      public $connection = 'db_presensi';
      public $table  = 'tbl_izin';
      public $primaryKey = 'id_izin';
+     public $timestamps = false;
 
-  
 }

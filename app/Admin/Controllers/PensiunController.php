@@ -85,7 +85,7 @@ class PensiunController extends Controller
     {
         $query = RiwayatPensiun::akanPensiun()->whereHas('obj_employee', function ($q) {
             $q->aktif();
-        })->orderBy('tgl_pensiun', 'desc')->with(['obj_employee.obj_riwayat_jabatan', 'obj_employee.obj_satker', 'obj_employee.obj_riwayat_pangkat.obj_pangkat']);
+        })->orderBy('tgl_pensiun', 'asc')->with(['obj_employee.obj_riwayat_jabatan', 'obj_employee.obj_satker', 'obj_employee.obj_riwayat_pangkat.obj_pangkat']);
         return Datatables::eloquent($query)
             ->addColumn('nip_baru', function (RiwayatPensiun $r) {
                 return $r->obj_employee->nip_baru;

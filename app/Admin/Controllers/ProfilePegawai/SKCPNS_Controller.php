@@ -50,7 +50,7 @@ class SKCPNS_Controller extends ProfileController
         }
         $form->hidden('employee_id', 'ID');
         // Add an input box of type text
-        $form->select('pangkat_id', 'PANGKAT (GOL RUANG)')->options(Pangkat::all()->pluck('name', 'id'));
+        $form->select('pangkat_id', 'PANGKAT (GOL RUANG)')->options(Pangkat::selectRaw("concat(name, ' - ', kode) as nama, id")->pluck('nama', 'id'));
         $form->text('no_sk', 'NO SK')->required(true);
         $form->date('tgl_sk', 'TANGGAL SK')->required(true);
         $form->date('tmt_cpns', 'TMT CPNS')->required(true);

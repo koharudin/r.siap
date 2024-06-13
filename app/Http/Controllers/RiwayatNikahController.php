@@ -19,7 +19,7 @@ class RiwayatNikahController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_nikah'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_nikah);
+        return response()->json($employee->obj_riwayat_nikah()->getQuery()->with(['obj_jenis_pekerjaan','obj_status_menikah'])->paginate());
     }
 
     /**

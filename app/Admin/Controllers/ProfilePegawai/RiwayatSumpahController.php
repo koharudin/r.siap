@@ -31,7 +31,7 @@ class RiwayatSumpahController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatSumpah());
-        $grid->model()->orderBy('tgl_sumpah','asc');
+        $grid->model()->orderBy('tgl_sumpah','desc');
         $grid->column('no_sumpah', __('NO SUMPAH'));
         $grid->column('tgl_sumpah', __('TGL SUMPAH'))->display(function ($o) {
             if ($o) {

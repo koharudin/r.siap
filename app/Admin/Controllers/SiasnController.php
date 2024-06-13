@@ -8,6 +8,33 @@ use Illuminate\Support\Facades\Storage;
 
 class SiasnController
 {
+    public function token_sso($refresh_token)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://sso-siasn.bkn.go.id/auth/realms/public-siasn/protocol/openid-connect/token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id=anriclient&grant_type=refresh_token&refresh_token='.$refresh_token,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded'
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if(isset($result->access_token) && !empty($result->access_token)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function token_api()
     {
         $curl = curl_init();
@@ -55,6 +82,127 @@ class SiasnController
         curl_close($curl);
         $result = json_decode($response);
         return $result->access_token;
+    }
+
+    public function get_rw_pangkat($nip, $token_login, $token_api) {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=8821d34c0d1927d954417f8d3dbccab0; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        return $result;
+    }
+
+    public function get_nip_pangkat($id) {
+        $id_pangkat = RiwayatPangkat::where('id', $id)->first();
+        $token = new self();
+        $token_api = $token->token_api();
+        $token_login = $token->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$id_pangkat->obj_pegawai->nip_baru,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=8821d34c0d1927d954417f8d3dbccab0; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if($result->code == 1) {
+            foreach($result->data as $data) {
+                if($data->id == $id_pangkat->id_siasn) {
+                    $result = array(
+                        "golongan" => $data->golongan,
+                        "skNomor" => $data->skNomor,
+                        "skTanggal" => $data->skTanggal,
+                        "tmtGolongan" => date("d-m-Y", strtotime($data->tmtGolongan)),
+                        "noPertekBkn" => $data->noPertekBkn,
+                        "tglPertekBkn" => $data->tglPertekBkn,
+                        "jumlahKreditUtama" => $data->jumlahKreditUtama,
+                        "jumlahKreditTambahan" => $data->jumlahKreditTambahan,
+                        "jenisKPNama" => $data->jenisKPNama,
+                        "masaKerjaGolonganTahun" => $data->masaKerjaGolonganTahun,
+                        "masaKerjaGolonganBulan" => $data->masaKerjaGolonganBulan,
+                        "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
+                    );
+                    break;
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function download_dok($id, $klasifikasi_id) {
+        $api = new self();
+        $id = base64_decode($id);
+        $klasifikasi_id = base64_decode($klasifikasi_id);
+        switch($klasifikasi_id) {
+            case '5':
+                $path = $api->get_nip_pangkat($id);
+                $dok_uri = (!empty($path['dok_uri'])) ? $path['dok_uri'] : '';
+                break;
+            default:
+                $dok_uri = '';
+                break;
+        }
+        // print_r($dok_uri);
+        // die();
+
+        $token_api = $api->token_api();
+        $token_login = $api->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/download-dok?filePath='.$dok_uri,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=c94513f399ed33bb608b90b1189b3cb9; pdns=1091068938.13088.0000'
+            ),
+        ));
+        
+        $response = curl_exec($curl);
+        curl_close($curl);
+        if(strpos($response, '%PDF') === 0) {
+            header('Content-Type: application/pdf');
+            echo $response;
+        } else {
+            // admin_error('Error', 'File tidak ada!');
+            admin_toastr('File tidak ada!', 'error', ['timeOut' => 10000]);
+            return redirect()->back();
+        }
     }
 
     public function data_pns($nip, $token_login, $token_api)
@@ -156,123 +304,6 @@ class SiasnController
         curl_close($curl);
         $result = json_decode($response);
         return $result;
-    }
-
-    public function get_rw_pangkat($nip, $token_login, $token_api) {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$nip,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=8821d34c0d1927d954417f8d3dbccab0; pdns=1091068938.13088.0000'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
-        return $result;
-    }
-
-    public function get_nip_pangkat($id) {
-        $id_pangkat = RiwayatPangkat::where('id', $id)->first();
-        $token = new self();
-        $token_api = $token->token_api();
-        $token_login = $token->token_login();
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$id_pangkat->obj_pegawai->nip_baru,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=8821d34c0d1927d954417f8d3dbccab0; pdns=1091068938.13088.0000'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
-        if($result->code == 1) {
-            foreach($result->data as $data) {
-                if($data->id == $id_pangkat->id_siasn) {
-                    $result = array(
-                        "golongan" => $data->golongan,
-                        "skNomor" => $data->skNomor,
-                        "skTanggal" => $data->skTanggal,
-                        "tmtGolongan" => date("d-m-Y", strtotime($data->tmtGolongan)),
-                        "noPertekBkn" => $data->noPertekBkn,
-                        "tglPertekBkn" => $data->tglPertekBkn,
-                        "jumlahKreditUtama" => $data->jumlahKreditUtama,
-                        "jumlahKreditTambahan" => $data->jumlahKreditTambahan,
-                        "jenisKPNama" => $data->jenisKPNama,
-                        "masaKerjaGolonganTahun" => $data->masaKerjaGolonganTahun,
-                        "masaKerjaGolonganBulan" => $data->masaKerjaGolonganBulan,
-                        "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
-                    );
-                    break;
-                }
-            }
-        }
-        return $result;
-    }
-
-    public function download_dok($id_siasn, $klasifikasi_id, $nip) {
-        $api = new self();
-        $token_api = $api->token_api();
-        $token_login = $api->token_login();
-        $id_siasn = base64_decode($id_siasn);
-        $klasifikasi_id = base64_decode($klasifikasi_id);
-        $nip = base64_decode($nip);
-        switch($klasifikasi_id) {
-            case '5':
-                $path = $api->get_nip_pangkat($nip, $id_siasn);
-                $dok_uri = (!empty($path)) ? $path['dok_uri'] : '';
-                break;
-            default:
-                $dok_uri = '';
-                break;
-        }
-        // var_dump($path);
-        // die();
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/download-dok?filePath='.$dok_uri,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=c94513f399ed33bb608b90b1189b3cb9; pdns=1091068938.13088.0000'
-            ),
-        ));
-        
-        $response = curl_exec($curl);
-        curl_close($curl);
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="download.pdf"');
-        echo $response;
     }
 
     public function download_data($id, $klasifikasi_id) {

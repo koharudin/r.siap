@@ -19,7 +19,7 @@ class RiwayatPenguasaanBahasaController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_penguasaanbahasa'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_penguasaanbahasa);
+        return response()->json($employee->obj_riwayat_penguasaanbahasa()->getQuery()->with(['obj_jenis_bahasa','obj_kemampuan_bicara'])->paginate());
   
     }
 

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
+  <title>{{ config('admin.title') }} | {{ trans('admin.login') }}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
@@ -88,10 +88,10 @@
         var isSame = password != pass;
         $('#passwordRequirements').html(
           (!isLengthValid ? 'Minimal 8 karakter<br>' : '') +
-          (!hasNumber ? 'Mengandung angka<br>' : '') +
-          (!hasUpperCase ? 'Mengandung huruf kapital<br>' : '') +
-          (!hasLowerCase ? 'Mengandung huruf kecil<br>': '') +
-          (!hasSymbol ? 'Mengandung simbol (bukan petik satu atau dua)<br>': '') +
+          (!hasNumber ? 'Harus mengandung angka<br>' : '') +
+          (!hasUpperCase ? 'Harus mengandung huruf kapital<br>' : '') +
+          (!hasLowerCase ? 'Harus mengandung huruf kecil<br>': '') +
+          (!hasSymbol ? 'Harus mengandung simbol (bukan petik satu atau dua)<br>': '') +
           (!isSame ? 'Tidak boleh sama dengan password sebelumnya': '')
         );
         updateSubmitButtonState();
@@ -101,7 +101,7 @@
         var password = $('#password').val();
         var confirmPassword = $(this).val();
         if(!(password === confirmPassword)) {
-          $('#passwordMatchMessage').text('Konfirmasi password tidak cocok');
+          $('#passwordMatchMessage').text('Password tidak sama');
         } else {
           $('#passwordMatchMessage').text('');
         }
@@ -131,5 +131,4 @@
   <script src="{{ admin_asset('login/js/bootstrap.min.js') }}"></script>
   <script src="{{ admin_asset('login/js/main.js') }}"></script>
 </body>
-
 </html>
