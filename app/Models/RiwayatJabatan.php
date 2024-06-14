@@ -34,7 +34,6 @@ class RiwayatJabatan extends Model
     {
         return $this->hasOne(TipeJabatan::class, 'id', 'tipe_jabatan_id');
     }
-    protected $dates = ['tmt_jabatan', 'tgl_sk'];
     public function updateLastRiwayatJabatan()
     {
         $this->load('obj_pegawai');
@@ -98,4 +97,9 @@ class RiwayatJabatan extends Model
     {
         if ($this->tipe_jabatan_id == 1 || $this->tipe_jabatan_id == 6) return $this->jabatan_id;
     }
+
+    public $dates = ['tgl_sk','tmt_jabatan','tgl_pelantikan'];
+    protected $casts = [
+        'tgl_sk' => 'datetime:Y-m-d','tmt_jabatan' => 'datetime:Y-m-d','tgl_pelantikan' => 'datetime:Y-m-d'
+    ];
 }

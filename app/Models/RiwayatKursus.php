@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RiwayatKursus extends Model
 {
     public $table = 'riwayat_kursus';
-    
-    public $dates = ['tgl_mulai', 'tgl_selesai'];
+
 
     public function obj_id()
     {
@@ -19,4 +18,8 @@ class RiwayatKursus extends Model
     {
         return $this->hasOne(DiklatSiasn::class, 'id_siasn', 'jenis_diklat_siasn');
     }
+    public $dates = ['tgl_mulai', 'tgl_selesai', 'tgl_sttpp'];
+    protected $casts = [
+        'tgl_mulai' => 'datetime:Y-m-d', 'tgl_selesai' => 'datetime:Y-m-d', 'tgl_sttpp' => 'datetime:Y-m-d'
+    ];
 }

@@ -21,5 +21,8 @@ class RiwayatHukuman extends Model
         return $this->tmt_sk->format('d-m-Y');
     }
 
-    public $dates = ['tgl_sk','tmt_sk','tgl_sk_akhir'];
+    public $dates = ['tgl_sk','tmt_sk','tmt_akhir','tgl_sk_akhir'];
+    protected $casts = [
+        'tgl_sk' => 'datetime:Y-m-d','tmt_sk' => 'datetime:Y-m-d','tmt_akhir' => 'datetime:Y-m-d','tgl_sk_akhir' => 'datetime:Y-m-d'
+    ];
 }

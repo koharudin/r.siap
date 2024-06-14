@@ -9,4 +9,7 @@ class RiwayatKinerja extends Model
     public $table  = 'riwayat_kinerja';
 
     public $dates  = ['tgl_penilaian'];
+    protected $casts = [
+        'tgl_penilaian' => 'datetime:Y-m-d'
+    ];
 }

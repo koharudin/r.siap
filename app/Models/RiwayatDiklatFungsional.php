@@ -12,7 +12,11 @@ class RiwayatDiklatFungsional extends Model
         $query->where('jenis_diklat',2);
     }
     
-    public $dates = ['tgl_mulai', 'tgl_selesai'];
+    public $dates = ['tgl_mulai', 'tgl_selesai','tgl_sttpp'];
+    protected $casts = [
+        'tgl_mulai'=> 'datetime:Y-m-d', 'tgl_selesai'=> 'datetime:Y-m-d','tgl_sttpp'=> 'datetime:Y-m-d'
+    ];
+
 
     public function obj_id()
     {
