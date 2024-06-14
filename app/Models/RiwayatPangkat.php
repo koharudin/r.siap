@@ -124,5 +124,8 @@ class RiwayatPangkat extends Model
     {
         return $this->masakerja_thn . " Tahun " . $this->masakerja_bln . " Bulan";
     }
-    protected $dates = ['tmt_pangkat', 'tgl_sk', 'tgl_nota', 'tmt_pak'];
+    protected $dates = ['tmt_pangkat', 'tgl_sk', 'tgl_nota','tgl_stlud', 'tmt_pak'];
+    protected $casts = [
+        'tmt_pangkat'=> 'datetime:Y-m-d', 'tgl_sk'=> 'datetime:Y-m-d', 'tgl_nota'=> 'datetime:Y-m-d','tgl_stlud'=> 'datetime:Y-m-d', 'tmt_pak'=> 'datetime:Y-m-d'
+    ];
 }

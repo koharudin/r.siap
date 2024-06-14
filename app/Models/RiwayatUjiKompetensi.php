@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatUjiKompetensi extends Model
 {
-    public $table  = 'riwayat_uji_kompetensi';    
+    public $table  = 'riwayat_uji_kompetensi';
 
-    public function getTTahunAttribute() {
+    public function getTTahunAttribute()
+    {
         return $this->tanggal->format('Y');
     }
     public $dates = ['tanggal'];
@@ -18,10 +19,13 @@ class RiwayatUjiKompetensi extends Model
     ];
     public function getJabatanIdFungsionalAttribute()
     {
-        if($this->tipe_jabatan_id == 1) return $this->jabatan_id;
+        if ($this->tipe_jabatan_id == 1) return $this->jabatan_id;
     }
     public function getJabatanIdStrukturalAttribute()
     {
-        if($this->tipe_jabatan_id == 2) return $this->jabatan_id;
+        if ($this->tipe_jabatan_id == 2) return $this->jabatan_id;
     }
+    protected $casts = [
+        'tanggal' => 'datetime:Y-m-d'
+    ];
 }

@@ -8,7 +8,7 @@ class RiwayatPendidikan extends Model
 {
     public $table  = 'riwayat_pendidikan';
 
-	public function obj_pegawai()
+    public function obj_pegawai()
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');
     }
@@ -60,4 +60,8 @@ class RiwayatPendidikan extends Model
     {
         return $this->obj_pendidikan->name;
     }
+    protected $dates = ['tgl_sttb'];
+    protected $casts = [
+        'tgl_sttb' => 'datetime:Y-m-d'
+    ];
 }

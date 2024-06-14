@@ -17,4 +17,7 @@ class RiwayatPenghargaan extends Model
     {
         return $this->hasOne(JenisPenghargaan::class, 'id', 'jenis_penghargaan_id');
     }
+    protected $casts = [
+        'tgl_sk' => 'datetime:Y-m-d'
+    ];
 }
