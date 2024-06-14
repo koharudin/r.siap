@@ -313,6 +313,15 @@ Route::get("/master-jenis-diklat-fungsional/{id}/detail",function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
+Route::get("/master-jenis-diklat-teknis/{id}/detail",function ($id) {
+
+    $query = Diklat::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
 Route::get("/master-unitkerja/{id}/detail", function ($id) {
     $query = UnitKerja::query();
     $query->where("id", $id);
