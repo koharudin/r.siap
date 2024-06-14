@@ -287,6 +287,32 @@ Route::post("/master-unitkerja", function () {
     $query->orderBy("name", "asc");
     return response()->json($query->paginate(), 200);
 });
+Route::get("/master-jenis-diklat-siasn/{id}/detail", function ($id) {
+    $query = DiklatSiasn::query();
+    $query->where("id_siasn", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-jenis-diklat-struktural/{id}/detail", function ($id) {
+
+    $query = Diklat::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-jenis-diklat-fungsional/{id}/detail",function ($id) {
+
+    $query = Diklat::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
 Route::get("/master-unitkerja/{id}/detail", function ($id) {
     $query = UnitKerja::query();
     $query->where("id", $id);
