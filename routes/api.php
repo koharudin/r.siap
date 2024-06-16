@@ -267,7 +267,41 @@ Route::group(["middleware" => "auth:api"], function () {
 });
 
 Route::post("/master-jabatan", function () {
-    return response()->json(Jabatan::paginate(), 200);
+    $query = Jabatan::query();
+    $tipe_jabatan = request()->input("tipe_jabatan");
+    
+    if($tipe_jabatan ==1 ){
+        $query = UnitKerja::query();
+    }
+    else if ($tipe_jabatan ==2){
+        $query->fungsional();
+    }
+    else if ($tipe_jabatan ==3){
+        $query->pelaksana();
+    }   
+    $q = request()->input("q");
+    $query->where("name","ilike","%{$q}%");
+    return response()->json($query->paginate(), 200);
+});
+Route::get("/master-jabatan/detail", function () {
+    $query = Jabatan::query();
+    $tipe_jabatan = request()->input("tipe_jabatan");
+    
+    if($tipe_jabatan ==1 ){
+        $query = UnitKerja::query();
+    }
+    else if ($tipe_jabatan ==2){
+        $query->fungsional();
+    }
+    else if ($tipe_jabatan ==3){
+        $query->pelaksana();
+    }   
+    $id = request()->input("id");
+    $query->where("id",$id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
 });
 Route::post("/master-pangkat", function () {
     return response()->json(Pangkat::paginate(), 200);
@@ -388,7 +422,46 @@ Route::get("/master-pejabat-penetap/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-
+Route::get("/master-kemampuan-bicara/{id}/detail", function ($id) {
+    $query = KemampuanBicara::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-jenis-bahasa/{id}/detail", function ($id) {
+    $query = JenisBahasa::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-status-pernikahan/{id}/detail", function ($id) {
+    $query = StatusMenikah::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-jenis-penghargaan/{id}/detail", function ($id) {
+    $query = JenisPenghargaan::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-jenis-pekerjaan/{id}/detail", function ($id) {
+    $query = JenisPekerjaan::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
 Route::post("/master-tingkat-hukuman", function () {
     $array = [
         ["id" => "R", "name" => "Hukuman Ringan"],
@@ -426,8 +499,11 @@ Route::get("/master-jenis-hukuman/{id}/detail", function ($id) {
     } else return response()->json("data tidak ditemukan", 404);
 });
 Route::post("/master-pendidikan", function () {
-    $list = Pendidikan::select("id as id", "name as name")->get();
-    return response()->json(["data" => $list], 200);
+    $query = Pendidikan::query();
+    $q = request()->input("q");
+    $query->where("name", "ilike", "%{$q}%");
+    $query->orderBy("name", "asc");
+    return response()->json($query->paginate(), 200);
 });
 Route::post("/master-pelanggaran", function () {
     $list = AlasanHukuman::select("id_hukuman as id", "nama_hukuman as name")->get();
@@ -437,6 +513,14 @@ Route::get("/master-pelanggaran/{id}/detail", function ($id) {
     $query = AlasanHukuman::query();
     $query->select("id_hukuman as id", "nama_hukuman as name");
     $query->where("id_hukuman", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-pendidikan/{id}/detail", function ($id) {
+    $query = Pendidikan::query();
+    $query->where("id", $id);
     $data = $query->get()->first();
     if ($data) {
         return response()->json($data, 200);
