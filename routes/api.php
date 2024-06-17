@@ -228,6 +228,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
     Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
     Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
+    Route::get('me/informasi-pegawai', [AdminEmployeeController::class, 'informasiPegawai']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
     Route::resource('riwayat-izin', PresensiIzinController::class);
