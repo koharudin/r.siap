@@ -10,4 +10,7 @@ class RiwayatSumpah extends Model
     public $table  = 'riwayat_sumpah';
 
     public $dates  = ['tgl_sumpah'];
+    protected $casts = [
+        'tgl_sumpah' => 'datetime:Y-m-d'
+    ];
 }

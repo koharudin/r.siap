@@ -18,4 +18,8 @@ class RiwayatAnak extends Model
         return $this->hasOne(StatusAnak::class,'id','status_keluarga');
     }
     public $dates = ['birth_date'];
+    protected $casts = [
+        'birth_date' => 'datetime:Y-m-d',
+    ];
+    protected $fillable = ['tahun', 'tanggung_jawab', 'motivasi', 'minat'];
 }

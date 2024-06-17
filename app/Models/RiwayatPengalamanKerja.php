@@ -8,4 +8,7 @@ class RiwayatPengalamanKerja extends Model
 {
     public $table  = 'riwayat_pengalaman_kerja';
     public $dates = ['tgl_kerja'];
+    protected $casts = [
+        'tgl_kerja' => 'datetime:Y-m-d'
+    ];
 }

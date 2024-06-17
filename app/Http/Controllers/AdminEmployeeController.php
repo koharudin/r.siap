@@ -20,10 +20,14 @@ class AdminEmployeeController extends Controller
     public function dataSaya()
     {
         $user = Auth::user();
-        $employee = Employee::whereRaw('nip_baru = ?',[$user->username])->first();
+        $employee = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
         return response()->json($employee);
- 
-        
+    }
+    public function informasiPegawai()
+    {
+        $user = Auth::user();
+        $employee = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
+        return response()->json($employee);
     }
 
     /**

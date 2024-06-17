@@ -7,13 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class RiwayatMutasi extends Model
 {
     public $table  = 'riwayat_mutasi';
-    protected $dates = ['tgl_sk','tmt_sk'];
+    protected $dates = ['tgl_sk', 'tmt_sk'];
     public $appends = ['lama_kerja_diunit'];
 
-    public function getTTglSKAttribute(){
+    public function getTTglSKAttribute()
+    {
         return $this->tgl_sk->format('d-m-Y');
     }
-    public function getLamaKerjaDiunitAttribute(){
+    public function getLamaKerjaDiunitAttribute()
+    {
         return 13;
     }
+    protected $casts = [
+        'tgl_sk' => 'datetime:Y-m-d',
+        'tmt_sk' => 'datetime:Y-m-d'
+    ];
 }

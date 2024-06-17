@@ -123,7 +123,7 @@ class VerifikasiController extends Controller
             DB::commit();
             return response()->json($request, 200);
         } catch (Exception $e) {
-            return response()->json($e->getMessage(), 500);
+            return response()->json(["message"=>$e->getMessage()], 422);
         }
     }
 }
