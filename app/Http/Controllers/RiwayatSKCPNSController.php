@@ -19,7 +19,7 @@ class RiwayatSKCPNSController extends Controller
         //
         $user = Auth::user();
         $employee = Employee::with(['obj_riwayat_skcpns'])->whereRaw('nip_baru = ?',[$user->username])->first();
-        return response()->json($employee->obj_riwayat_skcpns);
+        return response()->json($employee->obj_riwayat_skcpns()->orderBy('tmt_cpns','desc')->first());
 
     }
 

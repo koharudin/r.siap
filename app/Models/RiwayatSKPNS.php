@@ -79,10 +79,13 @@ class RiwayatSKPNS extends Model
             
             $ms_bulan = $riwayat_skcpns->masa_kerja_thn *12 + $riwayat_skcpns->masa_kerja_bln;
 
-            $m = $riwayat_skcpns->tmt_pangkat->diffInMonths($model->tmt_pns);
-            $total_m = $m + $ms_bulan;
-            $riwayat_skpns->masakerja_thn = (int)($total_m/12);
-            $riwayat_skpns->masakerja_bln =  $total_m%12;
+            if($riwayat_skcpns->tmt_pangkat){
+                $m = $riwayat_skcpns->tmt_pangkat->diffInMonths($model->tmt_pns);
+                $total_m = $m + $ms_bulan;
+                $riwayat_skpns->masakerja_thn = (int)($total_m/12);
+                $riwayat_skpns->masakerja_bln =  $total_m%12;
+            }
+           
 
             $riwayat_skpns->pejabat_penetap_id = $model->pejabat_penetap_id;
             $riwayat_skpns->pejabat_penetap_nip = $model->pejabat_penetap_nip;
