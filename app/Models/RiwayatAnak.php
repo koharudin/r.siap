@@ -21,4 +21,5 @@ class RiwayatAnak extends Model
     protected $casts = [
         'birth_date' => 'datetime:Y-m-d',
     ];
+    protected $fillable = ['tahun', 'tanggung_jawab', 'motivasi', 'minat'];
 }
