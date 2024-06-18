@@ -40,6 +40,7 @@ use App\Http\Controllers\RiwayatSKCPNSController;
 use App\Http\Controllers\RiwayatSKPNSController;
 use App\Http\Controllers\RiwayatSumpahController;
 use App\Http\Controllers\RiwayatUjiKompetensiController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\VerifikasiUsulanController;
 use App\Models\Administrator;
@@ -221,6 +222,7 @@ Route::group(["middleware" => "auth:api"], function () {
             "items" => $items
         ]);
     });
+    Route::post("test-upload",[TestController::class,"testUpload"]);
     Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
     Route::get("verifikasi-usulan", [VerifikasiUsulanController::class, "list"]);
     Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
