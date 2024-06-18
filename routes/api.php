@@ -76,6 +76,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
@@ -172,6 +173,17 @@ Route::post('/login-token', function () {
             "user" => $user
         ], 200);
     } else return response()->json("Kombinasi user dan password tidak cocok", 404);
+});
+Route::get("view_dokumen/{filename_dokumen}",function($filename_dokumen){
+    $disk  = Storage::disk("minio_layanan");
+    $content = $disk->get($filename_dokumen);
+    $url = $disk->temporaryUrl(
+        $filename_dokumen,
+        now()->addMinutes(5)
+    );
+    return redirect($url);
+    return response($content,200,[
+        'Content-Type' => 'application/pdf']);
 });
 Route::group(["middleware" => "auth:api"], function () {
     Route::post("menus", function () {

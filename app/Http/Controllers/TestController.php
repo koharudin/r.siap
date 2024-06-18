@@ -15,7 +15,7 @@ class TestController extends Controller
     public function testUpload(){
        
         $disk_layanan = Storage::disk("minio_layanan");
-        $files = request()->file("files");
+        $files = request()->file("filesx");
         foreach($files as $file){
             $ext = ".".$file->getClientOriginalExtension();
             $randomFileName = md5(uniqid()).$ext;
