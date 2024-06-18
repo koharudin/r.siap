@@ -6,8 +6,11 @@ use App\Models\Employee;
 use App\Models\Request as RequestPelayanan;
 use App\Models\RequestLog;
 use App\Models\RequestStep;
+use Exception;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use stdClass;
 
 class DaftarUsulanController extends Controller
 {
@@ -25,24 +28,43 @@ class DaftarUsulanController extends Controller
         $layanan_id  = request()->input("layanan_id");
         $ref_data = json_decode(request()->input("ref_data"));
         $new_data = json_decode(request()->input("new_data"));
+        if($new_data == null ){
+            $new_data = new stdClass;
+        }
         DB::beginTransaction();
         $user = FacadesAuth::user();
         $employee = Employee::with(['obj_requests'])->whereRaw('nip_baru = ?', [$user->username])->first();
         try {
             $request = new RequestPelayanan();
+            
+            $request->action = $action;
+            $request->category_id = $layanan_id;
+            $request->employee_id =  $employee->id;
+            $request->creator = $user->id;
+            $request->status_id = RequestStep::SEND;
+            
+            $files = request()->file("dokumen_pendukung");
+            $data_files = [];
+            if(request()->hasFile('dokumen_pendukung')){
+                $disk_layanan = Storage::disk("minio_layanan");
+                foreach($files as $file){
+                    $ext = ".".$file->getClientOriginalExtension();
+                    $randomFileName = "usulan_".md5(uniqid()).$ext;
+                    $data_files[] = $randomFileName;
+                    $disk_layanan->putFileAs("/",$file,$randomFileName);
+                }
+                $new_data->dokumen_pendukung = $data_files;
+            }
+            else {
+                throw new Exception("tidak ada file yang diupload");
+            }
             $request->data = [
                 "action" => $action,
                 "id" => $id,
                 "ref_data" =>$ref_data,
                 "new_data" => $action==3?$ref_data:$new_data
             ];
-            $request->action = $action;
-            $request->category_id = $layanan_id;
-            $request->employee_id =  $employee->id;
-            $request->creator = $user->id;
-            $request->status_id = RequestStep::SEND;
             $request->save();
-
             $requestLog = new RequestLog();
             $requestLog->user_id = $user->id;
             $requestLog->request_id = $request->id;

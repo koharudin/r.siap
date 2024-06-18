@@ -40,6 +40,7 @@ use App\Http\Controllers\RiwayatSKCPNSController;
 use App\Http\Controllers\RiwayatSKPNSController;
 use App\Http\Controllers\RiwayatSumpahController;
 use App\Http\Controllers\RiwayatUjiKompetensiController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\VerifikasiUsulanController;
 use App\Models\Administrator;
@@ -75,6 +76,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
@@ -172,6 +174,17 @@ Route::post('/login-token', function () {
         ], 200);
     } else return response()->json("Kombinasi user dan password tidak cocok", 404);
 });
+Route::get("view_dokumen/{filename_dokumen}",function($filename_dokumen){
+    $disk  = Storage::disk("minio_layanan");
+    $content = $disk->get($filename_dokumen);
+    $url = $disk->temporaryUrl(
+        $filename_dokumen,
+        now()->addMinutes(5)
+    );
+    return redirect($url);
+    return response($content,200,[
+        'Content-Type' => 'application/pdf']);
+});
 Route::group(["middleware" => "auth:api"], function () {
     Route::post("menus", function () {
         $user = Auth::user();
@@ -221,6 +234,7 @@ Route::group(["middleware" => "auth:api"], function () {
             "items" => $items
         ]);
     });
+    Route::post("test-upload",[TestController::class,"testUpload"]);
     Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
     Route::get("verifikasi-usulan", [VerifikasiUsulanController::class, "list"]);
     Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
