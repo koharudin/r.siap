@@ -95,16 +95,12 @@ Route::group([
     $router->resource('manage_kategori_layanan', ManageTreeKategoriLayanan::class);
 
     $router->resource('manage_hari_libur', ManageHariLibur::class);
-    $router->resource('manage_jenis_cuti', ManageJenisCuti::class);
     $router->resource('manage_riwayat_cuti', ManageRiwayatCuti::class);
     $router->any('manage_riwayat_izin/massal', 'ManageRiwayatIzin@massal')->name('manage_riwayat_izin.buat_massal');
     $router->any('manage_riwayat_pejaker/massal', 'ManageRiwayatPejaker@massal')->name('manage_riwayat_pejaker.buat_massal');
     $router->any('manage_riwayat_tubel/massal', 'ManageRiwayatTubel@massal')->name('manage_riwayat_tubel.buat_massal');
     $router->resource('manage_riwayat_izin', ManageRiwayatIzin::class);
     $router->resource('manage_riwayat_izin_lain', ManageRiwayatIzinLain::class);
-    $router->resource('manage_riwayat_lupa_finger', ManageRiwayatLupaFinger::class);
-    $router->resource('manage_riwayat_pejaker', ManageRiwayatPejaker::class);
-    $router->resource('manage_riwayat_tubel', ManageRiwayatTubel::class);
 
 
     Route::group(['prefix' => 'layanan', 'middleware' => ['checkProfile']], function (Router $router2) use ($router) {

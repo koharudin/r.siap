@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HariLibur extends Model
 {
-     public $table  = 'presensi.hari_libur';
-     public $primaryKey = 'id';
+     public $primaryKey = 'id_holiday';
+
+     public $connection = 'db_presensi';
+     public $table  = 'tbl_holiday';
 }
