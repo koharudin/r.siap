@@ -60,6 +60,8 @@ use App\Models\LineApproval;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\Pendidikan;
+use App\Models\Presensi\DetailJenisCuti;
+use App\Models\Presensi\JenisCuti;
 use App\Models\RequestCategory;
 use App\Models\RiwayatAngkaKredit;
 use App\Models\RiwayatDiklatFungsional;
@@ -395,6 +397,35 @@ Route::get("/master-jenis-kenaikan-gaji/{id}/detail", function ($id) {
 });
 Route::post("/master-jenis-bahasa", function () {
     return response()->json(JenisBahasa::paginate(), 200);
+});
+Route::post("/master-jenis-cuti", function () {
+    return response()->json(JenisCuti::select('id_jenis_cuti as id','deskripsi_jenis_cuti as name')->paginate(), 200);
+});
+Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
+    $query = JenisCuti::query();
+    $query->select('id_jenis_cuti as id','deskripsi_jenis_cuti as name');
+    $query->where("id_jenis_cuti", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::post("/master-detail-jenis-cuti", function () {
+    $parent_id = request()->input("parent_id");
+    if(!$parent_id) {
+        throw new Exception("Tidak ditemukan param parent_id");
+    }
+
+    return response()->json(DetailJenisCuti::select('id_detail_jenis_cuti as id','deskripsi_detail_jenis_cuti as name')->where('id_jenis_cuti',$parent_id)->paginate(), 200);
+});
+Route::get("/master-detail-jenis-cuti/{id}/detail", function ($id) {
+    $query = DetailJenisCuti::query();
+    $query->select('id_detail_jenis_cuti as id','deskripsi_detail_jenis_cuti as name');
+    $query->where("id_detail_jenis_cuti", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
 });
 Route::post("/master-jenis-layanan", function () {
     if (request()->input('pagination') == "false") {
