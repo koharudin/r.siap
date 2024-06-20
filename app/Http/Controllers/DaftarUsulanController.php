@@ -55,9 +55,6 @@ class DaftarUsulanController extends Controller
                 }
                 $new_data->dokumen_pendukung = $data_files;
             }
-            else {
-                throw new Exception("tidak ada file yang diupload");
-            }
             $request->data = [
                 "action" => $action,
                 "id" => $id,
