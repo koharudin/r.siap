@@ -32,6 +32,7 @@ class UsulanInformasiPegawai extends AcceptedClass
             $r->email = @$data['new_data']['email'];
             $r->foto = @$data['new_data']['foto'];
             $r->alamat = @$data['new_data']['alamat'];
+            $r->alamat_domisili = @$data['new_data']['alamat_domisili'];
             $r->karpeg = @$data['new_data']['karpeg'];
             $r->taspen = @$data['new_data']['taspen'];
             $r->npwp = @$data['new_data']['npwp'];
