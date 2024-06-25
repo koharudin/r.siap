@@ -35,9 +35,9 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-		if(!$last){
-			throw new Exception ("Tidak ditemukan jabatan terkahir ".$this->nip_baru);
-		}
+        if (!$last) {
+            throw new Exception("Tidak ditemukan jabatan terkahir " . $this->nip_baru);
+        }
         if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;
@@ -161,7 +161,7 @@ class Employee extends Model
     }
     public function obj_riwayat_mertua()
     {
-        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status', [3, 4])->orderBy('birth_date', 'desc');
     }
     public function obj_riwayat_organisasi()
     {
@@ -234,7 +234,7 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
     }
-    
+
     public function obj_riwayat_diklat_struktural()
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
@@ -354,4 +354,7 @@ class Employee extends Model
     }
 
     public $dates = ['birth_date', 'tgl_pensiun'];
+    protected $casts = [
+        'birth_date' => 'datetime:Y-m-d', 'tgl_pensiun' => 'datetime:Y-m-d'
+    ];
 }
