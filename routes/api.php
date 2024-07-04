@@ -395,7 +395,7 @@ Route::get("/master-jenis-kenaikan-gaji/{id}/detail", function ($id) {
 Route::post("/master-jenis-bahasa", function () {
     return response()->json(JenisBahasa::paginate(), 200);
 });
-Route::post("/master-jenis-cuti", function () {
+Route::get("/master-jenis-cuti", function () {
     return response()->json(JenisCuti::select('id_jenis_cuti as id', 'deskripsi_jenis_cuti as name')->paginate(), 200);
 });
 Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
@@ -407,7 +407,7 @@ Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-Route::post("/master-detail-jenis-cuti", function () {
+Route::get("/master-detail-jenis-cuti", function () {
     $parent_id = request()->input("parent_id");
     if (!$parent_id) {
         throw new Exception("Tidak ditemukan param parent_id");
