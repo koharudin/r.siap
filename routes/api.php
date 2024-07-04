@@ -240,6 +240,8 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::post("test-upload", [TestController::class, "testUpload"]);
     Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
     Route::get("verifikasi-usulan", [VerifikasiUsulanController::class, "list"]);
+    Route::get("usulan/{uuid}/edit", [DaftarUsulanController::class, "edit"]);
+    Route::post("usulan/{uuid}/edit", [DaftarUsulanController::class, "update"]);
     Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
     Route::post("usulan/{uuid}/hapus", [DaftarUsulanController::class, "hapus"]);
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
