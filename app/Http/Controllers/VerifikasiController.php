@@ -81,6 +81,20 @@ class VerifikasiController extends Controller
         } else if (request()->input("action") == "tolak") {
             return $this->tolak($record);
         }
+        else if (request()->input("action") == "revisi") {
+            return $this->revisi($record);
+        }
+    }
+    public function revisi(ModelsRequest $request)
+    {
+
+        DB::beginTransaction();
+        $request->status_id = RequestStep::REVISI;
+        $request->verifikator_id  = Auth::user()->id;
+        $request->save();
+        RequestLog::addLog($request, request()->input("alasan"));
+        DB::commit();
+        return response()->json($request, 200);
     }
     public function tolak(ModelsRequest $request)
     {
