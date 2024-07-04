@@ -245,6 +245,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
     Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
     Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
+    Route::get('user/me', [AdminEmployeeController::class, 'currentUser']);
     Route::get('me/informasi-pegawai', [AdminEmployeeController::class, 'informasiPegawai']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
@@ -301,7 +302,7 @@ Route::post("/master-jabatan", function () {
 });
 Route::get("/master-jabatan/detail", function () {
     $query = Jabatan::query();
-    $tipe_jabatan = request()->input("tipe_jabatan");
+    $tipe_jabatan = request()->input("tipe_jabatan_id");
 
     if ($tipe_jabatan == 1) {
         $query = UnitKerja::query();
@@ -395,7 +396,7 @@ Route::get("/master-jenis-kenaikan-gaji/{id}/detail", function ($id) {
 Route::post("/master-jenis-bahasa", function () {
     return response()->json(JenisBahasa::paginate(), 200);
 });
-Route::post("/master-jenis-cuti", function () {
+Route::get("/master-jenis-cuti", function () {
     return response()->json(JenisCuti::select('id_jenis_cuti as id', 'deskripsi_jenis_cuti as name')->paginate(), 200);
 });
 Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
@@ -407,7 +408,7 @@ Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-Route::post("/master-detail-jenis-cuti", function () {
+Route::get("/master-detail-jenis-cuti", function () {
     $parent_id = request()->input("parent_id");
     if (!$parent_id) {
         throw new Exception("Tidak ditemukan param parent_id");
