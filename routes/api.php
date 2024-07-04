@@ -507,7 +507,7 @@ Route::get("/master-status-pernikahan/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-Route::get("/master-jenis-penghargaan/{id}/detail", function ($id) {
+Route::get("/dmaster-jenis-penghargaan/{id}/detail", function ($id) {
     $query = JenisPenghargaan::query();
     $query->where("id", $id);
     $data = $query->get()->first();
