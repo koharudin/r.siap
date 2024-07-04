@@ -245,6 +245,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
     Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
     Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
+    Route::get('user/me', [AdminEmployeeController::class, 'currentUser']);
     Route::get('me/informasi-pegawai', [AdminEmployeeController::class, 'informasiPegawai']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
@@ -301,7 +302,7 @@ Route::post("/master-jabatan", function () {
 });
 Route::get("/master-jabatan/detail", function () {
     $query = Jabatan::query();
-    $tipe_jabatan = request()->input("tipe_jabatan");
+    $tipe_jabatan = request()->input("tipe_jabatan_id");
 
     if ($tipe_jabatan == 1) {
         $query = UnitKerja::query();
