@@ -43,9 +43,10 @@ class DaftarUsulanController extends Controller
             $request->creator = $user->id;
             $request->status_id = RequestStep::SEND;
             
-            $files = request()->file("dokumen_pendukung");
+            $files = request()->file("files-dokumen_pendukung");
             $data_files = [];
-            if(request()->hasFile('dokumen_pendukung')){
+            if(request()->hasFile('files-dokumen_pendukung')){
+                
                 $disk_layanan = Storage::disk("minio_layanan");
                 foreach($files as $file){
                     $ext = ".".$file->getClientOriginalExtension();
@@ -54,6 +55,11 @@ class DaftarUsulanController extends Controller
                     $disk_layanan->putFileAs("/",$file,$randomFileName);
                 }
                 $new_data->dokumen_pendukung = $data_files;
+            }
+            else {
+                if($action == 3)//penghapusan
+                {}
+                else throw new Exception("Tidak ada file");
             }
             $request->data = [
                 "action" => $action,
@@ -74,7 +80,8 @@ class DaftarUsulanController extends Controller
             $requestLog->save();
             DB::commit();
             return response()->json([
-                "uuid"=>$request->uuid
+                "uuid"=>$request->uuid,
+                "files"=>$files
             ], 200);
         } catch (\Exception $e) {
             DB::rollback();
