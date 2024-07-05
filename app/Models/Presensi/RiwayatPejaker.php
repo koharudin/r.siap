@@ -33,4 +33,5 @@ class RiwayatPejaker extends Model
           'dinas' => 'DINAS',
           'non dinas' => 'NON DINAS'
      ];
+     public $timestamps = false;
 }
