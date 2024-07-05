@@ -26,7 +26,7 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
-        $grid->model()->whereIn('status_pegawai_id', [1, 2, 23]);
+        // $grid->model()->whereIn('status_pegawai_id', [1, 2, 23]);
         $grid->model()->orderBy('first_name', 'asc');
         $grid->paginate(10);
         $grid->actions(function ($actions) {

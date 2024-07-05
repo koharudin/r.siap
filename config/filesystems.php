@@ -41,6 +41,15 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
+        'minio_layanan' => [
+            'driver' => 's3',
+            'endpoint' => env('MINIO_LAYANAN_ENDPOINT', ''),
+            'use_path_style_endpoint' => true,
+            'key' => env('MINIO_LAYANAN_ACCESS_KEY'),
+            'secret' => env('MINIO_LAYANAN_ACCESS_SECRET'),
+            'region' => env('MINIO_LAYANAN_ACCESS_REGION'),
+            'bucket' => 'layanan',
+        ],
         'minio_dokumen' => [
             'driver' => 's3',
             'endpoint' => env('MINIO_ENDPOINT', ''),
