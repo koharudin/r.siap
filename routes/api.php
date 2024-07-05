@@ -362,6 +362,24 @@ Route::post("/master-unitkerja", function () {
     $query->orderBy("name", "asc");
     return response()->json($query->paginate(), 200);
 });
+Route::post("/master-pegawai", function () {
+    $query = Employee::query();
+    $q = request()->input("q");
+    $query->where(function($query) use($q){
+        $query->where("first_name", "ilike", "%{$q}%");
+        $query->orWhere("nip_baru", "ilike", "%{$q}%");
+    });
+    $query->orderBy("first_name", "asc");
+    return response()->json($query->paginate(), 200);
+});
+Route::get("/master-pegawai/{nip}/detail", function ($nip) {
+    $query = Employee::query();
+    $query->where("nip_baru", $nip);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
 Route::get("/master-jenis-diklat-siasn/{id}/detail", function ($id) {
     $query = DiklatSiasn::query();
     $query->where("id_siasn", $id);
