@@ -285,6 +285,29 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::resource('riwayat-skpns', RiwayatSKPNSController::class);
     Route::resource('riwayat-sumpah', RiwayatSumpahController::class);
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
+
+    Route::post("/master-jenis-layanan", function () {
+        $user= auth()->user();
+        $user->load("roles");
+        $query = RequestCategory::query();
+        $query->where("active",true);
+        $query->orderBy("order","asc");
+        $query->orderBy("name","asc");
+        if (request()->input('pagination') == "false") {
+            $query->where(function($query)use($user){
+                $query->where('parent_id',1);
+                $tu = $user->roles->filter(function($r)use($query){
+                    //has role TU
+                    if($r->id==8){
+                        //Layanan TU
+                        $query->Orwhere("parent_id",39);
+                    }
+                });
+            });
+            return response()->json($query->get(), 200);
+        }
+        return response()->json($query->paginate(), 200);
+    });
 });
 
 Route::post("/master-jabatan", function () {
@@ -427,16 +450,7 @@ Route::get("/master-detail-jenis-cuti/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-Route::post("/master-jenis-layanan", function () {
-    $query = RequestCategory::query();
-    $query->where("active",true);
-    $query->orderBy("order","asc");
-    $query->orderBy("name","asc");
-    if (request()->input('pagination') == "false") {
-        return response()->json($query->whereNotNull('parent_id')->get(), 200);
-    }
-    return response()->json($query->paginate(), 200);
-});
+
 Route::post("/master-kemampuan-bicara", function () {
     return response()->json(KemampuanBicara::paginate(), 200);
 });
