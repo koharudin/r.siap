@@ -38,25 +38,26 @@ class DaftarUsulanController extends Controller
         $request_category = RequestCategory::find($layanan_id);
         $cls =  $request_category->acceptedclass;
         // $cls = "App\Http\Controllers\VerifikasiController";
-        if ($cls == "") {
-            throw new Exception("VerifiedClass masih kosong " . $cls);
-        }
-        $cls = "App\Models\VerifiedClass\\" . $cls;
-        if (!class_exists($cls)) {
-            throw new Exception("Turunan dari VerifiedClass tidak ditemukan " . $cls);
-        }
-
-        $ac = new $cls();
-        if (!is_subclass_of($cls, AcceptedClass::class)) {
-            throw new Exception(" VerifiedClass harus turunan dari AcceptedClass");
-        }
-        if(method_exists($ac,"checkSubmit")){
-           // $ac->checkSubmit();
-        }
-       
-
-        $employee = Employee::with(['obj_requests'])->whereRaw('nip_baru = ?', [$user->username])->first();
         try {
+            if ($cls == "") {
+                throw new Exception("VerifiedClass masih kosong " . $cls);
+            }
+            $cls = "App\Models\VerifiedClass\\" . $cls;
+            if (!class_exists($cls)) {
+                throw new Exception("Turunan dari VerifiedClass tidak ditemukan " . $cls);
+            }
+
+            $ac = new $cls();
+            if (!is_subclass_of($cls, AcceptedClass::class)) {
+                throw new Exception(" VerifiedClass harus turunan dari AcceptedClass");
+            }
+            if (method_exists($ac, "checkSubmit")) {
+                $ac->checkSubmit();
+            }
+
+
+            $employee = Employee::with(['obj_requests'])->whereRaw('nip_baru = ?', [$user->username])->first();
+
             $request = new RequestPelayanan();
 
             $request->action = $action;
@@ -107,7 +108,7 @@ class DaftarUsulanController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             // something went wrong
-            return response()->json("Tidak dapat menyimpan ke database <br>" . $e->getMessage(), 500);
+            return response()->json(["message"=>"Tidak dapat menyimpan ke database. " . $e->getMessage()], 500);
         }
     }
     public function edit($uuid)

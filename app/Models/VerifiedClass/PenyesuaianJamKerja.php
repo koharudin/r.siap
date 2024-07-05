@@ -16,7 +16,21 @@ class PenyesuaianJamKerja extends AcceptedClass
 {
     public function checkSubmit()
     {
-        throw new Exception("CHECK SUBMIT");
+        $user = auth()->user();
+        $e = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
+        if (!$e) {
+            throw new Exception("Pegawai tidak ditemukan");
+        }
+        $ep = EmployeePresensi::where("nipp", $e->nip_baru)->get()->first();
+        if (!$ep) {
+            throw new Exception("Pegawai Presensi tidak ditemukan");
+        }
+        $new_data = json_decode(request()->input("new_data"));
+        $r = RiwayatPejaker::where("no_pekerja", $ep->nomor_pekerja)->whereRaw("date(tgl_pejaker) = ?", [ $new_data->tgl_pejaker])->get()->first();
+
+        if ($r) {
+            throw new Exception("Sudah ada data penyesuaian jam kerja pada tanggal tersebut");
+        }
     }
     public function hook(Request $request)
     {
