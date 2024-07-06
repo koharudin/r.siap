@@ -136,6 +136,28 @@ Route::group(['middleware' => 'auth:api'], function () {
         $user = Auth::user();
         return response()->json($user, 200);
     });
+    Route::get("/cek_saldo_cuti_saya", function () {
+        $user = auth()->user();
+        $e = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
+        if (!$e) {
+            throw new Exception("Pegawai tidak ditemukan");
+        }
+        $ep = EmployeePresensi::where("nipp", $e->nip_baru)->get()->first();
+        if (!$ep) {
+            throw new Exception("Pegawai Presensi tidak ditemukan");
+        }
+        $tgl_mulai = request()->input("tgl_mulai");
+        $date = Carbon::createFromFormat("Y-m-d", $tgl_mulai);
+        $tahun = $date->format("Y");
+        $tgl_selesai = request()->input("tgl_selesai");
+        //get saldo cuti
+        $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+        $saldo_cuti = $c[0]->sisa_thn0;
+        $ct = DB::connection("db_presensi")->select("CALL jumlah_hari_cuti(?,?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai));
+        $jumlah_hari_kerja = $ct[0]->jumlah;
+        $sisa_sado_cuti = $saldo_cuti - $jumlah_hari_kerja;
+        return response()->json(["user" => $user, "ep" => $ep, "year" => $date->format("Y"), "saldo_cuti" => $saldo_cuti, "jumlah_hari_kerja" => $jumlah_hari_kerja, "sisa_sado_cuti" => $sisa_sado_cuti]);
+    });
 });
 
 Route::get('cek-login', function () {
@@ -289,20 +311,20 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
 
     Route::post("/master-jenis-layanan", function () {
-        $user= auth()->user();
+        $user = auth()->user();
         $user->load("roles");
         $query = RequestCategory::query();
-        $query->where("active",true);
-        $query->orderBy("order","asc");
-        $query->orderBy("name","asc");
+        $query->where("active", true);
+        $query->orderBy("order", "asc");
+        $query->orderBy("name", "asc");
         if (request()->input('pagination') == "false") {
-            $query->where(function($query)use($user){
-                $query->where('parent_id',1);
-                $tu = $user->roles->filter(function($r)use($query){
+            $query->where(function ($query) use ($user) {
+                $query->where('parent_id', 1);
+                $tu = $user->roles->filter(function ($r) use ($query) {
                     //has role TU
-                    if($r->id==8){
+                    if ($r->id == 8) {
                         //Layanan TU
-                        $query->Orwhere("parent_id",39);
+                        $query->Orwhere("parent_id", 39);
                     }
                 });
             });
@@ -367,12 +389,35 @@ Route::post("/master-unitkerja", function () {
 Route::post("/master-pegawai", function () {
     $query = Employee::query();
     $q = request()->input("q");
-    $query->where(function($query) use($q){
+    $query->where(function ($query) use ($q) {
         $query->where("first_name", "ilike", "%{$q}%");
         $query->orWhere("nip_baru", "ilike", "%{$q}%");
     });
     $query->orderBy("first_name", "asc");
     return response()->json($query->paginate(), 200);
+});
+
+
+Route::get("/sisa_cuti", function () {
+    $nip = request()->get("nip");
+    $tgl_selesai = request()->get("tahun");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+    response()->json(["total" => $c[0]->jumlah], 200);
+});
+Route::get("/jumlah_hari_cuti", function () {
+    $nip = request()->get("nip");
+    $tgl_mulai = request()->get("tgl_mulai");
+    $tgl_selesai = request()->get("tgl_selesai");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c = DB::connection("db_presensi")->select("CALL jumlah_hari_cuti(?,?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai));
+    response()->json(["total" => $c[0]->jumlah], 200);
 });
 Route::get("/cek_ijin", function () {
     $nip = request()->get("nip");
@@ -382,14 +427,11 @@ Route::get("/cek_ijin", function () {
     if (!$ep) {
         throw new Exception("Pegawai Presensi tidak ditemukan");
     }
-    $c= DB::connection("db_presensi")->select("CALL cek_ijin(?,?,?, ?,?) ",array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai,1,1));
+    $c = DB::connection("db_presensi")->select("CALL cek_ijin(?,?,?, ?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai, 1, 1));
     $result =  $c[0]->cek;
-    if($result ==0){
-        return response()->json(["message"=>"Pegawai sudah ada ijin dalam tanggal tersebut"],400);
-    }
-    else return response()->json(["message"=>"ok"],200);
-          
-   
+    if ($result == 0) {
+        return response()->json(["message" => "Pegawai sudah ada ijin dalam tanggal tersebut"], 400);
+    } else return response()->json(["message" => "ok"], 200);
 });
 Route::get("/master-pegawai/{nip}/detail", function ($nip) {
     $query = Employee::query();
