@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\EmployeePresensi;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminEmployeeController extends Controller
 {
@@ -29,13 +32,30 @@ class AdminEmployeeController extends Controller
         $user = Auth::user();
         $user->load("roles");
         $employee = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
-        return response()->json(["employee"=>$employee,"user"=>$user->only("username","name","avatar","roles")]);
+        $ep = EmployeePresensi::where("nipp", $employee->nip_baru)->get()->first();
+        if (!$ep) {
+            throw new Exception("Pegawai Presensi tidak ditemukan");
+        }
+        $tahun = date("Y");
+        //get saldo cuti
+        $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+        $saldo_cuti = $c[0]->sisa_thn0;
+        return response()->json(["employee" => $employee, "saldo_cuti" => $saldo_cuti, "user" => $user->only("username", "name", "avatar", "roles")]);
     }
     public function informasiPegawai()
     {
         $user = Auth::user();
         $employee = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
-        return response()->json($employee);
+        $ep = EmployeePresensi::where("nipp", $employee->nip_baru)->get()->first();
+        if (!$ep) {
+            throw new Exception("Pegawai Presensi tidak ditemukan");
+        }
+        $tahun = date("Y");
+        //get saldo cuti
+        $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+        $saldo_cuti = $c[0]->sisa_thn0;
+
+        return response()->json(["employee" => $employee, "saldo_cuti" => $saldo_cuti]);
     }
 
     /**
