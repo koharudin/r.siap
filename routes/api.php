@@ -49,6 +49,7 @@ use App\Models\AlasanHukuman;
 use App\Models\Diklat;
 use App\Models\DiklatSiasn;
 use App\Models\Employee;
+use App\Models\EmployeePresensi;
 use App\Models\Hukuman;
 use App\Models\Jabatan;
 use App\Models\JenisBahasa;
@@ -76,6 +77,7 @@ use Encore\Admin\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -371,6 +373,23 @@ Route::post("/master-pegawai", function () {
     });
     $query->orderBy("first_name", "asc");
     return response()->json($query->paginate(), 200);
+});
+Route::get("/cek_ijin", function () {
+    $nip = request()->get("nip");
+    $tgl_mulai = request()->get("tgl_mulai");
+    $tgl_selesai = request()->get("tgl_selesai");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c= DB::connection("db_presensi")->select("CALL cek_ijin(?,?,?, ?,?) ",array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai,1,1));
+    $result =  $c[0]->cek;
+    if($result ==0){
+        return response()->json(["message"=>"Pegawai sudah ada ijin dalam tanggal tersebut"],400);
+    }
+    else return response()->json(["message"=>"ok"],200);
+          
+   
 });
 Route::get("/master-pegawai/{nip}/detail", function ($nip) {
     $query = Employee::query();
