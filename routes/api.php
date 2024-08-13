@@ -58,6 +58,7 @@ use App\Models\JenisPekerjaan;
 use App\Models\JenisPenghargaan;
 use App\Models\KemampuanBicara;
 use App\Models\LineApproval;
+use App\Models\LineApprovalRequest;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\Pendidikan;
@@ -222,6 +223,16 @@ Route::group(["middleware" => "auth:api"], function () {
             if ($v->id == 5) $isVerifikator = true;
             if ($v->id == 2) $isPegawai = true;
         });
+        //cek apakah seorang pejabat
+        $unit_pejabat = UnitKerja::where("pejabat_nip",$user->username)->get()->first();
+        if($unit_pejabat){
+            $isVerifikator = true;
+        }
+        //cek apakah pernah menjadi assigner
+        $approver = LineApprovalRequest::where("approval_assigner",$user->username)->get();
+        if($approver->count()>0){
+            $isVerifikator = true;
+        }
         $items = [];
         $child = new stdClass;
         $child->id = "ui-element";
@@ -320,6 +331,7 @@ Route::group(["middleware" => "auth:api"], function () {
         if (request()->input('pagination') == "false") {
             $query->where(function ($query) use ($user) {
                 $query->where('parent_id', 1);
+                $query->Orwhere("parent_id", 42);//Lain-Lain
                 $tu = $user->roles->filter(function ($r) use ($query) {
                     //has role TU
                     if ($r->id == 8) {
