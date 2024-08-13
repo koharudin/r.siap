@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\AcceptedClass;
 use App\Models\Employee;
+use App\Models\LineApproval;
+use App\Models\LineApprovalRequest;
 use App\Models\Request as RequestPelayanan;
 use App\Models\RequestCategory;
 use App\Models\RequestLog;
 use App\Models\RequestStep;
+use App\Models\UnitKerja;
 use Exception;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class DaftarUsulanController extends Controller
@@ -25,6 +29,17 @@ class DaftarUsulanController extends Controller
     }
     public function store()
     {
+        $validator = Validator::make(request()->all(), [
+            'action' => "required",
+            "layanan_id"=>"required"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors(),
+                'message' => 'Harap lengkapi data yang diperlukan.',
+            ], 422);
+        }
         $action = request()->input("action");
         $id = request()->input("id");
         $layanan_id  = request()->input("layanan_id");
@@ -36,6 +51,7 @@ class DaftarUsulanController extends Controller
         DB::beginTransaction();
         $user = FacadesAuth::user();
         $request_category = RequestCategory::find($layanan_id);
+        
         $cls =  $request_category->acceptedclass;
         // $cls = "App\Http\Controllers\VerifikasiController";
         try {
@@ -59,7 +75,8 @@ class DaftarUsulanController extends Controller
             $employee = Employee::with(['obj_requests'])->whereRaw('nip_baru = ?', [$user->username])->first();
 
             $request = new RequestPelayanan();
-
+            
+            $request->line_approval_type = $request_category->line_approval_type;
             $request->action = $action;
             $request->category_id = $layanan_id;
             $request->employee_id =  $employee->id;
@@ -100,6 +117,27 @@ class DaftarUsulanController extends Controller
                 "new_data" => $action == 3 ? $ref_data : $new_data
             ];
             $requestLog->save();
+            if($request_category->line_approval_type ==3){
+                $e = Employee::where("nip_baru",$user->username)->get()->first();
+                if(!$e){
+                    throw new Exception("Pegawai tidak ditemukan");
+                }
+                if(!$e->unit_id) {
+                    throw new Exception("Data Unit ID pegawai kosong");
+                }
+                $u = UnitKerja::where("id",$e->unit_id)->get()->first();
+                if(!$u){
+                    throw new Exception("Data Unit Kerja pegawai tidak ditemukan");
+                }
+                $e_pejabat = Employee::where("nip_baru",$u->pejabat_nip)->get()->first();
+                if(!$e_pejabat){
+                    throw new Exception("Data atasan langsung pegawai tidak ditemukan");
+                }
+                $lineApproval = new LineApprovalRequest();
+                $lineApproval->request_id = $request->id;
+                $lineApproval->approval_assigner = $e_pejabat->nip_baru;
+                $lineApproval->save();
+            }
             DB::commit();
             return response()->json([
                 "uuid" => $request->uuid,

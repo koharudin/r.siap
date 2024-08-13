@@ -22,6 +22,17 @@ class VerifikasiUsulanController extends Controller
     {
         $list = RequestPelayanan::with(['obj_status', 'obj_employee', 'obj_kategori']);
         $list->where("status_id",">=",RequestStep::SEND);
+        $list->where(function($query){
+            $query->where("line_approval_type",1);
+            $query->orWhere(function($query){
+                $query->where("line_approval_type",3);
+                $query->whereHas("obj_line_approvals",function($query){
+                    $user = FacadesAuth::user();
+                    $query->where("approval_assigner",$user->username);
+                });
+            });
+        });
+        $user = FacadesAuth::user();
         return response()->json($list->orderBy('created_at', 'desc')->paginate());
     }
     public function verifikasi()
