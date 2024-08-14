@@ -14,12 +14,15 @@ class Employee extends Model
     public $table = 'employee';
     public $primaryKey = 'id';
     public $timestamps = true;
-
     public const STATUS_PENSIUN = 3;
 
+    public static function getIdByNip($nip)
+    {
+        return self::where('nip_baru', $nip)->value('id');
+    }
     public function showPhoto()
     {
-        if ($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
+        if($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
             return route('admin.download.foto', ['f' => base64_encode($this->foto)]);
         }
         return null;
@@ -35,23 +38,23 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-        if (!$last) {
-            throw new Exception("Tidak ditemukan jabatan terkahir " . $this->nip_baru);
+        if(!$last) {
+            throw new Exception("Tidak ditemukan jabatan terakhir ".$this->nip_baru);
         }
-        if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
+        if($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;
-        } else if ($last->tipe_jabatan_id == 2) {
+        } else if($last->tipe_jabatan_id == 2) {
             return $last->obj_tipe_jabatan->bup;
-        } else if ($last->tipe_jabatan_id >= 3 && $last->tipe_jabatan_id <= 5) {
+        } else if($last->tipe_jabatan_id >= 3 && $last->tipe_jabatan_id <= 5) {
             $obj = $last->obj_jabatan_fungsional;
             return $obj ? $obj->bup : null;
         }
     }
     public function getTmtPensiun($tglPensiun)
     {
-        if ($tglPensiun) {
-            if ($tglPensiun->day == 1) {
+        if($tglPensiun) {
+            if($tglPensiun->day == 1) {
                 return $tglPensiun;
             } else {
                 $tglPensiun->addMonth();
@@ -65,12 +68,12 @@ class Employee extends Model
     {
         $bup = $this->getBup();
         $bday = $this->birth_date;
-        if ($bup) {
+        if($bup) {
             $pensiun = $bday->addYear($bup);
             $this->load('obj_riwayat_pensiun');
             $this->tgl_pensiun = $pensiun->setDay($pensiun->daysInMonth);
             $obj_riwayat_pensiun = $this->obj_riwayat_pensiun;
-            if (!$obj_riwayat_pensiun) {
+            if(!$obj_riwayat_pensiun) {
                 $obj_riwayat_pensiun = new RiwayatPensiun();
                 $obj_riwayat_pensiun->employee_id = $this->id;
             }
@@ -194,7 +197,7 @@ class Employee extends Model
     public function calculateNilaiMasaKerja()
     {
         $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
-        if ($latestSKCPNS) {
+        if($latestSKCPNS) {
             $cpnsDate = $latestSKCPNS->tmt_cpns;
             $now = now();
             $lengthOfService = $cpnsDate->diff($now);
@@ -211,8 +214,8 @@ class Employee extends Model
                 ['min' => 32, 'max' => null, 'value' => 450],
             ];
 
-            foreach ($ranges as $range) {
-                if (
+            foreach($ranges as $range) {
+                if(
                     ($range['max'] === null && $totalMonths >= $range['min']) ||
                     ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
                 ) {
@@ -234,7 +237,6 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
     }
-
     public function obj_riwayat_diklat_struktural()
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
@@ -277,7 +279,7 @@ class Employee extends Model
     }
     public function getUsiaAttribute($from = null)
     {
-        if ($from == null) {
+        if($from == null) {
             $from = Carbon::now();
         }
         return $this->birth_date->diffInMonths($from);
@@ -285,11 +287,11 @@ class Employee extends Model
     public function getNamaGelarAttribute()
     {
         $long_name = [];
-        if ($this->gelar_depan) {
+        if($this->gelar_depan) {
             $long_name[] = $this->gelar_depan;
         }
         $long_name[] = $this->first_name;
-        if ($this->gelar_belakang) {
+        if($this->gelar_belakang) {
             $long_name[] = $this->gelar_belakang;
         }
         return trim(implode(" ", $long_name));
@@ -297,10 +299,10 @@ class Employee extends Model
     public function getTTDAttribute()
     {
         $txt = [];
-        if ($this->birth_place) {
+        if($this->birth_place) {
             $txt[] = $this->birth_place;
         }
-        if ($this->birth_date) {
+        if($this->birth_date) {
             $txt[] = $this->birth_date->format('d-m-Y');
         }
         return trim(implode(", ", $txt));
@@ -321,12 +323,11 @@ class Employee extends Model
     {
         return StatusPegawai::find($this->status_pegawai_id)->name;
     }
-
     public function updateLastRiwayatPangkat()
     {
         $this->load('obj_riwayat_pangkat');
         $last = $this->obj_riwayat_pangkat->last();
-        if ($last) {
+        if($last) {
             $this->last_riwayat_pangkat_id = $last->id;
         } else
             $this->last_riwayat_pangkat_id = null;
@@ -336,7 +337,7 @@ class Employee extends Model
     {
         $this->load('obj_riwayat_jabatan');
         $last = $this->obj_riwayat_jabatan->last();
-        if ($last) {
+        if($last) {
             $this->last_riwayat_jabatan_id = $last->id;
         } else
             $this->last_riwayat_jabatan_id = null;
@@ -346,7 +347,7 @@ class Employee extends Model
     {
         $this->load('obj_riwayat_pendidikan');
         $last = $this->obj_riwayat_pendidikan->last();
-        if ($last) {
+        if($last) {
             $this->last_riwayat_pendidikan_id = $last->id;
         } else
             $this->last_riwayat_pendidikan_id = null;

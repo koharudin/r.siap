@@ -143,8 +143,9 @@ class ProfileController
         }
         if(!empty(@$arr['id_siasn'])) {
             $url = route('admin.download.dokumensiasn', [
-                'f' => base64_encode(@$arr['id']),
-                'g' => base64_encode(@$arr['klasifikasi_id'])
+                'f' => base64_encode($arr['nip']),
+                'g' => base64_encode(@$arr['klasifikasi_id']),
+                'h' => base64_encode(@$arr['id_siasn']),
             ]);
             $href = $href."<hr style='margin-bottom: 5px; margin-top: 5px;'><a href='{$url}' target='_blank'><i class='fa fa-eye'> Download dari <b>MyASN</b></a>";
         } else {
@@ -169,6 +170,7 @@ class ProfileController
                         'klasifikasi_id' => $_this->klasifikasi_id,
                         'id' => $this->id,
                         'id_siasn' => $this->id_siasn,
+                        'nip' => (isset($this->obj_pegawai->nip_baru)) ? $this->obj_pegawai->nip_baru : '0',
                     ]);
                 });
             }
@@ -244,7 +246,7 @@ class ProfileController
                     $tools->disableEdit();
                 }
                 if((Admin::user()->can("delete-{$_this->activeTab}")) or (Admin::user()->can("edit-{$_this->activeTab}l"))) {
-                    $tools->append('<a style="margin-right: 10px;" id="getButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
+                    // $tools->append('<a style="margin-right: 5px;" id="getButton" class="btn btn-sm btn-success"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;Ambil dari SIASN</a>');
                     // $tools->append('<a style="margin-right: 10px;" class="btn btn-sm btn-warning"><i class="fa fa-cloud-upload"></i>&nbsp;&nbsp;Kirim ke SIASN</a>');
                     $url = route('admin.download.datasiasn', [
                         'f' => $id,

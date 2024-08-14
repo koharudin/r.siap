@@ -15,10 +15,10 @@ class RiwayatPangkat extends Model
         $this->load('obj_pegawai');
         $this->obj_pegawai->updateLastRiwayatPangkat();
     }
+
     public static function boot()
     {
         parent::boot();
-
         self::creating(function ($model) {
             // ... code here
         });
@@ -28,7 +28,7 @@ class RiwayatPangkat extends Model
             // ... code here
             // insert into riwayat gaji
             $record = RiwayatGaji::where('riwayat_pangkat_id', $model->id)->get()->first();
-            if (!$record) {
+            if(!$record) {
                 $record = new RiwayatGaji();
                 $record->riwayat_pangkat_id = $model->id;
                 $record->employee_id = $model->employee_id;
@@ -42,7 +42,7 @@ class RiwayatPangkat extends Model
             $record->gaji_pokok = 0;
             $record->jenis_kenaikan = $model->jenis_kp;
             $record->pangkat_id = $model->pangkat_id;
-            if ($model->is_cpns_pns == 1) {
+            if($model->is_cpns_pns == 1) {
             }
             $record->save();
         });
@@ -56,7 +56,7 @@ class RiwayatPangkat extends Model
             // ... code here
 
             $record = RiwayatGaji::where('riwayat_pangkat_id', $model->id)->get()->first();
-            if (!$record) {
+            if(!$record) {
                 $record = new RiwayatGaji();
                 $record->riwayat_pangkat_id = $model->id;
                 $record->employee_id = $model->employee_id;
@@ -70,7 +70,7 @@ class RiwayatPangkat extends Model
             $record->gaji_pokok = 0;
             $record->jenis_kenaikan = $model->jenis_kp;
             $record->pangkat_id = $model->pangkat_id;
-            if ($model->is_cpns_pns == RiwayatPangkat::SK_CPNS) {
+            if($model->is_cpns_pns == RiwayatPangkat::SK_CPNS) {
                 $gapok = GajiPokok::where('pangkat_id', $model->pangkat_id)->where('masa_kerja', 0)->orderBy('tahun', 'asc')->get()->last();
                 $record->gaji_pokok = $gapok ? ($gapok->gaji_pokok * 80 / 100) : null;
             } else {
@@ -104,28 +104,29 @@ class RiwayatPangkat extends Model
     }
     public function getTTMTPangkatAttribute()
     {
-        if (@$this->tmt_pangkat) {
+        if(@$this->tmt_pangkat) {
             return $this->tmt_pangkat->format('d-m-Y');
         }
         return "-";
     }
     public function getTJenisKPAttribute()
     {
-        if ($this->obj_jenis_kenaikan_pangkat) {
+        if($this->obj_jenis_kenaikan_pangkat) {
             return $this->obj_jenis_kenaikan_pangkat->name;
         }
         return null;
     }
     public function getTPangkatGolonganAttribute()
     {
-        return $this->obj_pangkat->name . " - " . $this->obj_pangkat->kode;
+        return $this->obj_pangkat->name." - ".$this->obj_pangkat->kode;
     }
     public function getTMasaKerjaAttribute()
     {
-        return $this->masakerja_thn . " Tahun " . $this->masakerja_bln . " Bulan";
+        return $this->masakerja_thn." Tahun ".$this->masakerja_bln." Bulan";
     }
+    
     protected $dates = ['tmt_pangkat', 'tgl_sk', 'tgl_nota','tgl_stlud', 'tmt_pak'];
     protected $casts = [
-        'tmt_pangkat'=> 'datetime:Y-m-d', 'tgl_sk'=> 'datetime:Y-m-d', 'tgl_nota'=> 'datetime:Y-m-d','tgl_stlud'=> 'datetime:Y-m-d', 'tmt_pak'=> 'datetime:Y-m-d'
+        'tmt_pangkat' => 'datetime:Y-m-d', 'tgl_sk' => 'datetime:Y-m-d', 'tgl_nota' => 'datetime:Y-m-d', 'tgl_stlud' => 'datetime:Y-m-d', 'tmt_pak' => 'datetime:Y-m-d'
     ];
 }

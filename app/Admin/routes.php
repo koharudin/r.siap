@@ -67,7 +67,7 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->get('/download/dokumen/{f}', 'HomeController@download_dokumen')->name('download.dokumen');
     $router->get('/download/foto/{f}', 'HomeController@download_foto')->name('download.foto');
-    $router->get('/download/dokumensiasn/{f}/{g}', 'SiasnController@download_dok')->name('download.dokumensiasn');
+    $router->get('/download/dokumensiasn/{f}/{g}/{h}', 'SiasnController@download_dok')->name('download.dokumensiasn');
     $router->post('/download/datasiasn/{f}/{g}', 'SiasnController@download_data')->name('download.datasiasn');
 
     $router->resource('test', TestController::class);

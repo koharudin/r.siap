@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Admin\Selectable;
 
 use App\Models\Jabatan;
@@ -16,7 +17,7 @@ class GridJabatan extends Selectable
 
         $this->filter(function (Filter $filter) {
             $filter->disableIdFilter();
-            $filter->ilike('name', 'Cari Jabatan');
+            $filter->ilike('name', 'CARI JABATAN');
         });
     }
 }

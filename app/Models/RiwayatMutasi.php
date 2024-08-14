@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatMutasi extends Model
 {
-    public $table  = 'riwayat_mutasi';
+    public $table = 'riwayat_mutasi';
     protected $dates = ['tgl_sk', 'tmt_sk'];
     public $appends = ['lama_kerja_diunit'];
 
@@ -22,43 +22,18 @@ class RiwayatMutasi extends Model
         'tgl_sk' => 'datetime:Y-m-d',
         'tmt_sk' => 'datetime:Y-m-d'
     ];
-    public static function boot()
+
+    public function obj_riwayat_jabatan()
     {
-        parent::boot();
-
-        self::creating(function ($model) {
-            // ... code here
-        });
-
-        self::created(function ($model) {
-
-            $last_mutasi = $model->obj_pegawai->obj_riwayat_mutasi->last();
-            $employee =   $model->obj_pegawai;
-            $employee->unit_id = $last_mutasi->satker_id_baru;
-            $employee->save();
-        });
-
-        self::updating(function ($model) {
-            // ... code here
-        });
-
-        self::updated(function ($model) {
-            $last_mutasi = $model->obj_pegawai->obj_riwayat_mutasi->last();
-            $employee = $model->obj_pegawai;
-            $employee->unit_id = $last_mutasi->satker_id_baru;
-            $employee->save();
-        });
-
-        self::deleting(function ($model) {
-            // ... code here
-        });
-
-        self::deleted(function ($model) {
-            $last_mutasi = $model->obj_pegawai->obj_riwayat_mutasi->last();
-            $employee = $model->obj_pegawai;
-            $employee->unit_id = $last_mutasi->satker_id_baru;
-            $employee->save();
-        });
+        return $this->hasOne(RiwayatJabatan::class, 'id', 'riwayat_jabatan_id');
+    }
+    public function obj_unit_kerja_baru()
+    {
+        return $this->hasOne(UnitKerja::class, 'id', 'satker_id_baru');
+    }
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
     }
     public function obj_pegawai()
     {

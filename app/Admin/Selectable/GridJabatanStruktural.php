@@ -17,12 +17,12 @@ class GridJabatanStruktural extends Selectable
         $this->model()->whereNotNull('pejabat_jabatan');
         $this->column('id', __('ID'));
         $this->column('name', __('NAMA'))->display(function($o) {
-            return "<b>".$this->pejabat_jabatan."</b><br>".$this->name;
+            return "<b>".$this->pejabat_jabatan."</b><br>".$this->getNameWithParentAttribute();
         });
 
         $this->filter(function(Filter $filter) {
             $filter->disableIdFilter();
-            $filter->ilike('pejabat_jabatan', "Cari Jabatan");
+            $filter->ilike('pejabat_jabatan', "CARI JABATAN");
         });
     }
 }

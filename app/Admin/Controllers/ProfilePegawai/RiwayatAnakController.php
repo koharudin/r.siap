@@ -9,6 +9,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use DateTime;
+use DateInterval;
 
 class RiwayatAnakController extends ProfileController
 {
@@ -81,13 +83,25 @@ class RiwayatAnakController extends ProfileController
         $form->hidden('employee_id', __('Employee id'));
         $form->text('name', __('NAMA'));
         $form->text('birth_place', __('TEMPAT LAHIR'));
-        $form->date('birth_date', __('TANGGAL LAHIR'))->default(date('Y-m-d'));
+        $form->date('birth_date', __('TANGGAL LAHIR'));
         $form->select('jenis_kelamin', __('JENIS KELAMIN'))->options(JenisKelamin::all()->pluck('name','id'));
         $form->text('pekerjaan', __('PEKERJAAN'));
         $form->select('status_keluarga', __('STATUS KELUARGA'))->options(StatusAnak::all()->pluck('name','id'));
         $form->select('status_tunjangan', __('STATUS TUNJANGAN'))->options(['1' => 'Dapat',  '0' => 'Tidak']);
-        $form->date('bln_dibayar', __('BLN DIBAYAR'))->default(date('Y-m-d'));
-        $form->date('bln_akhir_dibayar', __('BLN AKHIR DIBAYAR'))->default(date('Y-m-d'));
+        $form->date('bln_dibayar', __('BULAN DIBAYAR'));
+        $form->hidden('bln_akhir_dibayar', __('BULAN AKHIR DIBAYAR'));
+
+        $form->saving(function (Form $form) {
+            if($form->birth_date) {
+                $r = $form->birth_date;
+                if(!empty($r)) {
+                    $r = new DateTime($r);
+                    $interval = new DateInterval('P21Y');
+                    $r->add($interval);
+                    $form->bln_akhir_dibayar = $r->format('Y-m-d');
+                }
+            }
+        });
 
         return $form;
     }
