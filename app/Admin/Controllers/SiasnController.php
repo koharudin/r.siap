@@ -296,7 +296,7 @@ class SiasnController
                         "tglPertekBkn" => $data->tglPertekBkn,
                         "jenisKPNama" => $data->jenisKPNama,
                         "masaKerjaGolongan" => $data->masaKerjaGolonganTahun.' Tahun '.$data->masaKerjaGolonganBulan.' Bulan',
-                        "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
+                        "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
                     );
                     break;
                 }
@@ -344,7 +344,7 @@ class SiasnController
                 "jenisPenugasanId" => $data->jenisPenugasanId,
                 "tmtMutasi" => $data->tmtMutasi,
                 "jabatanMutasi" => (!empty($data->jabatanFungsionalNama)) ? $data->jabatanFungsionalNama : $data->jabatanFungsionalUmumNama,
-                "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
+                "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
             );
         }
         return $result;
@@ -382,7 +382,7 @@ class SiasnController
                 "skNomor" => $data->skNomor,
                 "skDate" => $data->skDate,
                 "hargaNama" => $data->hargaNama,
-                "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
+                "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
             );
         }
         return $result;
