@@ -34,5 +34,9 @@ class UnitKerja extends Model
         $parentName = $this->parent ? $this->parent->id." ".$this->parent->name : "";
         return $parentName;
     }
+
+    public function list_riwayat_jabatan(){
+        return $this->hasMany(RiwayatJabatan::class,'unit_id','id')->orderBy("tmt_jabatan","asc");
+    }
     protected $hidden = ['path'];
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Encore\Admin\Traits\DefaultDatetimeFormat;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class RiwayatJabatan extends Model
@@ -47,6 +48,20 @@ class RiwayatJabatan extends Model
     {
         $this->load('obj_pegawai');
         $this->obj_pegawai->updateLastRiwayatJabatan();
+        
+    }
+    public function syncStruktural(){
+        $this->load('obj_pegawai.obj_riwayat_jabatan');
+        $last = $this->obj_pegawai->obj_riwayat_jabatan->last();
+        
+        if($last->tipe_jabatan_id ==1 || $last->tipe_jabatan_id ==6){//struktural
+            $unit_id = $last->unit_id;
+            $unit = UnitKerja::find($unit_id);
+            $unit->pejabat_nip = $this->obj_pegawai->nip_baru;
+            $unit->pejabat_nama = $this->obj_pegawai->first_name;
+            $unit->pejabat_jabatan = $last->nama_jabatan;
+            $unit->save();
+        }
     }
     public static function boot()
     {
@@ -59,6 +74,7 @@ class RiwayatJabatan extends Model
             $model->updateLastRiwayatJabatan();
             // inserted ke pensiun2
             $model->obj_employee->setTanggalPensiun();
+            $model->syncStruktural();
         });
         self::updating(function ($model) {
             // ... code here
@@ -68,6 +84,7 @@ class RiwayatJabatan extends Model
             $model->updateLastRiwayatJabatan();
             // update ke pensiun2
             $model->obj_employee->setTanggalPensiun();
+            $model->syncStruktural();
         });
         self::deleting(function ($model) {
             // ... code here
@@ -75,6 +92,7 @@ class RiwayatJabatan extends Model
         self::deleted(function ($model) {
             // ... code here
             $model->updateLastRiwayatJabatan();
+            $model->syncStruktural();
         });
     }
     public function getTTipeJabatanAttribute()
