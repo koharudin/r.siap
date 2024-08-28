@@ -98,7 +98,11 @@ class DaftarUsulanController extends Controller
             } else {
                 if ($action == 3) //penghapusan
                 {
-                } else throw new Exception("Tidak ada file");
+                } else {
+                    if($request_category->require_file){
+                        throw new Exception("Dokumen pendukung wajib di isi.");
+                    }
+                }
             }
             $request->data = [
                 "action" => $action,
