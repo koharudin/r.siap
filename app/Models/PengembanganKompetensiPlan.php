@@ -10,4 +10,6 @@ class PengembanganKompetensiPlan extends Model
     public $timestamps = false;
     public $table = 'rencana_pengembangan_kompetensi';
     public $primaryKey = 'id';
+
+    public $casts = ['kebutuhan_manso' => 'array','kebutuhan_komtek' => 'array','kebutuhan_pengembangan' => 'array'];
 }
