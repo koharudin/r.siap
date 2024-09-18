@@ -46,26 +46,54 @@ class NilaiUnitKerjaPegawaiController extends AdminController
             $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
             $filter->ilike('first_name', 'Nama Pegawai');
         });
+
         $grid->header(function ($query) {
             // Aturan yang nilai di unit yang berbeda
             $unitRules = [
-                41 => 350, // Sekretariat Utama
-                38 => 'Lembaga', // Arsip Nasional Republik Indonesia
+                41 => 300, // Sekretariat Utama
+                38 => 350, // Arsip Nasional Republik Indonesia
                 39 => 350, // Deputi Bidang Konservasi Arsip
                 9 => 350, // Direktorat Akuisisi
                 10 => 350, // Direktorat Pengolahan
                 47 => 350, // Direktorat Preservasi
                 49 => 350, // Direktorat Layanan dan Pemanfaatan
-                118 => 350, // Balai Arsip Tsunami Aceh
+                118 => 350, // Balai Arsip Statis dan Tsunami
                 15 => 200, // Pusat Pendidikan dan Pelatihan Kearsipan
-                22 => 0, // Tidak Ada
+                22 => 0, // Tidak ada
+                161 => 200, // PPSDM
                 null => 'Unit Tidak Diketahui',
+                152 => 350, // 152 - Deputi Bidang Penyelamatan, Pelestarian, dan Pelindungan Arsip
+                153 => 350, // 153 - Direktorat Penyelamatan Arsip
+                154 => 350, // 154 - Direktorat Pengolahan Arsip
+                155 => 350, // 155 - Direktorat Pelestarian dan Pelindungan Arsip
+                156 => 350, // 156 - Direktorat Layanan dan Pemanfaatan Arsip
+                169 => 350, // 169 - Balai Arsip Statis dan Tsunami
+                135 => 350, // 135 - Pusat Studi Arsip Statis Kepresidenan
             ];
 
             $data = [];
 
-            foreach (UnitKerja::whereIn('id', Employee::whereIn('status_pegawai_id', [2, 23])->pluck('unit_id')->toArray())->get() as $unit) {
+            foreach (UnitKerja::whereIn('id', Employee::whereIn('status_pegawai_id', [2])->pluck('unit_id')->toArray())->orderBy('order', 'asc')->get() as $unit) {
                 $unitValue = $unitRules[$unit->id] ?? 300;
+                $eselonId = $unit->eselon_id;
+                $parentId = $unit->parent_id;
+                if ($eselonId == 11) { // Eselon 1
+                    // Otamatis sesuai UnitRules
+                } elseif ($eselonId == 21) { // Eselon 2
+                    // Otamatis sesuai UnitRules
+                } elseif ($eselonId == 31) { // Eselon 3
+                    // Cari Parent dengan eselon_id 21 atau 11
+                    $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
+                    if ($parentUnit) {
+                        $unitValue = $unitRules[$parentUnit->id] ?? 300;
+                    }
+                } elseif ($eselonId == 41) { // Eselon 4
+                    // Cari Parent dengan eselon_id 21 atau 11 atau 31
+                    $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11, 31])->first();
+                    if ($parentUnit) {
+                        $unitValue = $unitRules[$parentUnit->id] ?? 300;
+                    }
+                }
 
                 $data[] = [
                     'unit_kerja' => $unit->name,
@@ -73,6 +101,7 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                     'nilai_pegawai' => $unitValue,
                 ];
             }
+
             $html = '
                 <div class="container">
                     <div class="row">
@@ -131,7 +160,7 @@ class NilaiUnitKerjaPegawaiController extends AdminController
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
             $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
 
-            return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
+            return $this->nip_baru . " - " . $this->first_name .  "<br> ASN: " . $statusLabel;
         })->sortable();
 
         $grid->column('latest_unit_info', __('Unit Kerja saat ini'))->display(function () {
@@ -155,31 +184,40 @@ class NilaiUnitKerjaPegawaiController extends AdminController
 
         $grid->column('nilai_unit_kerja', __('Nilai Pegawai di Unit Kerja'))->display(function () {
             $unitId = $this->unit_id;
-            // Aturan yang nilai di unit yang berbeda
+            // Aturan yang dinilai di unit yang berbeda
             $unitRules = [
-                41 => 350, // Sekretariat Utama
-                38 => 0, // Arsip Nasional Republik Indonesia
+                41 => 300, // Sekretariat Utama
+                38 => 350, // Arsip Nasional Republik Indonesia
                 39 => 350, // Deputi Bidang Konservasi Arsip
                 9 => 350, // Direktorat Akuisisi
                 10 => 350, // Direktorat Pengolahan
                 47 => 350, // Direktorat Preservasi
                 49 => 350, // Direktorat Layanan dan Pemanfaatan
-                118 => 350, // Balai Arsip Tsunami Aceh
+                118 => 350, // Balai Arsip Statis dan Tsunami
                 15 => 200, // Pusat Pendidikan dan Pelatihan Kearsipan
-                22 => 0, // Tidak Ada
-                null => 0,
+                22 => 0, // Tidak ada
+                161 => 200, // PPSDM
+                null => 'Unit Tidak Diketahui',
+                152 => 350, // 152 - Deputi Bidang Penyelamatan, Pelestarian, dan Pelindungan Arsip
+                153 => 350, // 153 - Direktorat Penyelamatan Arsip
+                154 => 350, // 154 - Direktorat Pengolahan Arsip
+                155 => 350, // 155 - Direktorat Pelestarian dan Pelindungan Arsip
+                156 => 350, // 156 - Direktorat Layanan dan Pemanfaatan Arsip
+                169 => 350, // 169 - Balai Arsip Statis dan Tsunami
+                135 => 350, // 135 - Pusat Studi Arsip Statis Kepresidenan
                 // ... Tambahkan aturan lainnya
+                // Dinamis Nilai tiap Unit per Eselon I dan II
             ];
             $unitValue = $unitRules[$unitId] ?? 300;
 
-            // Cek Hirarki Eselon
-            $eselonId = $this->eselon_id;
-            $parentId = $this->parent_id;
+            // Cek Hierarki Eselon
+            $eselonId = $this->obj_satker ? $this->obj_satker->eselon_id : $this->eselon_id;
+            $parentId = $this->obj_satker ? $this->obj_satker->parent_id : $this->parent_id;
 
             if ($eselonId == 11) { // Eselon 1
-                // Otomatis sesuai UnitRules
+                // Otamatis sesuai UnitRules
             } elseif ($eselonId == 21) { // Eselon 2
-                // Otomatis sesuai UnitRules
+                // Otamatis sesuai UnitRules
             } elseif ($eselonId == 31) { // Eselon 3
                 // Cari Parent dengan eselon_id 21 atau 11
                 $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
@@ -187,8 +225,8 @@ class NilaiUnitKerjaPegawaiController extends AdminController
                     $unitValue = $unitRules[$parentUnit->id] ?? 300;
                 }
             } elseif ($eselonId == 41) { // Eselon 4
-                // Cari Parent dengan eselon_id 21 or 11
-                $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11])->first();
+                // Cari Parent dengan eselon_id 21 atau 11 atau 31
+                $parentUnit = UnitKerja::where('id', $parentId)->whereIn('eselon_id', [21, 11, 31])->first();
                 if ($parentUnit) {
                     $unitValue = $unitRules[$parentUnit->id] ?? 300;
                 }

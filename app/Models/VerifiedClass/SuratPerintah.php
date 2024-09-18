@@ -58,6 +58,8 @@ class SuratPerintah extends AcceptedClass
             if (!$employees) {
                 throw new Exception("Tidak ada daftar pegawai");
             }
+			
+		
             $tgl_mulai =  @$data['new_data']['tgl_mulai'];
             $tgl_selesai =  @$data['new_data']['tgl_selesai'];
             foreach($employees as $employee){
@@ -71,6 +73,10 @@ class SuratPerintah extends AcceptedClass
                 }
                 $c = DB::connection("db_presensi")->select("CALL cek_ijin(?,?,?, ?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai, 1, 1));
                 $result =  $c[0]->cek;
+				/*if($employee["nip_baru"]=="199410212019022002"){		
+					throw new Exception(json_encode([$ep->nomor_pekerja, $tgl_mulai, $tgl_selesai, 1, 1]));
+				}
+				*/
                 if ($result == 0) {
                     throw new Exception("Pegawai sudah ada ijin dalam tanggal tersebut");
                 }
@@ -83,8 +89,9 @@ class SuratPerintah extends AcceptedClass
                 $r->no_sk = @$data['new_data']['no_sk'];
                 $r->tgl_sk = @$data['new_data']['tgl_sk'];
                 $r->tgl_mulai = @$data['new_data']['tgl_mulai'];
+				$r->tgl_selesai = @$data['new_data']['tgl_selesai'];
                 $r->no_pemberiTugas = @$data['new_data']['assigner_nip'];
-                $r->keterangan = @$data['new_data']['assigner_nip'];
+                $r->keterangan = @$data['new_data']['keterangan'];
                 $r->save();
             }
         }

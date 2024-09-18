@@ -484,6 +484,64 @@ class SiasnController
 
     /* end of supervised */
 
+    public function data_anak($nip, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/data-anak/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=7c6816a8a1345ca8e9de6abab7a03a27; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function data_pim($nip, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-diklat/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=7c6816a8a1345ca8e9de6abab7a03a27; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
     public function get_rw_pangkat($nip, $token_login, $token_api) {
         $curl = curl_init();
         curl_setopt_array($curl, array(

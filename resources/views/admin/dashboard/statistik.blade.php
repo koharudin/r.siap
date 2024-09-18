@@ -24,6 +24,9 @@
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <canvas id="chart_pegawai_by_pendidikan"></canvas>
             </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <canvas id="chart_pegawai_by_agama"></canvas>
+            </div>
         </div>
 
     </div>
@@ -321,6 +324,48 @@
                         },
                         legend: {
                             display: false,
+                            position: 'bottom',
+                        }
+                    }
+                });
+            }
+        });
+
+
+         //Chart : Pegawai Berdasarkan agama
+         $.ajax({
+            url: url_api + 'rekap_agama',
+            method: "GET",
+            success: function (data) {
+
+                var xValues = ['Islam','Kristen','Katolik','Hindu','Budha', 'Shinto','Kong Hu Chu'];
+                var yValues = [data.data.islam, data.data.kristen, data.data.katolik, data.data.hindu, data.data.budha, data.data.shinto, data.data.konghuchu];
+
+                var barColors = [
+                    "#b95a5c",
+                    "#d09091",
+                    "#e7c6c6",
+                    "#5ab9b8",
+                    "#90d0cf",
+                    "#c6e7e6",
+                    "#9091d0"
+                ];
+
+                new Chart("chart_pegawai_by_agama", {
+                    type: "pie",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: barColors,
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Employees Based on Religion'
+                        },
+                        legend: {
                             position: 'bottom',
                         }
                     }

@@ -22,7 +22,7 @@ class Employee extends Model
     }
     public function showPhoto()
     {
-        if($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
+        if ($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
             return route('admin.download.foto', ['f' => base64_encode($this->foto)]);
         }
         return null;
@@ -38,23 +38,23 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-        if(!$last) {
-            throw new Exception("Tidak ditemukan jabatan terakhir ".$this->nip_baru);
+        if (!$last) {
+            throw new Exception("Tidak ditemukan jabatan terakhir " . $this->nip_baru);
         }
-        if($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
+        if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;
-        } else if($last->tipe_jabatan_id == 2) {
+        } else if ($last->tipe_jabatan_id == 2) {
             return $last->obj_tipe_jabatan->bup;
-        } else if($last->tipe_jabatan_id >= 3 && $last->tipe_jabatan_id <= 5) {
+        } else if ($last->tipe_jabatan_id >= 3 && $last->tipe_jabatan_id <= 5) {
             $obj = $last->obj_jabatan_fungsional;
             return $obj ? $obj->bup : null;
         }
     }
     public function getTmtPensiun($tglPensiun)
     {
-        if($tglPensiun) {
-            if($tglPensiun->day == 1) {
+        if ($tglPensiun) {
+            if ($tglPensiun->day == 1) {
                 return $tglPensiun;
             } else {
                 $tglPensiun->addMonth();
@@ -68,12 +68,12 @@ class Employee extends Model
     {
         $bup = $this->getBup();
         $bday = $this->birth_date;
-        if($bup) {
+        if ($bup) {
             $pensiun = $bday->addYear($bup);
             $this->load('obj_riwayat_pensiun');
             $this->tgl_pensiun = $pensiun->setDay($pensiun->daysInMonth);
             $obj_riwayat_pensiun = $this->obj_riwayat_pensiun;
-            if(!$obj_riwayat_pensiun) {
+            if (!$obj_riwayat_pensiun) {
                 $obj_riwayat_pensiun = new RiwayatPensiun();
                 $obj_riwayat_pensiun->employee_id = $this->id;
             }
@@ -196,34 +196,45 @@ class Employee extends Model
     }
     public function calculateNilaiMasaKerja()
     {
-        $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
-        if($latestSKCPNS) {
-            $cpnsDate = $latestSKCPNS->tmt_cpns;
-            $now = now();
-            $lengthOfService = $cpnsDate->diff($now);
-            $totalMonths = ($lengthOfService->y);
+        switch ($this->nip_baru) {
+            //case '199406122023211009':
+            //    return 500; // Nilai khusus untuk nip_baru 'aaa'
+            //case 'nip_lain':
+            //return 300; // Nilai khusus untuk nip_baru 'bbb'
+            //case 'nip_lain':
+            //return 200; // Nilai khusus untuk nip_baru 'cccc'
+            // Tambahkan case lainnya jika ada nip_baru lain yang memerlukan nilai khusus
+            default:
+                // Perhitungan nilai berdasarkan masa kerja (jika nip_baru tidak ada di case khusus)
+                $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
+                if ($latestSKCPNS) {
+                    $cpnsDate = $latestSKCPNS->tmt_cpns;
+                    $now = now();
+                    $lengthOfService = $cpnsDate->diff($now);
+                    $totalMonths = ($lengthOfService->y);
 
-            $ranges = [
-                ['min' => 0, 'max' => 4, 'value' => 40],
-                ['min' => 4, 'max' => 8, 'value' => 140],
-                ['min' => 8, 'max' => 12, 'value' => 225],
-                ['min' => 12, 'max' => 16, 'value' => 295],
-                ['min' => 16, 'max' => 20, 'value' => 355],
-                ['min' => 20, 'max' => 28, 'value' => 400],
-                ['min' => 28, 'max' => 32, 'value' => 430],
-                ['min' => 32, 'max' => null, 'value' => 450],
-            ];
+                    $ranges = [
+                        ['min' => 0, 'max' => 4, 'value' => 40],
+                        ['min' => 4, 'max' => 8, 'value' => 140],
+                        ['min' => 8, 'max' => 12, 'value' => 225],
+                        ['min' => 12, 'max' => 16, 'value' => 295],
+                        ['min' => 16, 'max' => 20, 'value' => 355],
+                        ['min' => 20, 'max' => 24, 'value' => 400],
+                        ['min' => 24, 'max' => 28, 'value' => 430],
+                        ['min' => 28, 'max' => null, 'value' => 450],
+                    ];
 
-            foreach($ranges as $range) {
-                if(
-                    ($range['max'] === null && $totalMonths >= $range['min']) ||
-                    ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
-                ) {
-                    return $range['value'];
+                    foreach ($ranges as $range) {
+                        if (
+                            ($range['max'] === null && $totalMonths >= $range['min']) ||
+                            ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
+                        ) {
+                            return $range['value'];
+                        }
+                    }
                 }
-            }
+                return 0;
         }
-        return 0;
     }
     public function obj_riwayat_jabatan()
     {
@@ -279,7 +290,7 @@ class Employee extends Model
     }
     public function getUsiaAttribute($from = null)
     {
-        if($from == null) {
+        if ($from == null) {
             $from = Carbon::now();
         }
         return $this->birth_date->diffInMonths($from);
@@ -287,11 +298,11 @@ class Employee extends Model
     public function getNamaGelarAttribute()
     {
         $long_name = [];
-        if($this->gelar_depan) {
+        if ($this->gelar_depan) {
             $long_name[] = $this->gelar_depan;
         }
         $long_name[] = $this->first_name;
-        if($this->gelar_belakang) {
+        if ($this->gelar_belakang) {
             $long_name[] = $this->gelar_belakang;
         }
         return trim(implode(" ", $long_name));
@@ -299,10 +310,10 @@ class Employee extends Model
     public function getTTDAttribute()
     {
         $txt = [];
-        if($this->birth_place) {
+        if ($this->birth_place) {
             $txt[] = $this->birth_place;
         }
-        if($this->birth_date) {
+        if ($this->birth_date) {
             $txt[] = $this->birth_date->format('d-m-Y');
         }
         return trim(implode(", ", $txt));
@@ -327,7 +338,7 @@ class Employee extends Model
     {
         $this->load('obj_riwayat_pangkat');
         $last = $this->obj_riwayat_pangkat->last();
-        if($last) {
+        if ($last) {
             $this->last_riwayat_pangkat_id = $last->id;
         } else
             $this->last_riwayat_pangkat_id = null;
@@ -337,7 +348,7 @@ class Employee extends Model
     {
         $this->load('obj_riwayat_jabatan');
         $last = $this->obj_riwayat_jabatan->last();
-        if($last) {
+        if ($last) {
             $this->last_riwayat_jabatan_id = $last->id;
         } else
             $this->last_riwayat_jabatan_id = null;
@@ -347,7 +358,7 @@ class Employee extends Model
     {
         $this->load('obj_riwayat_pendidikan');
         $last = $this->obj_riwayat_pendidikan->last();
-        if($last) {
+        if ($last) {
             $this->last_riwayat_pendidikan_id = $last->id;
         } else
             $this->last_riwayat_pendidikan_id = null;
@@ -356,6 +367,7 @@ class Employee extends Model
 
     public $dates = ['birth_date', 'tgl_pensiun'];
     protected $casts = [
-        'birth_date' => 'datetime:Y-m-d', 'tgl_pensiun' => 'datetime:Y-m-d'
+        'birth_date' => 'datetime:Y-m-d',
+        'tgl_pensiun' => 'datetime:Y-m-d'
     ];
 }

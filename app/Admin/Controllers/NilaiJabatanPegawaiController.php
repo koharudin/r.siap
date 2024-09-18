@@ -92,7 +92,7 @@ class NilaiJabatanPegawaiController extends AdminController
         $grid->model()->with(['obj_riwayat_jabatan']);
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
             $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
-            return $this->first_name . " <br> " . $this->nip_baru . "<br> ASN: " . $statusLabel;
+            return $this->nip_baru . " - " . $this->first_name .  "<br> ASN: " . $statusLabel;
         })->sortable();
 
         $grid->column('latest_unit_info', __('Unit Kerja saat ini'))->display(function () {
@@ -135,6 +135,7 @@ class NilaiJabatanPegawaiController extends AdminController
                     return 'Fungsional Tertentu';
                 case 4:
                     return 'Fungsional Tertentu (Madya)';
+                    //eselon 1 sampai 4 harus nilai 150 mantan
                 case 5:
                     return 'Fungsional Tertentu (Utama)';
                 case 6:
@@ -145,29 +146,59 @@ class NilaiJabatanPegawaiController extends AdminController
         });
 
         $grid->column('nilai_jabatan_kerja', __('Nilai Pegawai di Unit Kerja'))->display(function () {
-            $latestJabatan = $this->obj_riwayat_jabatan->sortByDesc('tmt_jabatan')->first();
+            $latestJabatan = $this->obj_riwayat_jabatan->where('status_riwayat', 1)->sortByDesc('tmt_jabatan')->first();
             $unitId = $this->unit_id;
+            $employeeId = $this->id;
             $defaultUnitValue = 0;
 
             $nilaiJabatanKerja = 0;
-
             if ($latestJabatan) {
                 $namaJabatan = $latestJabatan->nama_jabatan;
-
                 if (
                     strpos(strtolower($namaJabatan), 'arsiparis') !== false
                     || strpos(strtolower($namaJabatan), 'kepala') !== false
                     || strpos(strtolower($namaJabatan), 'deputi') !== false
-                    || $unitId == 118
+                    || strpos(strtolower($namaJabatan), 'sekretaris') !== false
+                    || strpos(strtolower($namaJabatan), 'direktur') !== false
+                    || strpos(strtolower($namaJabatan), 'inspektur') !== false
+                    || $unitId == 118 || $unitId == 169 || $unitId == 170 // BAST
+                    || $unitId == 39 || $unitId == 152 // Dekon
+                    || $unitId == 9 || $unitId == 153 // Akuisisi
+                    || $unitId == 10 || $unitId == 154 // Pengolahan
+                    || $unitId == 47 || $unitId == 155 // Preservasi
+                    || $unitId == 49 || $unitId == 156 // LP
+                    || $unitId == 135 || $unitId == 118 || $unitId == 136 // PSASK
                 ) {
                     $nilaiJabatanKerja = 150;
                 } else {
                     $nilaiJabatanKerja = 100;
                 }
+
+                if (
+                    $latestJabatan->tipe_jabatan_id == 1
+                    && ($unitId == 39 || $unitId == 152 // Dekon
+                        || $unitId == 9 || $unitId == 153 // Akuisisi
+                        || $unitId == 10 || $unitId == 154 // Pengolahan
+                        || $unitId == 47 || $unitId == 155 // Preservasi
+                        || $unitId == 49 || $unitId == 156 // LP
+                        || $unitId == 135 || $unitId == 136 // PSASK
+                        || $unitId == 118 || $unitId == 169 || $unitId == 170 // BAST
+                    )
+                ) {
+                    $nilaiJabatanKerja = 100;
+                }
             }
 
-            $additionalUnitIds = [39, 9, 10, 47, 49, 118];
+            $additionalUnitIds = [39, 152, 9, 153, 10, 154, 47, 155, 49, 156, 118, 169, 170, 135, 136];
             $totalNilai = in_array($unitId, $additionalUnitIds) ? $defaultUnitValue + $nilaiJabatanKerja + 50 : $defaultUnitValue + $nilaiJabatanKerja;
+
+            $mantanStruktural = [267, 257, 272, 367, 355, 322, 397, 454, 255, 443, 751, 260, 249, 266, 265, 296, 287, 302, 258, 292, 283, 310, 337, 309, 362, 269, 434, 404, 432, 414, 427, 439, 289, 300, 437, 307,
+                358, 254, 455, 256, 352, 752, 359, 263, 447, 585, 366, 321, 349, 578, 353, 299, 275];
+            if(in_array($employeeId, $mantanStruktural)) {
+                if($totalNilai < 150) {
+                    $totalNilai = 150;
+                }
+            }
 
             return number_format($totalNilai);
         });
