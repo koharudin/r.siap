@@ -11,6 +11,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Admin\Controllers\SiasnController;
 
 class RiwayatPenghargaanController extends ProfileController
 {
@@ -31,19 +32,27 @@ class RiwayatPenghargaanController extends ProfileController
     protected function grid()
     {
         $grid = new Grid(new RiwayatPenghargaan());
-        
         $grid->model()->orderBy('tgl_sk', 'desc');
+
         $grid->column('nama_penghargaan', __('NAMA PENGHARGAAN'));
-        $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
-            if ($o) {
+        $grid->column('no_sk', __('NOMOR SK'));
+        $grid->column('tgl_sk', __('TANGGAL SK'))->display(function ($o) {
+            if($o) {
                 return $this->tgl_sk->format('d-m-Y');
             }
             return "-";
         });
-        $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
         $grid->column('tahun', __('TAHUN'));
-        $grid->column('jenis_penghargaan', __('JENIS PENGHARGAAN'));
+        $grid->column('id_siasn', __('INTG.<br>MYASN'))->display(function($o) {
+            if(!empty($this->id_siasn)) {
+                $label = 'success';
+                $status = '<i class="fa fa-check"></i>';
+            } else {
+                $label = 'danger';
+                $status = '<i class="fa fa-times"></i>';
+            }
+            return "<span class='label label-$label'>".$status."</span>";
+        });
 
         return $grid;
     }
@@ -56,14 +65,53 @@ class RiwayatPenghargaanController extends ProfileController
      */
     protected function detail($id)
     {
-        $show = new Show(RiwayatPenghargaan::findOrFail($id));
+        $riwayatPenghargaan = RiwayatPenghargaan::findOrFail($id);
+        $show = new Show($riwayatPenghargaan);
+        $apiData = SiasnController::get_penghargaan($riwayatPenghargaan->id_siasn);
+        $apiData = (array) $apiData;
 
-        $show->field('nama_penghargaan', __('NAMA PENGHARGAAN'));
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field('pejabat_penetap', __('PEJABAT PENETAP'));
-        $show->field('tahun', __('TAHUN'));
-        $show->field('jenis_penghargaan', __('JENIS PENGHARGAAN'));
+        $show->field('nama_penghargaan', 'NAMA PENGHARGAAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data1', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['hargaNama'])) ? $apiData['hargaNama'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('no_sk', 'NOMOR SK')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data2', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['skNomor'])) ? $apiData['skNomor'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tgl_sk', 'TANGGAL SK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data3', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['skDate'])) ? $apiData['skDate'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tahun', 'TAHUN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data4', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tahun'])) ? $apiData['tahun'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('pejabat_penetap_nama', 'PENETAP NAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('pejabat_penetap_jabatan', 'PENETAP JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
 
         return $show;
     }
@@ -76,29 +124,25 @@ class RiwayatPenghargaanController extends ProfileController
     protected function form()
     {
         $form = new Form(new RiwayatPenghargaan());
-        $form->belongsTo('jenis_penghargaan_id', GridPenghargaan::class, __('JENIS PENGHARGAAN'));
+
         $form->hidden('employee_id', __('Employee id'));
-        //$form->text('nama_penghargaan', __('NAMA PENGHARGAAN'));
-        $form->text('no_sk', __('NO SK'));
-        $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
-        $form->number('tahun', __('TAHUN'));
-
-        //$form->text('jenis_penghargaan', __('JENIS PENGHARGAAN'));
-
-        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
-        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
-        $form->text('pejabat_penetap_nip', __('NIP'));
-        $form->text('pejabat_penetap_nama', __('NAMA'));
+        $form->hidden('flag_integrasi');
+        $form->belongsTo('jenis_penghargaan_id', GridPenghargaan::class, __('PENGHARGAAN'))->required();
+        $form->display('nama_penghargaan', __('NAMA PENGHARGAAN'));
+        $form->text('no_sk', __('NOMOR SK'))->required();
+        $form->date('tgl_sk', __('TANGGAL SK'))->required();
+        $form->number('tahun', __('TAHUN'))->required();
+        $form->text('pejabat_penetap_nama', __('PENETAP NAMA'));
+        $form->text('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
 
         $form->saving(function (Form $form) {
-            if ($form->pejabat_penetap_id) {
-                $r =  PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
-                if ($r) {
-                    $form->pejabat_penetap_jabatan = $r->jabatan;
-                    $form->pejabat_penetap_nip = $r->nip;
-                    $form->pejabat_penetap_nama = $r->nama;
+            if($form->jenis_penghargaan_id) {
+                $r = Penghargaan::where('id', $form->jenis_penghargaan_id)->get()->first();
+                if($r) {
+                    $form->nama_penghargaan = $r->name;
                 }
             }
+            $form->flag_integrasi = 1;
         });
 
         return $form;

@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class DaftarPegawaiController extends Controller
 {
-    public $title  = 'Daftar Pegawai Aktif';
+    public $title = 'Daftar Pegawai Aktif';
     public function index(Content $content)
     {
 
@@ -26,7 +26,7 @@ class DaftarPegawaiController extends Controller
     public function grid()
     {
         $grid = new Grid(new Employee());
-        $grid->model()->whereIn('status_pegawai_id', [1, 2, 23]);
+        // $grid->model()->whereIn('status_pegawai_id', [1, 2, 23]);
         $grid->model()->orderBy('first_name', 'asc');
         $grid->paginate(10);
         $grid->actions(function ($actions) {
@@ -37,6 +37,13 @@ class DaftarPegawaiController extends Controller
         });
         $grid->disableCreateButton();
         $grid->disableRowSelector();
+        $grid->column('foto', __('Foto'))->display(function () {
+            $url = $this->showPhoto();
+            if ($url) {
+                return "<img class='profile-user-img img-responsive img-circle' src='$url' style='height:100px;width:80px'/>";
+            }
+            return '';
+        });
         $grid->column('first_name', __('Nama Pegawai'))->display(function ($o) {
             $statusLabel = ($this->status_pegawai_id == 2) ? 'PNS' : (($this->status_pegawai_id == 23) ? 'PPPK' : '');
 
@@ -51,6 +58,7 @@ class DaftarPegawaiController extends Controller
                 $query->where('first_name', 'ilike', "%" . $this->input . '%');
             }, 'Nama Pegawai');
             $filter->like('nip_baru', 'NIP Pegawai');
+            $filter->equal('status_pegawai_id', 'Status Pegawai')->select([2 => 'PNS', 23 => 'PPPK']);
         });
         return $grid;
     }

@@ -14,9 +14,12 @@ class Employee extends Model
     public $table = 'employee';
     public $primaryKey = 'id';
     public $timestamps = true;
-
     public const STATUS_PENSIUN = 3;
 
+    public static function getIdByNip($nip)
+    {
+        return self::where('nip_baru', $nip)->value('id');
+    }
     public function showPhoto()
     {
         if ($this->foto && !($this->foto == '' || $this->foto == ' ' || $this->foto == '  ')) {
@@ -35,9 +38,9 @@ class Employee extends Model
     public function getBup()
     {
         $last = $this->obj_riwayat_jabatan->last();
-		if(!$last){
-			throw new Exception ("Tidak ditemukan jabatan terkahir ".$this->nip_baru);
-		}
+        if (!$last) {
+            throw new Exception("Tidak ditemukan jabatan terakhir " . $this->nip_baru);
+        }
         if ($last->tipe_jabatan_id == 1 || $last->tipe_jabatan_id == 6) {
             $obj = $last->obj_jabatan_struktural;
             return $obj ? $obj->bup : null;
@@ -161,7 +164,7 @@ class Employee extends Model
     }
     public function obj_riwayat_mertua()
     {
-        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status',[3,4])->orderBy('birth_date', 'desc');
+        return $this->hasMany(RiwayatOrangTua::class, 'employee_id', 'id')->whereIn('status', [3, 4])->orderBy('birth_date', 'desc');
     }
     public function obj_riwayat_organisasi()
     {
@@ -193,34 +196,45 @@ class Employee extends Model
     }
     public function calculateNilaiMasaKerja()
     {
-        $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
-        if ($latestSKCPNS) {
-            $cpnsDate = $latestSKCPNS->tmt_cpns;
-            $now = now();
-            $lengthOfService = $cpnsDate->diff($now);
-            $totalMonths = ($lengthOfService->y);
+        switch ($this->nip_baru) {
+            //case '199406122023211009':
+            //    return 500; // Nilai khusus untuk nip_baru 'aaa'
+            //case 'nip_lain':
+            //return 300; // Nilai khusus untuk nip_baru 'bbb'
+            //case 'nip_lain':
+            //return 200; // Nilai khusus untuk nip_baru 'cccc'
+            // Tambahkan case lainnya jika ada nip_baru lain yang memerlukan nilai khusus
+            default:
+                // Perhitungan nilai berdasarkan masa kerja (jika nip_baru tidak ada di case khusus)
+                $latestSKCPNS = $this->obj_riwayat_skcpns->sortByDesc('tmt_cpns')->first();
+                if ($latestSKCPNS) {
+                    $cpnsDate = $latestSKCPNS->tmt_cpns;
+                    $now = now();
+                    $lengthOfService = $cpnsDate->diff($now);
+                    $totalMonths = ($lengthOfService->y);
 
-            $ranges = [
-                ['min' => 0, 'max' => 4, 'value' => 40],
-                ['min' => 4, 'max' => 8, 'value' => 140],
-                ['min' => 8, 'max' => 12, 'value' => 225],
-                ['min' => 12, 'max' => 16, 'value' => 295],
-                ['min' => 16, 'max' => 20, 'value' => 355],
-                ['min' => 20, 'max' => 28, 'value' => 400],
-                ['min' => 28, 'max' => 32, 'value' => 430],
-                ['min' => 32, 'max' => null, 'value' => 450],
-            ];
+                    $ranges = [
+                        ['min' => 0, 'max' => 4, 'value' => 40],
+                        ['min' => 4, 'max' => 8, 'value' => 140],
+                        ['min' => 8, 'max' => 12, 'value' => 225],
+                        ['min' => 12, 'max' => 16, 'value' => 295],
+                        ['min' => 16, 'max' => 20, 'value' => 355],
+                        ['min' => 20, 'max' => 24, 'value' => 400],
+                        ['min' => 24, 'max' => 28, 'value' => 430],
+                        ['min' => 28, 'max' => null, 'value' => 450],
+                    ];
 
-            foreach ($ranges as $range) {
-                if (
-                    ($range['max'] === null && $totalMonths >= $range['min']) ||
-                    ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
-                ) {
-                    return $range['value'];
+                    foreach ($ranges as $range) {
+                        if (
+                            ($range['max'] === null && $totalMonths >= $range['min']) ||
+                            ($range['max'] !== null && $totalMonths >= $range['min'] && $totalMonths < $range['max'])
+                        ) {
+                            return $range['value'];
+                        }
+                    }
                 }
-            }
+                return 0;
         }
-        return 0;
     }
     public function obj_riwayat_jabatan()
     {
@@ -234,7 +248,6 @@ class Employee extends Model
     {
         return $this->hasMany(RiwayatGaji::class, 'employee_id', 'id')->orderBy('tmt_sk', 'asc');
     }
-    
     public function obj_riwayat_diklat_struktural()
     {
         return $this->hasMany(RiwayatDiklatStruktural::class, 'employee_id', 'id')->orderBy('tahun', 'asc')->orderBy('tgl_mulai', 'asc');
@@ -321,7 +334,6 @@ class Employee extends Model
     {
         return StatusPegawai::find($this->status_pegawai_id)->name;
     }
-
     public function updateLastRiwayatPangkat()
     {
         $this->load('obj_riwayat_pangkat');
@@ -354,4 +366,8 @@ class Employee extends Model
     }
 
     public $dates = ['birth_date', 'tgl_pensiun'];
+    protected $casts = [
+        'birth_date' => 'datetime:Y-m-d',
+        'tgl_pensiun' => 'datetime:Y-m-d'
+    ];
 }

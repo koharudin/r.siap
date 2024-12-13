@@ -40,6 +40,7 @@ use App\Http\Controllers\RiwayatSKCPNSController;
 use App\Http\Controllers\RiwayatSKPNSController;
 use App\Http\Controllers\RiwayatSumpahController;
 use App\Http\Controllers\RiwayatUjiKompetensiController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\VerifikasiUsulanController;
 use App\Models\Administrator;
@@ -48,6 +49,7 @@ use App\Models\AlasanHukuman;
 use App\Models\Diklat;
 use App\Models\DiklatSiasn;
 use App\Models\Employee;
+use App\Models\EmployeePresensi;
 use App\Models\Hukuman;
 use App\Models\Jabatan;
 use App\Models\JenisBahasa;
@@ -56,9 +58,12 @@ use App\Models\JenisPekerjaan;
 use App\Models\JenisPenghargaan;
 use App\Models\KemampuanBicara;
 use App\Models\LineApproval;
+use App\Models\LineApprovalRequest;
 use App\Models\Pangkat;
 use App\Models\PejabatPenetap;
 use App\Models\Pendidikan;
+use App\Models\Presensi\DetailJenisCuti;
+use App\Models\Presensi\JenisCuti;
 use App\Models\RequestCategory;
 use App\Models\RiwayatAngkaKredit;
 use App\Models\RiwayatDiklatFungsional;
@@ -73,8 +78,10 @@ use Encore\Admin\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
@@ -130,6 +137,28 @@ Route::group(['middleware' => 'auth:api'], function () {
         $user = Auth::user();
         return response()->json($user, 200);
     });
+    Route::get("/cek_saldo_cuti_saya", function () {
+        $user = auth()->user();
+        $e = Employee::whereRaw('nip_baru = ?', [$user->username])->first();
+        if (!$e) {
+            throw new Exception("Pegawai tidak ditemukan");
+        }
+        $ep = EmployeePresensi::where("nipp", $e->nip_baru)->get()->first();
+        if (!$ep) {
+            throw new Exception("Pegawai Presensi tidak ditemukan");
+        }
+        $tgl_mulai = request()->input("tgl_mulai");
+        $date = Carbon::createFromFormat("Y-m-d", $tgl_mulai);
+        $tahun = $date->format("Y");
+        $tgl_selesai = request()->input("tgl_selesai");
+        //get saldo cuti
+        $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+        $saldo_cuti = $c[0]->sisa_thn0;
+        $ct = DB::connection("db_presensi")->select("CALL jumlah_hari_cuti(?,?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai));
+        $jumlah_hari_kerja = $ct[0]->jumlah;
+        $sisa_sado_cuti = $saldo_cuti - $jumlah_hari_kerja;
+        return response()->json(["user" => $user, "ep" => $ep, "year" => $date->format("Y"), "saldo_cuti" => $saldo_cuti, "jumlah_hari_kerja" => $jumlah_hari_kerja, "sisa_sado_cuti" => $sisa_sado_cuti]);
+    });
 });
 
 Route::get('cek-login', function () {
@@ -172,6 +201,18 @@ Route::post('/login-token', function () {
         ], 200);
     } else return response()->json("Kombinasi user dan password tidak cocok", 404);
 });
+Route::get("view_dokumen/{filename_dokumen}", function ($filename_dokumen) {
+    $disk  = Storage::disk("minio_layanan");
+    $content = $disk->get($filename_dokumen);
+    $url = $disk->temporaryUrl(
+        $filename_dokumen,
+        now()->addMinutes(5)
+    );
+    return redirect($url);
+    return response($content, 200, [
+        'Content-Type' => 'application/pdf'
+    ]);
+});
 Route::group(["middleware" => "auth:api"], function () {
     Route::post("menus", function () {
         $user = Auth::user();
@@ -182,6 +223,16 @@ Route::group(["middleware" => "auth:api"], function () {
             if ($v->id == 5) $isVerifikator = true;
             if ($v->id == 2) $isPegawai = true;
         });
+        //cek apakah seorang pejabat
+        $unit_pejabat = UnitKerja::where("pejabat_nip",$user->username)->get()->first();
+        if($unit_pejabat){
+            $isVerifikator = true;
+        }
+        //cek apakah pernah menjadi assigner
+        $approver = LineApprovalRequest::where("approval_assigner",$user->username)->get();
+        if($approver->count()>0){
+            $isVerifikator = true;
+        }
         $items = [];
         $child = new stdClass;
         $child->id = "ui-element";
@@ -221,13 +272,17 @@ Route::group(["middleware" => "auth:api"], function () {
             "items" => $items
         ]);
     });
+    Route::post("test-upload", [TestController::class, "testUpload"]);
     Route::get("usulan-saya", [DaftarUsulanController::class, "list"]);
     Route::get("verifikasi-usulan", [VerifikasiUsulanController::class, "list"]);
+    Route::get("usulan/{uuid}/edit", [DaftarUsulanController::class, "edit"]);
+    Route::post("usulan/{uuid}/edit", [DaftarUsulanController::class, "update"]);
     Route::get("usulan/{uuid}/detail", [DaftarUsulanController::class, "detail"]);
     Route::post("usulan/{uuid}/hapus", [DaftarUsulanController::class, "hapus"]);
     Route::post("usulan", [DaftarUsulanController::class, "store"]);
     Route::post("on-verify", [VerifikasiController::class, "doVerify"]);
     Route::get('me', [AdminEmployeeController::class, 'dataSaya']);
+    Route::get('user/me', [AdminEmployeeController::class, 'currentUser']);
     Route::get('me/informasi-pegawai', [AdminEmployeeController::class, 'informasiPegawai']);
     Route::resource('riwayat-kehadiran', PresensiKehadiranController::class);
     Route::resource('riwayat-sesikerja', PresensiSesiKerjaController::class);
@@ -265,40 +320,60 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::resource('riwayat-skpns', RiwayatSKPNSController::class);
     Route::resource('riwayat-sumpah', RiwayatSumpahController::class);
     Route::resource('riwayat-ujikompetensi', RiwayatUjiKompetensiController::class);
+
+    Route::post("/master-jenis-layanan", function () {
+        $user = auth()->user();
+        $user->load("roles");
+        $query = RequestCategory::query();
+        $query->where("active", true);
+        $query->orderBy("order", "asc");
+        $query->orderBy("name", "asc");
+        if (request()->input('pagination') == "false") {
+            $query->where(function ($query) use ($user) {
+                $query->where('parent_id', 1);
+                $query->Orwhere("parent_id", 42);//Lain-Lain
+                $tu = $user->roles->filter(function ($r) use ($query) {
+                    //has role TU
+                    if ($r->id == 8) {
+                        //Layanan TU
+                        $query->Orwhere("parent_id", 39);
+                    }
+                });
+            });
+            return response()->json($query->get(), 200);
+        }
+        return response()->json($query->paginate(), 200);
+    });
 });
 
 Route::post("/master-jabatan", function () {
     $query = Jabatan::query();
     $tipe_jabatan = request()->input("tipe_jabatan");
-    
-    if($tipe_jabatan ==1 ){
+
+    if ($tipe_jabatan == 1) {
         $query = UnitKerja::query();
-    }
-    else if ($tipe_jabatan ==2){
+    } else if ($tipe_jabatan == 2) {
         $query->fungsional();
-    }
-    else if ($tipe_jabatan ==3){
+    } else if ($tipe_jabatan == 3) {
         $query->pelaksana();
-    }   
+    }
     $q = request()->input("q");
-    $query->where("name","ilike","%{$q}%");
+    $query->where("name", "ilike", "%{$q}%");
     return response()->json($query->paginate(), 200);
 });
 Route::get("/master-jabatan/detail", function () {
     $query = Jabatan::query();
-    $tipe_jabatan = request()->input("tipe_jabatan");
-    
-    if($tipe_jabatan ==1 ){
+    $tipe_jabatan = request()->input("tipe_jabatan_id");
+
+    if ($tipe_jabatan == 1) {
         $query = UnitKerja::query();
-    }
-    else if ($tipe_jabatan ==2){
+    } else if ($tipe_jabatan == 2) {
         $query->fungsional();
-    }
-    else if ($tipe_jabatan ==3){
+    } else if ($tipe_jabatan == 3) {
         $query->pelaksana();
-    }   
+    }
     $id = request()->input("id");
-    $query->where("id",$id);
+    $query->where("id", $id);
     $data = $query->get()->first();
     if ($data) {
         return response()->json($data, 200);
@@ -322,6 +397,61 @@ Route::post("/master-unitkerja", function () {
     $query->where("name", "ilike", "%{$q}%");
     $query->orderBy("name", "asc");
     return response()->json($query->paginate(), 200);
+});
+Route::post("/master-pegawai", function () {
+    $query = Employee::query();
+    $q = request()->input("q");
+    $query->where(function ($query) use ($q) {
+        $query->where("first_name", "ilike", "%{$q}%");
+        $query->orWhere("nip_baru", "ilike", "%{$q}%");
+    });
+    $query->orderBy("first_name", "asc");
+    return response()->json($query->paginate(), 200);
+});
+
+
+Route::get("/sisa_cuti", function () {
+    $nip = request()->get("nip");
+    $tgl_selesai = request()->get("tahun");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c = DB::connection("db_presensi")->select("CALL getSisaCutiNew(?,?) ", array($ep->nomor_pekerja, $tahun));
+    response()->json(["total" => $c[0]->jumlah], 200);
+});
+Route::get("/jumlah_hari_cuti", function () {
+    $nip = request()->get("nip");
+    $tgl_mulai = request()->get("tgl_mulai");
+    $tgl_selesai = request()->get("tgl_selesai");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c = DB::connection("db_presensi")->select("CALL jumlah_hari_cuti(?,?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai));
+    response()->json(["total" => $c[0]->jumlah], 200);
+});
+Route::get("/cek_ijin", function () {
+    $nip = request()->get("nip");
+    $tgl_mulai = request()->get("tgl_mulai");
+    $tgl_selesai = request()->get("tgl_selesai");
+    $ep = EmployeePresensi::where("nipp",  $nip)->get()->first();
+    if (!$ep) {
+        throw new Exception("Pegawai Presensi tidak ditemukan");
+    }
+    $c = DB::connection("db_presensi")->select("CALL cek_ijin(?,?,?, ?,?) ", array($ep->nomor_pekerja, $tgl_mulai, $tgl_selesai, 1, 1));
+    $result =  $c[0]->cek;
+    if ($result == 0) {
+        return response()->json(["message" => "Pegawai sudah ada ijin dalam tanggal tersebut"], 400);
+    } else return response()->json(["message" => "ok"], 200);
+});
+Route::get("/master-pegawai/{nip}/detail", function ($nip) {
+    $query = Employee::query();
+    $query->where("nip_baru", $nip);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
 });
 Route::get("/master-jenis-diklat-siasn/{id}/detail", function ($id) {
     $query = DiklatSiasn::query();
@@ -382,14 +512,41 @@ Route::get("/master-jenis-kenaikan-gaji/{id}/detail", function ($id) {
 Route::post("/master-jenis-bahasa", function () {
     return response()->json(JenisBahasa::paginate(), 200);
 });
-Route::post("/master-jenis-layanan", function () {
-    if (request()->input('pagination') == "false") {
-        return response()->json(RequestCategory::whereNotNull('parent_id')->orderBy('name', 'asc')->get(), 200);
-    }
-    return response()->json(RequestCategory::orderBy('name', 'asc')->paginate(), 200);
+Route::get("/master-jenis-cuti", function () {
+    return response()->json(JenisCuti::select('id_jenis_cuti as id', 'deskripsi_jenis_cuti as name')->paginate(), 200);
 });
+Route::get("/master-jenis-cuti/{id}/detail", function ($id) {
+    $query = JenisCuti::query();
+    $query->select('id_jenis_cuti as id', 'deskripsi_jenis_cuti as name');
+    $query->where("id_jenis_cuti", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+Route::get("/master-detail-jenis-cuti", function () {
+    $parent_id = request()->input("parent_id");
+    if (!$parent_id) {
+        throw new Exception("Tidak ditemukan param parent_id");
+    }
+
+    return response()->json(DetailJenisCuti::select('id_detail_jenis_cuti as id', 'deskripsi_detail_jenis_cuti as name')->where('id_jenis_cuti', $parent_id)->paginate(), 200);
+});
+Route::get("/master-detail-jenis-cuti/{id}/detail", function ($id) {
+    $query = DetailJenisCuti::query();
+    $query->select('id_detail_jenis_cuti as id', 'deskripsi_detail_jenis_cuti as name');
+    $query->where("id_detail_jenis_cuti", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
+});
+
 Route::post("/master-kemampuan-bicara", function () {
     return response()->json(KemampuanBicara::paginate(), 200);
+});
+Route::post("/master-agama", function () {
+    return response()->json(Agama::orderBy('name', 'ASC')->paginate(), 200);
 });
 Route::post("/master-status-pernikahan", function () {
     return response()->json(StatusMenikah::orderBy('name', 'ASC')->paginate(), 200);
@@ -414,6 +571,14 @@ Route::post("/master-jenis-diklat-teknis", function () {
 });
 Route::post("/master-pejabat-penetap", function () {
     return response()->json(PejabatPenetap::paginate(), 200);
+});
+Route::get("/master-agama/{id}/detail", function ($id) {
+    $query = Agama::query();
+    $query->where("id", $id);
+    $data = $query->get()->first();
+    if ($data) {
+        return response()->json($data, 200);
+    } else return response()->json("data tidak ditemukan", 404);
 });
 Route::get("/master-pejabat-penetap/{id}/detail", function ($id) {
     $query = PejabatPenetap::query();
@@ -447,7 +612,7 @@ Route::get("/master-status-pernikahan/{id}/detail", function ($id) {
         return response()->json($data, 200);
     } else return response()->json("data tidak ditemukan", 404);
 });
-Route::get("/master-jenis-penghargaan/{id}/detail", function ($id) {
+Route::get("/dmaster-jenis-penghargaan/{id}/detail", function ($id) {
     $query = JenisPenghargaan::query();
     $query->where("id", $id);
     $data = $query->get()->first();
@@ -492,7 +657,7 @@ Route::post("/master-jenis-hukuman", function () {
 });
 Route::get("/master-jenis-hukuman/{id}/detail", function ($id) {
     $query = Hukuman::query();
-    $query->select("id","hukuman as name");
+    $query->select("id", "hukuman as name");
     $query->where("id", $id);
     $data = $query->get()->first();
     if ($data) {

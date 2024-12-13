@@ -2,20 +2,18 @@
 
 namespace App\Admin\Controllers\ProfilePegawai;
 
-use App\Admin\Selectable\GridPejabatPenetap;
 use App\Admin\Selectable\GridUnitKerja;
-use App\Models\PejabatPenetap;
 use App\Models\RiwayatMutasi;
+use App\Models\RiwayatJabatan;
 use App\Models\UnitKerja;
 use Encore\Admin\Auth\Permission;
-use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Carbon\Carbon;
-
+use App\Admin\Controllers\SiasnController;
 
 class RiwayatMutasiController extends ProfileController
 {
@@ -38,89 +36,94 @@ class RiwayatMutasiController extends ProfileController
     {
         $grid = new Grid(new RiwayatMutasi());
         $grid->model()->orderBy('tmt_sk', 'desc');
-        $grid->column('satker_lama', __('SATKER LAMA'));
-        $grid->column('satker_baru', __('SATKER BARU'));
-        $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
-            if ($o) {
-                return $this->tgl_sk->format('d-m-Y');
-            }
-            return "-";
-        });
-        $grid->column('tmt_sk', __('TMT SK'))->display(function ($o) {
-            if ($o) {
+
+        $grid->column('satker_baru', __('UNIT KERJA BARU'));
+        $grid->column('satker_lama', __('UNIT KERJA LAMA'));
+        $grid->column('no_sk', __('NOMOR SK'));
+        $grid->column('tmt_sk', __('TMT MUTASI'))->display(function ($o) {
+            if($o) {
                 return $this->tmt_sk->format('d-m-Y');
             }
             return "-";
         });
-        $grid->column('lama_kerja_diunit', __('LAMA BEKERJA'))->display(function () {
-            // Mendapatkan riwayat mutasi berdasarkan employee_id, diurutkan dari yang terbaru
+        $grid->column('tgl_sk', __('TANGGAL SK'))->display(function ($o) {
+            if($o) {
+                return $this->tgl_sk->format('d-m-Y');
+            }
+            return "-";
+        });
+        $grid->column('obj_riwayat_jabatan.nama_jabatan', __('RIWAYAT JABATAN'));
+        $grid->column('id', __('LAMA KERJA DI UNIT'))->display(function ($o) {
             $riwayatMutasi = RiwayatMutasi::where('employee_id', $this->employee_id)
                 ->orderBy('tmt_sk')
                 ->get();
 
-            // Mendapatkan tanggal saat ini
-            $currentDate = Carbon::now();
+            $nextTmtSk = Carbon::now();
+            $tmtSk = $riwayatMutasi->min('tmt_sk');
 
-            // Inisialisasi total bulan menjadi 0
-            $totalMonths = 0;
-
-            // Mendapatkan TMT_SK unit/satker pertama
-            $firstTmtSk = $riwayatMutasi->min('tmt_sk');
-
-            // Loop melalui setiap entri riwayat mutasi
-            foreach ($riwayatMutasi as $index => $mutasi) {
-                // Ambil tanggal TMT_SK dari entri mutasi
-                $tmtSk = $mutasi->tmt_sk;
-
-                // Jika ini bukan entri terakhir, hitung dari tmt_sk ke tmt_sk berikutnya
-                if ($index < count($riwayatMutasi) - 1) {
-                    $nextTmtSk = $riwayatMutasi[$index + 1]->tmt_sk;
-                    $totalMonths += $tmtSk->diffInMonths($nextTmtSk);
-                } else {
-                    // Jika ini entri terakhir, hitung dari tmt_sk terakhir ke waktu sekarang
-                    $totalMonths += $tmtSk->diffInMonths($currentDate);
+            foreach($riwayatMutasi as $index => $mutasi) {
+                if($mutasi->id == $o) {
+                    $tmtSk = $mutasi->tmt_sk;
+                    if($index < count($riwayatMutasi) - 1) {
+                        $nextTmtSk = $riwayatMutasi[$index + 1]->tmt_sk;
+                    }
                 }
             }
 
-            // Check apakah firstTmtSk lebih kecil(tanggal terakhir dalam riwayat mutasi)
-            if ($firstTmtSk <= $riwayatMutasi->last()->tmt_sk) {
-                // Menghitung lama bekerja dari firstTmtSk ke waktu sekarang
-                $lengthOfService = $firstTmtSk->addMonths($totalMonths)->diff($currentDate);
+            if($riwayatMutasi->min('tmt_sk') <= $riwayatMutasi->last()->tmt_sk) {
+                $lengthOfService = $tmtSk->diff($nextTmtSk);
 
-                // Konversi total bulan ke tahun, bulan, dan hari
-                $years = floor($totalMonths / 12);
-                $months = $totalMonths % 12;
-                $days = $lengthOfService->days;
-
-                // Mengembalikan hasil format lama bekerja dalam tahun, bulan, dan hari
-                return "$years tahun, $months bulan, $days hari";
+                return "$lengthOfService->y Tahun $lengthOfService->m Bulan $lengthOfService->d Hari";
             } else {
-                // Invalid Date Range jika firstTmtSk > tanggal terakhir dalam riwayat mutasi
                 return "Invalid Date Range";
             }
         });
+        // $grid->column('lama_kerja_diunit', __('TOTAL LAMA KERJA'))->display(function () {
+        //     $riwayatMutasi = RiwayatMutasi::where('employee_id', $this->employee_id)
+        //         ->orderBy('tmt_sk')
+        //         ->get();
 
-        $grid->column('pejabat_penetap_jabatan', __('PEJABAT PENETAP'));
-        if (!Admin::user()->can('create-riwayat_pangkat')) {
+        //     $currentDate = Carbon::now();
+        //     $firstTmtSk = $riwayatMutasi->min('tmt_sk');
+
+        //     if($firstTmtSk <= $riwayatMutasi->last()->tmt_sk) {
+        //         $lengthOfService = $firstTmtSk->diff($currentDate);
+
+        //         return "$lengthOfService->y Tahun $lengthOfService->m Bulan $lengthOfService->d Hari";
+        //     } else {
+        //         return "Invalid Date Range";
+        //     }
+        // });
+        $grid->column('id_siasn', __('INTG.<br>MYASN'))->display(function($o) {
+            if(!empty($this->id_siasn)) {
+                $label = 'success';
+                $status = '<i class="fa fa-check"></i>';
+            } else {
+                $label = 'danger';
+                $status = '<i class="fa fa-times"></i>';
+            }
+            return "<span class='label label-$label'>".$status."</span>";
+        });
+        if(!Admin::user()->can('create-riwayat_pangkat')) {
             $grid->disableCreateButton();
         }
         $grid->actions(function ($actions) {
-            if (!Admin::user()->can('delete-riwayat_pangkat')) {
+            if(!Admin::user()->can('delete-riwayat_pangkat')) {
                 $actions->disableDelete();
             }
-            if (!Admin::user()->can('edit-riwayat_pangkat')) {
+            if(!Admin::user()->can('edit-riwayat_pangkat')) {
                 $actions->disableEdit();
             }
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
-                if (!Admin::user()->can('delete-riwayat_pangkat')) {
+                if(!Admin::user()->can('delete-riwayat_pangkat')) {
                     $batch->disableDelete();
                 }
             });
         });
         $grid->disableRowSelector();
+        
         return $grid;
     }
 
@@ -132,16 +135,70 @@ class RiwayatMutasiController extends ProfileController
      */
     protected function detail($id)
     {
-        $show = new Show(RiwayatMutasi::findOrFail($id));
+        $riwayatMutasi = RiwayatMutasi::findOrFail($id);
+        $show = new Show($riwayatMutasi);
+        $apiData = SiasnController::get_jabatan($riwayatMutasi->id_siasn);
+        $apiData = (array) $apiData;
+        // var_dump(session('token_sso'));
+        // dd($apiData);
+        // die();
 
-        $show->field('satker_lama', __('SATKER LAMA'));
-        $show->field('satker_baru', __('SATKER BARU'));
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field('tmt_sk', __('TMT SK'));
-        $show->field('pejabat_penetap_nip', __('PEJABAT PENETAP NIP'));
-        $show->field('pejabat_penetap_nama', __('PEJABAT PENETAP NAMA'));
-        $show->field('pejabat_penetap_jabatan', __('PEJABAT PENETAP JABATAN'));
+        $show->field('no_sk', 'NOMOR SK')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data1', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['nomorSk'])) ? $apiData['nomorSk'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tgl_sk', 'TANGGAL SK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data2', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tanggalSk'])) ? $apiData['tanggalSk'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tmt_sk', 'TMT MUTASI')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });          
+        $show->field('api_data3', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tmtJabatan'])) ? $apiData['tmtMutasi'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('obj_riwayat_jabatan.nama_jabatan', 'RIWAYAT JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data5', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['jabatanMutasi'])) ? $apiData['jabatanMutasi'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('satker_baru', 'UNIT KERJA BARU')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data4', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['namaUnor'])) ? $apiData['namaUnor'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('satker_lama', 'UNIT KERJA LAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->divider();
+
+        $show->field('pejabat_penetap_nama', 'PENETAP NAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('pejabat_penetap_jabatan', 'PENETAP JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
 
         return $show;
     }
@@ -156,39 +213,33 @@ class RiwayatMutasiController extends ProfileController
         $form = new Form(new RiwayatMutasi());
 
         $form->hidden('employee_id', __('Employee id'));
-        $form->belongsTo('satker_id_lama', GridUnitKerja::class, 'SATKER LAMA');
-        $form->text('satker_lama', __('SATKER LAMA'));
-        $form->belongsTo('satker_id_baru', GridUnitKerja::class, 'SATKER BARU');
-        $form->text('satker_baru', __('SATKER BARU'));
-        $form->text('no_sk', __('NO SK'));
-        $form->date('tgl_sk', __('TGL SK'))->default(date('Y-m-d'));
-        $form->date('tmt_sk', __('TMT SK'))->default(date('Y-m-d'));
-        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
-        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
-        $form->text('pejabat_penetap_nip', __('NIP'));
-        $form->text('pejabat_penetap_nama', __('NAMA'));
-
+        $form->hidden('flag_integrasi');
+        $form->text('no_sk', __('NOMOR SK'))->required();
+        $form->date('tgl_sk', __('TANGGAL SK'))->required();
+        $form->date('tmt_sk', __('TMT MUTASI'))->required();
+        $form->belongsTo('satker_id_baru', GridUnitKerja::class, 'UNIT KERJA BARU')->required();
+        $form->display('satker_baru', __('NAMA UNIT BARU'));
+        $form->belongsTo('satker_id_lama', GridUnitKerja::class, 'UNIT KERJA LAMA');
+        $form->display('satker_lama', __('NAMA UNIT LAMA'));
+        $form->select('riwayat_jabatan_id', __('RIWAYAT JABATAN'))->options(RiwayatJabatan::selectRaw("concat(nama_jabatan, ' (', tmt_jabatan, ')') as nama, id")->where('employee_id', request()->route('profile_id'))->orderBy('tmt_jabatan', 'desc')->pluck('nama', 'id'))->required();
+        $form->divider('Pejabat Penetap');
+        $form->text('pejabat_penetap_nama', __('PENETAP NAMA'));
+        $form->text('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
+        
         $form->saving(function (Form $form) {
-            if ($form->pejabat_penetap_id) {
-                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
-                if ($r) {
-                    $form->pejabat_penetap_jabatan = $r->jabatan;
-                    $form->pejabat_penetap_nip = $r->nip;
-                    $form->pejabat_penetap_nama = $r->nama;
-                }
-            }
-            if ($form->satker_id_lama) {
+            if($form->satker_id_lama) {
                 $r = UnitKerja::where('id', $form->satker_id_lama)->get()->first();
-                if ($r) {
+                if($r) {
                     $form->satker_lama = $r->name;
                 }
             }
-            if ($form->satker_id_baru) {
+            if($form->satker_id_baru) {
                 $r = UnitKerja::where('id', $form->satker_id_baru)->get()->first();
-                if ($r) {
+                if($r) {
                     $form->satker_baru = $r->name;
                 }
             }
+            $form->flag_integrasi = 1;
         });
 
         return $form;

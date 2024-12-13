@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatMutasi extends Model
 {
-    public $table  = 'riwayat_mutasi';
+    public $table = 'riwayat_mutasi';
     protected $dates = ['tgl_sk', 'tmt_sk'];
     public $appends = ['lama_kerja_diunit'];
 
@@ -22,4 +22,21 @@ class RiwayatMutasi extends Model
         'tgl_sk' => 'datetime:Y-m-d',
         'tmt_sk' => 'datetime:Y-m-d'
     ];
+
+    public function obj_riwayat_jabatan()
+    {
+        return $this->hasOne(RiwayatJabatan::class, 'id', 'riwayat_jabatan_id');
+    }
+    public function obj_unit_kerja_baru()
+    {
+        return $this->hasOne(UnitKerja::class, 'id', 'satker_id_baru');
+    }
+    public function obj_employee()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
+    public function obj_pegawai()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
 }

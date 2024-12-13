@@ -84,6 +84,464 @@ class SiasnController
         return $result->access_token;
     }
 
+    public function save_jabatan($id, $eselonId, $instansiId, $jabatanlId, $jenisJabatan, $nomorSk,
+        $pnsId, $satuanKerjaId, $tanggalSk, $tmtJabatan, $tmtPelantikan, $unorId, $jenisPenugasanId, $token_login, $token_api)
+    {
+        $jabatanFungsionalId = null;
+        $jabatanFungsionalUmumId = null;
+        if($jenisJabatan == 2) {
+            $jabatanFungsionalId = $jabatanlId;
+        } else if($jenisJabatan == 4) {
+            $jabatanFungsionalUmumId = $jabatanlId;
+        }
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/jabatan/save',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode([
+                "eselonId" => $eselonId,
+                "id" => $id,
+                "instansiId" => $instansiId,
+                "jabatanFungsionalId" => $jabatanFungsionalId,
+                "jabatanFungsionalUmumId" => $jabatanFungsionalUmumId,
+                "jenisJabatan" => $jenisJabatan,
+                "nomorSk" => $nomorSk,
+                "pnsId" => $pnsId,
+                "satuanKerjaId" => $satuanKerjaId,
+                "tanggalSk" => $tanggalSk,
+                "tmtJabatan" => $tmtJabatan,
+                "tmtPelantikan" => $tmtPelantikan,
+                "unorId" => $unorId,
+                'jenisPenugasanId' => $jenisPenugasanId
+            ]),
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Content-Type: application/json',
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function save_mutasi($id, $instansiId, $jabatanlId, $jenisJabatan, $jenisMutasiId, $nomorSk,
+        $pnsId, $satuanKerjaId, $tanggalSk, $tmtJabatan, $tmtMutasi, $unorId, $token_login, $token_api)
+    {
+        $jabatanFungsionalId = null;
+        $jabatanFungsionalUmumId = null;
+        if($jenisJabatan == 2) {
+            $jabatanFungsionalId = $jabatanlId;
+        } else if($jenisJabatan == 4) {
+            $jabatanFungsionalUmumId = $jabatanlId;
+        }
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/jabatan/unorjabatan/save',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode([
+                "id" => $id,
+                "instansiId" => $instansiId,
+                "instansiIndukId" => $instansiId,
+                "jabatanFungsionalId" => $jabatanFungsionalId,
+                "jabatanFungsionalUmumId" => $jabatanFungsionalUmumId,
+                "jenisJabatan" => $jenisJabatan,
+                "jenisMutasiId" => $jenisMutasiId,
+                "nomorSk" => $nomorSk,
+                "pnsId" => $pnsId,
+                "satuanKerjaId" => $satuanKerjaId,
+                "tanggalSk" => $tanggalSk,
+                "tmtJabatan" => $tmtJabatan,
+                "tmtMutasi" => $tmtMutasi,
+                "unorId" => $unorId
+            ]),
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Content-Type: application/json',
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function upload_dok_rw($file, $id_ref_dokumen, $id_riwayat, $token_login, $token_api) {
+        $disk = Storage::disk('minio_dokumen')->get($file);
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'temp-file-');
+        $tempName = substr($tempFilePath, strrpos($tempFilePath, "/") + 1);
+        file_put_contents($tempFilePath, $disk);
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/upload-dok-rw',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => array(
+                'id_riwayat' => $id_riwayat,
+                'id_ref_dokumen' => $id_ref_dokumen,
+                'file' => new \CURLFile($tempFilePath, 'application/pdf', $tempName.'.pdf')
+            ),
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Content-Type: multipart/form-data',
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        unlink($tempFilePath);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function list_kp_instansi($tmt, $token_login, $token_api) {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/list-kp-instansi?periode='.$tmt,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000; BIGipServerpool_apiws_prod_8243=1091068938.13088.0000; ff8d625df24f2272ecde05bd53b814bc=0b3829ca75bc61b3f67910616a4d8481'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function get_nip_pangkat($nip, $id_siasn) {
+        $token = new self();
+        $token_api = $token->token_api();
+        $token_login = $token->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000; BIGipServerpool_apiws_prod_8243=1091068938.13088.0000; ff8d625df24f2272ecde05bd53b814bc=fffb61d07a7b5bb1825b1e455882deac'
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if($result->code == 1) {
+            foreach($result->data as $data) {
+                if($data->id == $id_siasn) {
+                    $result = array(
+                        "golongan" => $data->golongan.' - '.$data->pangkat,
+                        "skNomor" => $data->skNomor,
+                        "skTanggal" => $data->skTanggal,
+                        "tmtGolongan" => date("d-m-Y", strtotime($data->tmtGolongan)),
+                        "noPertekBkn" => $data->noPertekBkn,
+                        "tglPertekBkn" => $data->tglPertekBkn,
+                        "jenisKPNama" => $data->jenisKPNama,
+                        "masaKerjaGolongan" => $data->masaKerjaGolonganTahun.' Tahun '.$data->masaKerjaGolonganBulan.' Bulan',
+                        "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
+                    );
+                    break;
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function get_jabatan($id) {
+        $token = new self();
+        $token_api = $token->token_api();
+        $token_login = $token->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/jabatan/id/'.$id,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000; BIGipServerpool_apiws_prod_8243=1091068938.13088.0000; ff8d625df24f2272ecde05bd53b814bc=fffb61d07a7b5bb1825b1e455882deac'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if($result->code == 1) {
+            $data = $result->data;
+            $result = array(
+                "nomorSk" => $data->nomorSk,
+                "tanggalSk" => $data->tanggalSk,
+                "tmtJabatan" => $data->tmtJabatan,
+                "jenisJabatan" => $data->jenisJabatan,
+                "eselon" => $data->eselon,
+                "namaJabatan" => $data->namaJabatan,
+                "namaUnor" => $data->namaUnor,
+                "tmtPelantikan" => ($data->tmtPelantikan == '01-01-1970') ? null : $data->tmtPelantikan,
+                "jenisPenugasanId" => $data->jenisPenugasanId,
+                "tmtMutasi" => $data->tmtMutasi,
+                "jabatanMutasi" => (!empty($data->jabatanFungsionalNama)) ? $data->jabatanFungsionalNama : $data->jabatanFungsionalUmumNama,
+                "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
+            );
+        }
+        return $result;
+    }
+
+    public function get_penghargaan($id) {
+        $token = new self();
+        $token_api = $token->token_api();
+        $token_login = $token->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/penghargaan/id/'.$id,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if($result->code == 1) {
+            $data = $result->data;
+            $result = array(
+                "tahun" => $data->tahun,
+                "skNomor" => $data->skNomor,
+                "skDate" => $data->skDate,
+                "hargaNama" => $data->hargaNama,
+                "dok_uri" => (!empty($data->path) && is_object(reset($data->path))) ? reset($data->path)->dok_uri : ''
+            );
+        }
+        return $result;
+    }
+
+    public function download_dok($nip, $klasifikasi_id, $id_siasn) {
+        $api = new self();
+        $nip = base64_decode($nip);
+        $klasifikasi_id = base64_decode($klasifikasi_id);
+        $id_siasn = base64_decode($id_siasn);
+        switch($klasifikasi_id) {
+            case '5':
+                $path = $api->get_nip_pangkat($nip, $id_siasn);
+                $dok_uri = (!empty($path['dok_uri'])) ? $path['dok_uri'] : '';
+                break;
+            case '6':
+            case '7':
+                $path = $api->get_jabatan($id_siasn);
+                $dok_uri = (!empty($path['dok_uri'])) ? $path['dok_uri'] : '';
+                break;
+            case '19':
+                $path = $api->get_penghargaan($id_siasn);
+                $dok_uri = (!empty($path['dok_uri'])) ? $path['dok_uri'] : '';
+                break;
+            default:
+                $dok_uri = '';
+                break;
+        }
+
+        $token_api = $api->token_api();
+        $token_login = $api->token_login();
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/download-dok?filePath='.$dok_uri,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000; BIGipServerpool_apiws_prod_8243=1091068938.13088.0000; ff8d625df24f2272ecde05bd53b814bc=fffb61d07a7b5bb1825b1e455882deac'
+            ),
+        ));
+        
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+        if(strpos($response, '%PDF') === 0) {
+            header('Content-Type: application/pdf');
+            echo $response;
+        } else {
+            admin_toastr('Error: '.$result->message, 'error', ['timeOut' => 20000]);
+            return redirect()->back();
+        }
+    }
+
+    public function save_penghargaan($id, $hargaId, $pnsOrangId, $skDate, $skNomor, $tahun, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/penghargaan/save',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode([
+                "hargaId" => $hargaId,
+                "id" => $id,
+                "pnsOrangId" => $pnsOrangId,
+                "skDate" => $skDate,
+                "skNomor" => $skNomor,
+                "tahun" => $tahun
+            ]),
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Content-Type: application/json',
+                'Authorization: Bearer '.$token_api,
+                'Cookie: BIGipServerpool_apiws=1091068938.58148.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    /* end of supervised */
+
+    public function data_anak($nip, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/data-anak/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=7c6816a8a1345ca8e9de6abab7a03a27; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
+    public function data_pim($nip, $token_login, $token_api)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-diklat/'.$nip,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'Auth: bearer '.$token_login,
+                'Authorization: Bearer '.$token_api,
+                'Cookie: ff8d625df24f2272ecde05bd53b814bc=7c6816a8a1345ca8e9de6abab7a03a27; pdns=1091068938.13088.0000'
+            ),
+        ));
+        $response = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $result = json_decode($response);
+        return [
+            'code' => $code,
+            'response' => $result
+        ];
+    }
+
     public function get_rw_pangkat($nip, $token_login, $token_api) {
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -106,103 +564,6 @@ class SiasnController
         curl_close($curl);
         $result = json_decode($response);
         return $result;
-    }
-
-    public function get_nip_pangkat($id) {
-        $id_pangkat = RiwayatPangkat::where('id', $id)->first();
-        $token = new self();
-        $token_api = $token->token_api();
-        $token_login = $token->token_login();
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/pns/rw-golongan/'.$id_pangkat->obj_pegawai->nip_baru,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=8821d34c0d1927d954417f8d3dbccab0; pdns=1091068938.13088.0000'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
-        if($result->code == 1) {
-            foreach($result->data as $data) {
-                if($data->id == $id_pangkat->id_siasn) {
-                    $result = array(
-                        "golongan" => $data->golongan,
-                        "skNomor" => $data->skNomor,
-                        "skTanggal" => $data->skTanggal,
-                        "tmtGolongan" => date("d-m-Y", strtotime($data->tmtGolongan)),
-                        "noPertekBkn" => $data->noPertekBkn,
-                        "tglPertekBkn" => $data->tglPertekBkn,
-                        "jumlahKreditUtama" => $data->jumlahKreditUtama,
-                        "jumlahKreditTambahan" => $data->jumlahKreditTambahan,
-                        "jenisKPNama" => $data->jenisKPNama,
-                        "masaKerjaGolonganTahun" => $data->masaKerjaGolonganTahun,
-                        "masaKerjaGolonganBulan" => $data->masaKerjaGolonganBulan,
-                        "dok_uri" => (!empty($data->path)) ? reset($data->path)->dok_uri : ''
-                    );
-                    break;
-                }
-            }
-        }
-        return $result;
-    }
-
-    public function download_dok($id, $klasifikasi_id) {
-        $api = new self();
-        $id = base64_decode($id);
-        $klasifikasi_id = base64_decode($klasifikasi_id);
-        switch($klasifikasi_id) {
-            case '5':
-                $path = $api->get_nip_pangkat($id);
-                $dok_uri = (!empty($path['dok_uri'])) ? $path['dok_uri'] : '';
-                break;
-            default:
-                $dok_uri = '';
-                break;
-        }
-        // print_r($dok_uri);
-        // die();
-
-        $token_api = $api->token_api();
-        $token_login = $api->token_login();
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/download-dok?filePath='.$dok_uri,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=c94513f399ed33bb608b90b1189b3cb9; pdns=1091068938.13088.0000'
-            ),
-        ));
-        
-        $response = curl_exec($curl);
-        curl_close($curl);
-        if(strpos($response, '%PDF') === 0) {
-            header('Content-Type: application/pdf');
-            echo $response;
-        } else {
-            // admin_error('Error', 'File tidak ada!');
-            admin_toastr('File tidak ada!', 'error', ['timeOut' => 10000]);
-            return redirect()->back();
-        }
     }
 
     public function data_pns($nip, $token_login, $token_api)
@@ -265,42 +626,6 @@ class SiasnController
             ),
         ));
         $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
-        return $result;
-    }
-
-    public function upload_dok_rw($file, $id_ref_dokumen, $id_riwayat, $token_login, $token_api) {
-        $disk = Storage::disk('minio_dokumen')->get($file);
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'temp-file-');
-        $tempName = substr($tempFilePath, strrpos($tempFilePath, "/") + 1);
-        file_put_contents($tempFilePath, $disk);
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apimws.bkn.go.id:8243/apisiasn/1.0/upload-dok-rw',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => array(
-                'id_riwayat' => $id_riwayat,
-                'id_ref_dokumen' => $id_ref_dokumen,
-                'file' => new \CURLFile($tempFilePath, 'application/pdf', $tempName.'.pdf')
-            ),
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'Auth: bearer '.$token_login,
-                'Content-Type: multipart/form-data',
-                'Authorization: Bearer '.$token_api,
-                'Cookie: ff8d625df24f2272ecde05bd53b814bc=eeb0fca813502b0c7e460bd92e553764; pdns=1091068938.13088.0000'
-            ),
-        ));
-        $response = curl_exec($curl);
-        unlink($tempFilePath);
         curl_close($curl);
         $result = json_decode($response);
         return $result;

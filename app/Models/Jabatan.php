@@ -19,11 +19,10 @@ class Jabatan extends Model
         parent::__construct($attributes);
         $this->setTitleColumn('name');
     }
-
-    public function scopePelaksana($query){
+    public function scopePelaksana($query) {
         $query->where('parent_id',1);
     }
-    public function scopeFungsional($query){
+    public function scopeFungsional($query) {
         $query->where('parent_id',153);
     }
 }

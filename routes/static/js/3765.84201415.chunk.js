@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpelayanan_pegawai=self.webpackChunkpelayanan_pegawai||[]).push([[3765],{63765:function(a,n,e){e.r(n);e(47313);var s=e(20041),i=e(58467),t=e(46417);n.default=function(a){return(0,t.jsx)(t.Fragment,{children:s.Z.isLogin()?(0,t.jsx)(i.Fg,{to:"/dashboard"}):(0,t.jsx)(i.Fg,{to:"/login"})})}}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpelayanan_pegawai=self.webpackChunkpelayanan_pegawai||[]).push([[588],{80588:function(e,a,n){n.r(a);var s=n(65832),i=n(46417);a.default=function(e){return(0,i.jsxs)(s.Z,{children:[(0,i.jsx)(s.Z.Header,{children:(0,i.jsx)(s.Z.Title,{as:"h5",children:"PERHATIAN"})}),(0,i.jsx)(s.Z.Body,{children:"MODULE TIDAK DITEMUKAN"})]})}}}]);

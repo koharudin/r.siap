@@ -26,8 +26,17 @@ class UnitKerja extends Model
     }
     public function getNameWithParentAttribute()
     {
-        $parentName = $this->parent ? " - " . $this->parent->name : "";
-        return $this->name . $parentName;
+        $parentName = $this->parent ? "<b> | </b>".$this->parent->id." ".$this->parent->name : "";
+        return $this->id." ".$this->name.$parentName;
+    }
+    public function getParentName()
+    {
+        $parentName = $this->parent ? $this->parent->id." ".$this->parent->name : "";
+        return $parentName;
+    }
+
+    public function list_riwayat_jabatan(){
+        return $this->hasMany(RiwayatJabatan::class,'unit_id','id')->orderBy("tmt_jabatan","asc");
     }
     protected $hidden = ['path'];
 }

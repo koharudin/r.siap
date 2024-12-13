@@ -13,6 +13,10 @@ class RiwayatPenghargaan extends Model
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');
     }
+    public function obj_peagwai()
+    {
+        return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
     public function obj_jenis_penghargaan()
     {
         return $this->hasOne(JenisPenghargaan::class, 'id', 'jenis_penghargaan_id');

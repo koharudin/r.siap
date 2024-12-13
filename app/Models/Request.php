@@ -20,6 +20,10 @@ class Request extends Model
     {
         return $this->hasMany(RequestLog::class, 'request_id', 'id');
     }
+    public function obj_line_approvals()
+    {
+        return $this->hasMany(LineApprovalRequest::class, 'request_id', 'id');
+    }
     public function obj_employee()
     {
         return $this->hasOne(Employee::class, 'id', 'employee_id');

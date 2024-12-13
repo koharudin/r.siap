@@ -4,34 +4,24 @@ namespace App\Admin\Controllers\ProfilePegawai;
 
 use App\Admin\Selectable\GridJabatan;
 use App\Admin\Selectable\GridJabatanStruktural;
-use Illuminate\Http\UploadedFile;
-use App\Admin\Selectable\GridPejabatPenetap;
 use App\Admin\Selectable\GridUnitKerja;
-use App\Models\DokumenPegawai;
 use App\Models\Eselon;
 use App\Models\Jabatan;
-use App\Models\JenisKP;
-use App\Models\Pangkat;
-use App\Models\PejabatPenetap;
 use App\Models\RiwayatJabatan;
-use App\Models\RiwayatPangkat;
 use App\Models\StatusJabatan;
 use App\Models\TipeJabatan;
 use App\Models\UnitKerja;
-use Carbon\Carbon;
-use Encore\Admin\Auth\Permission;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
-use Illuminate\Support\Facades\Storage;
+use App\Admin\Controllers\SiasnController;
+use DateTime;
 
 class RiwayatJabatanController extends ProfileController
 {
     public $activeTab = 'riwayat_jabatan';
     public $klasifikasi_id = 6;
+
     /**
      * Title for current resource.
      *
@@ -46,32 +36,41 @@ class RiwayatJabatanController extends ProfileController
      */
     protected function grid()
     {
-
         $grid = new Grid(new RiwayatJabatan());
         $grid->model()->orderBy('tmt_jabatan', 'desc');
+
         $grid->column('nama_jabatan', __('JABATAN'));
         $grid->column('unit_text', __('UNIT KERJA'));
+        $grid->column('no_sk', __('NOMOR SK'));
         $grid->column('tmt_jabatan', __('TMT JABATAN'))->display(function ($o) {
-            if ($o) {
+            if($o) {
                 return $this->tmt_jabatan->format('d-m-Y');
             }
             return "-";
         });
-        $grid->column('no_sk', __('NO SK'));
-        $grid->column('tgl_sk', __('TGL SK'))->display(function ($o) {
-            if ($o) {
+        $grid->column('tgl_sk', __('TANGGAL SK'))->display(function ($o) {
+            if($o) {
                 return $this->tgl_sk->format('d-m-Y');
             }
             return "-";
         });
-        $grid->column('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
-	$grid->column('status_riwayat', __('STATUS RIWAYAT JABATAN'))->display(function ($o){
-            if($o == 1){
+        $grid->column('obj_status_jabatan.name', __('STATUS JABATAN'));
+	    $grid->column('status_riwayat', __('STATUS RIWAYAT'))->display(function ($o) {
+            if($o == 1) {
                 return "Aktif";
-            }
-            else{
+            } else {
                 return "Inaktif";
             }
+        });
+        $grid->column('id_siasn', __('INTG.<br>MYASN'))->display(function($o) {
+            if(!empty($this->id_siasn)) {
+                $label = 'success';
+                $status = '<i class="fa fa-check"></i>';
+            } else {
+                $label = 'danger';
+                $status = '<i class="fa fa-times"></i>';
+            }
+            return "<span class='label label-$label'>".$status."</span>";
         });
 
         return $grid;
@@ -85,29 +84,135 @@ class RiwayatJabatanController extends ProfileController
      */
     protected function detail($id)
     {
-        $show = new Show(RiwayatJabatan::findOrFail($id));
+        $riwayatJabatan = RiwayatJabatan::findOrFail($id);
+        $show = new Show($riwayatJabatan);
+        $apiData = SiasnController::get_jabatan($riwayatJabatan->id_siasn);
+        $apiData = (array) $apiData;
+        // var_dump(session('token_sso'));
+        // dd($apiData);
+        // die();
 
-        $show->field('stlud', __('STLUD'));
-        $show->field('no_stlud', __('NO STLUD'));
-        $show->field('tgl_stlud', __('TGL STLUD'));
-        $show->field('no_nota', __('NO NOTA'));
-        $show->field('tgl_nota', __('TGL NOTA'));
-        $show->field('no_sk', __('NO SK'));
-        $show->field('tgl_sk', __('TGL SK'));
-        $show->field('tmt_pangkat', __('TMT PANGKAT'));
-        $show->field('kredit', __('KREDIT'));
-        $show->field('obj_pangkat.name', __('PANGKAT'));
-        $show->field('obj_jenis_kenaikan_pangkat.name', __('JENIS KP'));
-        $show->field('status_jabatan_id', __('KETERANGAN'));
-        $show->field('jenis_ket', __('JENIS KET'));
-        $show->field('tmt_pak', __('TMT PAK'));
-        $show->field('masakerja_thn', __('MASA KERJA TAHUN'));
-        $show->field('masakerja_bln', __('MASA KERJA BULAN'));
-        $show->divider("PEJABAT PENETAP");
-        $show->field('penetap_nip', __('PENETAP NIP'));
-        $show->field('penetap_nama', __('PENETAP NAMA'));
-        $show->field('penetap_jabatan', __('PENETAP JABATAN'));
- 	$show->field('status_riwayat', __('STATUS RIWAYAT JABATAN'));
+        $show->field('no_sk', 'NOMOR SK')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data1', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['nomorSk'])) ? $apiData['nomorSk'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tgl_sk', 'TANGGAL SK')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data2', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tanggalSk'])) ? $apiData['tanggalSk'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('tmt_jabatan', 'TMT JABATAN')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });          
+        $show->field('api_data3', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tmtJabatan'])) ? $apiData['tmtJabatan'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('obj_tipe_jabatan.name', 'TIPE JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data4', ' ')->unescape()->as(function() use($apiData) {
+            if(empty($apiData['jenisJabatan'])) {
+                $value = "-";
+            } else if($apiData['jenisJabatan'] == 1) {
+                $value = "Jabatan Struktural";
+            } else if($apiData['jenisJabatan'] == 2) {
+                $value = "Jabatan Fungsional";
+            } else if($apiData['jenisJabatan'] == 3) {
+                $value = "Jabatan Pelaksana";
+            }
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('obj_eselon.name', 'ESELON')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data5', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['eselon'])) ? $apiData['eselon'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('nama_jabatan', 'NAMA JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data6', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['namaJabatan'])) ? $apiData['namaJabatan'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('unit_text', 'NAMA UNIT KERJA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data7', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['namaUnor'])) ? $apiData['namaUnor'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('no_pelantikan', 'NOMOR PELANTIKAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->divider();
+        
+        $show->field('tgl_pelantikan', 'TANGGAL PELANTIKAN')->as(function($value) {
+            return (!empty($value)) ? $value->format('d-m-Y') : "-";
+        });
+        $show->field('api_data8', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['tmtPelantikan'])) ? $apiData['tmtPelantikan'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('grade', 'KELAS JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->divider();
+
+        $show->field('bln_dibayar', 'BULAN DIBAYAR')->as(function($value) {
+            return (!empty($value)) ? (new DateTime($value))->format('d-m-Y') : "-";
+        });
+        $show->divider();
+
+        $show->field('obj_status_jabatan.name', 'STATUS JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('api_data9', ' ')->unescape()->as(function() use($apiData) {
+            $value = (!empty($apiData['jenisPenugasanId'])) ? $apiData['jenisPenugasanId'] : "-";
+            return "<span style='color: blue;'>".$value."</span>&nbsp;<span style='font-size: 11px;'>(dari MyASN)</span>";
+        });
+        $show->divider();
+
+        $show->field('status_riwayat', 'STATUS RIWAYAT')->as(function($value) {
+            if($value == 1) {
+                $value = "Aktif";
+            } else {
+                $value = "Inaktif";
+            }
+            return $value;
+        });
+        $show->divider();
+
+        $show->field('pejabat_penetap_nama', 'PENETAP NAMA')->as(function($value) {
+            return $value ?? '-';
+        });
+        $show->field('pejabat_penetap_jabatan', 'PENETAP JABATAN')->as(function($value) {
+            return $value ?? '-';
+        });
+
         return $show;
     }
 
@@ -119,68 +224,55 @@ class RiwayatJabatanController extends ProfileController
     protected function form()
     {
         $form = new Form(new RiwayatJabatan());
+
         $form->hidden('employee_id', __('Employee id'));
-        $form->text('no_sk', __('NO SK'));
-        $form->date('tgl_sk', __('TGL SK'));
-        $form->date('tmt_jabatan', __('TMT JABATAN'));
+        $form->hidden('flag_integrasi');
+        $form->hidden('id');
+        $form->text('no_sk', __('NOMOR SK'))->required();
+        $form->date('tgl_sk', __('TANGGAL SK'))->required();
+        $form->date('tmt_jabatan', __('TMT JABATAN'))->required();
         $form->hidden('jabatan_id');
-        $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
+        $form->select('tipe_jabatan_id', __('TIPE JABATAN'))->required()->options(TipeJabatan::all()->pluck('name', 'id'))->when('in', [1, 6], function (Form $form) {
             $form->select('eselon', __('ESELON'))->options(Eselon::all()->pluck('name', 'id'));
-            $form->date('tmt_eselon', __('TMT ESELON'));
             $form->belongsTo('jabatan_id_struktural', GridJabatanStruktural::class, 'JABATAN STRUKTURAL');
         })->when('in', [2, 3, 4, 5], function (Form $form) {
             $form->belongsTo('jabatan_id_fungsional', GridJabatan::class, 'JABATAN FUNGSIONAL/UMUM');
         });
         $form->display('nama_jabatan', __('NAMA JABATAN'));
-        $form->text('no_pelantikan', __('NO PELANTIKAN'));
-        $form->date('tgl_pelantikan', __('TGL PELANTIKAN'));
-        $form->select('grade', __('KELAS JABATAN'))->options(['17' => '17', '16' => '16', '15' => '15', '14' => '14', '13' => '13', '12' => '12', '11' => '11', '10' => '10', '9' => '9', '8' => '8',
-            '7' => '7', '6' => '6', '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1'])->required();
-        $form->text('tunjangan', __('TUNJANGAN'));
+        $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'))->required();
+        $form->display('unit_text', __('NAMA UNIT KERJA'));
+        $form->text('no_pelantikan', __('NOMOR PELANTIKAN'));
+        $form->date('tgl_pelantikan', __('TANGGAL PELANTIKAN'));
+        $form->select('grade', __('KELAS JABATAN'))->options(array_combine(range(1, 17), range(1, 17)))->required();
         $form->date('bln_dibayar', __('BULAN DIBAYAR'));
-
-        $form->select('status_riwayat', __('STATUS RIWAYAT JABATAN'))->options(['1' => 'Aktif', '0' => 'Inaktif'])->default('1');
-        $form->belongsTo('unit_id', GridUnitKerja::class, __('UNIT KERJA'));
-        $form->display('unit_text', __('UNIT KERJA'));
-        $form->select('status_jabatan_id', __('STATUS JABATAN'))->options(StatusJabatan::all()->pluck('name', 'id'));
-
+        $form->select('status_jabatan_id', __('STATUS JABATAN'))->options(StatusJabatan::whereNotNull('id_status_jabatan_siasn')->orderBy('id', 'asc')->pluck('name', 'id'))->required();
+        $form->select('status_riwayat', __('STATUS RIWAYAT'))->options(['1' => 'Aktif', '0' => 'Inaktif'])->default('1')->required();
         $form->divider("Pejabat Penetap");
-        $form->belongsTo('pejabat_penetap_id', GridPejabatPenetap::class, 'PEJABAT PENETAP');
-        $form->text('pejabat_penetap_jabatan', __('JABATAN'));
-        $form->text('pejabat_penetap_nip', __('NIP'));
-        $form->text('pejabat_penetap_nama', __('NAMA'));
+        $form->text('pejabat_penetap_nama', __('PENETAP NAMA'));
+        $form->text('pejabat_penetap_jabatan', __('PENETAP JABATAN'));
         $form->divider();
-        $d = $form->file('dokumen', 'DOKUMEN PENDUKUNG')->disk('minio_dokumen')->uniqueName();
 
-        $form->submitted(function (Form $form) use ($d) {
-            $form->ignore('dokumen');
-            $form->ignore('jabatan_struktural_id');
+        $form->submitted(function (Form $form) {
             $form->ignore('jabatan_id_fungsional');
             $form->ignore('jabatan_id_struktural');
         });
         $_this = $this;
-        $form->saving(function (Form $form) use ($d, $_this) {
+        $form->saving(function (Form $form) use ($_this) {
             $jabatan_id_fungsional = request()->input('jabatan_id_fungsional');
             $jabatan_id_struktural = request()->input('jabatan_id_struktural');
             if(in_array($form->tipe_jabatan_id, [1, 6])) {
                 if($jabatan_id_struktural) {
                     $form->jabatan_id = $jabatan_id_struktural;
                     $form->nama_jabatan = UnitKerja::find($form->jabatan_id)->pejabat_jabatan;
-                } else
+                } else {
                     $form->jabatan_id = null;
+                }
             } else {
                 if($jabatan_id_fungsional) {
                     $form->jabatan_id = $jabatan_id_fungsional;
                     $form->nama_jabatan = Jabatan::find($form->jabatan_id)->name;
-                } else
+                } else {
                     $form->jabatan_id = null;
-            }
-            if($form->pejabat_penetap_id) {
-                $r = PejabatPenetap::where('id', $form->pejabat_penetap_id)->get()->first();
-                if($r) {
-                    $form->pejabat_penetap_jabatan = $r->jabatan;
-                    $form->pejabat_penetap_nip = $r->nip;
-                    $form->pejabat_penetap_nama = $r->nama;
                 }
             }
             if($form->unit_id) {
@@ -189,21 +281,11 @@ class RiwayatJabatanController extends ProfileController
                     $form->unit_text = $unit_kerja->name;
                 }
             }
-        });
-        
-        $form->saved(function (Form $form) use ($d, $_this) {
-            $file = request()->file('dokumen');
-            if($file) {
-                $newFileName = $d->prepare($file);
-                $keys = explode("#", $form->model()->simpeg_id);
-                $arr = [
-                    'id' => $form->model()->id,
-                    'klasifikasi_id' => 5,
-                    'pk1' => sizeof($keys) == 2 ? $keys[0] : null,
-                    'pk2' => sizeof($keys) == 2 ? $keys[1] : null,
-                ];
-                $_this->saveDokumenUpload($file->getClientOriginalName(), $newFileName, $arr);
+            if($form->status_riwayat == 1) {
+                $currentId = $form->id;
+                RiwayatJabatan::where('status_riwayat', 1)->where('employee_id', request()->route('profile_id'))->where('id', '!=', $currentId)->update(['status_riwayat' => 0]);
             }
+            $form->flag_integrasi = 1;
         });
 
         return $form;
